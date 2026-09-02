@@ -4256,7 +4256,7 @@
                 </div>
             </div>
 
-            <!-- FEYNMAN ACTIVE RECALL & FAST-TRACK INSTANT MASTERY CHALLENGE SECTION -->
+            <!-- FEYNMAN ACTIVE RECALL & SENTENCE USAGE PRODUCTION LAB (v8.0) -->
             <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/40 space-y-3.5" id="vocab-feynman-container">
                 <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-900 pb-2.5">
                     <div class="flex items-center space-x-2">
@@ -4264,35 +4264,48 @@
                             <i class="fa-solid fa-brain"></i>
                         </div>
                         <div>
-                            <div class="text-xs font-mono font-bold text-indigo-300">Feynman Active Recall & SRS Mastery</div>
-                            <div class="text-[10px] text-slate-400 font-sans">Uji pemahaman mendalam Anda tanpa membaca teks definisi</div>
+                            <div class="text-xs font-mono font-bold text-indigo-300">Feynman Concept Recall & Sentence Production Lab</div>
+                            <div class="text-[10px] text-slate-400 font-sans">Buktikan pemahaman makna & uji kemampuan membuat kalimat gramatikal</div>
                         </div>
                     </div>
                     <!-- Current Feynman SRS Status Badge -->
                     <div id="vocab-feynman-status-badge"></div>
                 </div>
 
-                <!-- Feynman Input Form -->
-                <div class="space-y-2">
-                    <label class="block text-[11px] font-mono font-bold text-slate-300">
-                        <i class="fa-solid fa-pen-nib text-indigo-400 mr-1"></i> Jelaskan arti kata ini dengan bahasamu sendiri (seperti menerangkan ke anak kecil / teman):
-                    </label>
-                    <textarea id="input-feynman-explanation" rows="3" placeholder="Contoh: 'obvious itu artinya sesuatu yang sangat mencolok dan gampang banget dilihat atau dipahami semua orang tanpa mikir keras...' (Boleh Bahasa Indonesia atau Simple English)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed"></textarea>
+                <!-- Dual Input Form -->
+                <div class="space-y-3" id="vocab-feynman-input-section">
+                    <!-- Step 1: Meaning / Analogy Input -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-mono font-bold text-slate-300 flex items-center justify-between">
+                            <span><i class="fa-solid fa-lightbulb text-amber-400 mr-1"></i> Langkah 1: Arti / Analogi Konsep (Bahasamu Sendiri):</span>
+                            <span class="text-[10px] text-slate-500 font-mono">ELI5 / Konsep</span>
+                        </label>
+                        <textarea id="input-feynman-explanation" rows="2" placeholder="Contoh: 'impertinent itu artinya orang yang tidak sopan, lancang, dan ngomong seenaknya...' (Boleh Bahasa Indonesia atau Simple English)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed shadow-inner"></textarea>
+                    </div>
+
+                    <!-- Step 2: Sentence Construction Practice -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-mono font-bold text-slate-300 flex items-center justify-between">
+                            <span><i class="fa-solid fa-pen-fancy text-emerald-400 mr-1"></i> Langkah 2: Contoh Kalimat Praktik Anda (IELTS Context):</span>
+                            <span class="text-[10px] text-slate-500 font-mono">English Sentence</span>
+                        </label>
+                        <textarea id="input-feynman-sentence" rows="2" placeholder="Contoh: 'The student made an impertinent remark to the examiner.' (AI akan membedah struktur, part of speech & kolokasi)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 resize-none leading-relaxed shadow-inner"></textarea>
+                    </div>
                     
                     <div class="flex flex-wrap justify-between items-center gap-2 pt-1">
                         <button onclick="startFastTrackMasteryChallenge()" id="btn-challenge-feynman" class="px-3.5 py-2 bg-gradient-to-r from-amber-600/30 to-amber-500/20 hover:from-amber-600/40 hover:to-amber-500/30 text-amber-300 font-mono font-bold text-xs rounded-xl transition-all border border-amber-500/40 flex items-center gap-1.5 shadow-sm">
                             <i class="fa-solid fa-crown text-amber-400"></i>
-                            <span>🏆 Uji Bebas Review (Instant Mastery Challenge)</span>
+                            <span>🏆 Uji Bebas Review (Instant Mastery)</span>
                         </button>
                         <button onclick="submitFeynmanExplanation()" id="btn-submit-feynman" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-emerald-600 hover:opacity-95 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5 border border-indigo-400/30">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
-                            <span id="btn-submit-feynman-text">Uji Pemahaman dengan AI Examiner (+20 XP)</span>
+                            <span id="btn-submit-feynman-text">Uji Pemahaman & Tata Bahasa (+25 XP)</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Feynman AI Evaluation Result Card -->
-                <div id="vocab-feynman-feedback-box" class="hidden p-4 rounded-xl bg-slate-900/90 border text-xs font-sans leading-relaxed space-y-2"></div>
+                <!-- Feynman AI Evaluation & Tutoring Result Card -->
+                <div id="vocab-feynman-feedback-box" class="hidden p-4 rounded-2xl bg-slate-900/95 border text-xs font-sans leading-relaxed space-y-3 shadow-lg"></div>
 
                 <!-- Fast-Track Instant Mastery Spontaneous Challenge Box -->
                 <div id="vocab-fasttrack-box" class="hidden p-4 rounded-xl bg-amber-950/30 border border-amber-500/40 text-xs font-sans space-y-3">
@@ -10385,30 +10398,22 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 }
             }
 
-            // Populate Feynman input & feedback
+            // Populate Feynman inputs & feedback (v8.0)
             const feynmanInput = document.getElementById('input-feynman-explanation');
             if (feynmanInput) {
                 feynmanInput.value = vocab.feynmanLastExplanation || '';
+            }
+
+            const feynmanSentenceInput = document.getElementById('input-feynman-sentence');
+            if (feynmanSentenceInput) {
+                feynmanSentenceInput.value = vocab.feynmanLastSentence || '';
             }
 
             const feedbackBox = document.getElementById('vocab-feynman-feedback-box');
             if (feedbackBox) {
                 if (vocab.feynmanFeedback) {
                     feedbackBox.classList.remove('hidden');
-                    const isMastery = vocab.feynmanFeedback.level === 'mastery';
-                    const isPartial = vocab.feynmanFeedback.level === 'partial';
-                    const borderC = isMastery ? 'border-emerald-500/40' : (isPartial ? 'border-amber-500/40' : 'border-rose-500/40');
-                    const textC = isMastery ? 'text-emerald-300' : (isPartial ? 'text-amber-300' : 'text-rose-300');
-                    const icon = isMastery ? 'fa-circle-check' : (isPartial ? 'fa-circle-exclamation' : 'fa-triangle-exclamation');
-
-                    feedbackBox.className = `p-4 rounded-xl bg-slate-900/90 border ${borderC} text-xs font-sans leading-relaxed space-y-2 shadow-inner`;
-                    feedbackBox.innerHTML = `
-                        <div class="flex items-center justify-between font-mono font-bold ${textC}">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid ${icon}"></i> Evaluasi AI: ${vocab.feynmanFeedback.statusLabel || 'Hasil Drill'}</span>
-                            <span class="text-[11px] bg-slate-950 px-2 py-0.5 rounded border border-slate-800">Skor: ${vocab.feynmanFeedback.score || 0}%</span>
-                        </div>
-                        <p class="text-slate-200">${vocab.feynmanFeedback.critique || ''}</p>
-                    `;
+                    feedbackBox.innerHTML = renderFeynmanFeedbackCard(vocab.feynmanFeedback, vocab);
                 } else {
                     feedbackBox.classList.add('hidden');
                     feedbackBox.innerHTML = '';
@@ -11333,7 +11338,7 @@ Jawab dalam bahasa Indonesia, tapi contoh kalimatnya dalam bahasa Inggris.`;
         }
 
         // =========================================================================
-        // IeltsGo v7.0 — FEYNMAN TECHNIQUE ACTIVE RECALL & FAST-TRACK MASTERY ENGINE
+        // IeltsGo v8.0 — DUAL FEYNMAN RECALL & SENTENCE USAGE PRODUCTION ENGINE
         // =========================================================================
 
         async function submitFeynmanExplanation() {
@@ -11341,9 +11346,12 @@ Jawab dalam bahasa Indonesia, tapi contoh kalimatnya dalam bahasa Inggris.`;
             if (!vocab) { showToast("Tidak ada kata aktif yang dipilih.", "error"); return; }
 
             const inputEl = document.getElementById('input-feynman-explanation');
+            const inputSentenceEl = document.getElementById('input-feynman-sentence');
             const explanation = inputEl ? inputEl.value.trim() : '';
-            if (!explanation) {
-                showToast("Silakan tuliskan penjelasan konsep Anda terlebih dahulu!", "error");
+            const sentence = inputSentenceEl ? inputSentenceEl.value.trim() : '';
+
+            if (!explanation && !sentence) {
+                showToast("Silakan isi arti konsep (Langkah 1) atau contoh kalimat praktik (Langkah 2) Anda!", "error");
                 return;
             }
 
@@ -11351,38 +11359,54 @@ Jawab dalam bahasa Indonesia, tapi contoh kalimatnya dalam bahasa Inggris.`;
             const btnText = document.getElementById('btn-submit-feynman-text');
             if (btn) {
                 btn.disabled = true;
-                if (btnText) btnText.innerText = "AI Sedang Mengevaluasi Pemahaman...";
+                if (btnText) btnText.innerText = "AI Sedang Membedah Pemahaman & Kalimat...";
             }
 
-            const systemPrompt = `You are an expert Cambridge IELTS Examiner and Cognitive Tutor evaluating a student's conceptual grasp using the FEYNMAN TECHNIQUE (Explain Like I'm 5 / Deep Semantic Recall).
+            const systemPrompt = `You are an elite Cambridge IELTS Examiner and Cognitive Tutor evaluating a student's Active Productive Mastery of a target English word using the Dual Feynman Recall & Sentence Usage Framework.
 
 TARGET WORD: "${vocab.word}" (${vocab.pos || 'word'}, CEFR ${vocab.cefr || 'B2'})
 OFFICIAL MEANING: ${vocab.meaningEn} | ${vocab.meaningId}
+OFFICIAL EXAMPLE: ${vocab.example || '-'}
 
-STUDENT'S SUBMITTED EXPLANATION (Boleh Bahasa Indonesia atau Simple English):
-"${explanation}"
+STUDENT SUBMISSION:
+- Langkah 1 (Arti / Analogi Konsep): "${explanation || '(Tidak diisi)'}"
+- Langkah 2 (Contoh Kalimat Praktik): "${sentence || '(Tidak diisi)'}"
 
-🚨 ANTI-ROTE MEMORIZATION & FEYNMAN ESSENCE GUARD:
-1. Pure Dictionary Copy vs Intuitive Analogy:
-   - If the student simply copied or rephrased the dictionary definition without an intuitive analogy or real-world mental model: Capped strictly at "partial" (score 55-65%) with critique: "Penjelasan terlalu kaku / textbook. Tuliskan perumpamaan dunia nyata atau analogi sederhana yang bisa dipahami anak kecil."
-2. Semantic Precision:
-   - If they confused this word's nuanced meaning with a close synonym (e.g. confusing 'mitigate' with 'eliminate', or 'substantiate' with 'create'): Capped at "unlearned" (score <50%).
+EVALUATION RUBRIC & ACTIVE TEACHING MANDATE:
+1. Semantic Precision & Analogy (Concept):
+   - Did they understand the core meaning and nuanced emotion/vibe of the word?
+   - Pure verbatim textbook copies without intuitive mental models are penalized.
+2. Syntactic & Collocational Correctness (Sentence Usage):
+   - Is the Part of Speech used accurately (e.g. not using an adjective as a noun/verb)?
+   - Are the prepositions and natural word pairings (collocations) authentic and native-like?
+   - Catch any spelling typos (e.g. 'disrepectfull' -> 'disrespectful').
+   - If sentence is omitted, cap overall score at max 65%.
 3. Rating Tiers:
-   - "mastery": Score >= 80%. Student uses a vivid, clear, child-friendly analogy showing true deep comprehension.
-   - "partial": Score 50-79%. Understands the general idea, but lacked a creative analogy or missed subtle nuance.
-   - "unlearned": Score < 50%. Completely misunderstood the word, gave incorrect definition, or hallucinated meaning.
+   - "mastery": Score >= 80%. Accurate meaning + gramatically sound, natural IELTS sentence with correct collocations.
+   - "partial": Score 50-79%. Meaning is generally understood, but sentence has grammar/collocation flaws or was omitted.
+   - "unlearned": Score < 50%. Severe misconception of meaning OR broken sentence that distorts the word.
 
 Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 {
   "score": 0 - 100,
   "level": "mastery" | "partial" | "unlearned",
-  "statusLabel": "Paham Sempurna (Mastery)" | "Cukup Paham (Minor Review)" | "Miskonsepsi / Kurang Tepat",
-  "critique": "1-2 kalimat feedback singkat, padat, dan tajam dalam Bahasa Indonesia yang mengapresiasi pemahaman tepat dan mengoreksi bagian yang meleset.",
+  "statusLabel": "Paham & Tepat (Mastery)" | "Cukup Paham (Perlu Polesan)" | "Miskonsepsi / Salah Struktur",
+  "meaningCritique": "1-2 kalimat feedback ketepatan arti/analogi dalam Bahasa Indonesia.",
+  "sentenceCritique": "1-2 kalimat feedback gramatika, part of speech, dan kolokasi kalimat siswa dalam Bahasa Indonesia.",
+  "grammarErrors": ["Daftar kesalahan ejaan/struktur spesifik jika ada (misal: 'disrepectfull' -> 'disrespectful', 'salah preposisi: gunakan to bukan with')"],
+  "syntaxFormulas": [
+    "[Subject] + make an impertinent remark / comment",
+    "It is impertinent of [Someone] to + [Verb]"
+  ],
+  "upgradedSentence": "Contoh kalimat versi upgrade tingkat tinggi (Band 8.0+) yang menyempurnakan ide kalimat siswa.",
   "srsDays": 4
 }`;
 
             try {
-                const userPrompt = `Evaluasi penjelasan Feynman saya untuk kata "${vocab.word}": "${explanation}"`;
+                const userPrompt = `Evaluasi penguasaan konsep dan penggunaan kalimat saya untuk kata "${vocab.word}".
+Arti/Analogi: "${explanation}"
+Contoh Kalimat: "${sentence}"`;
+
                 const response = await callGeminiAPI(userPrompt, systemPrompt);
                 if (!response) throw new Error("Tidak ada respon dari AI. Periksa koneksi atau API Key.");
 
@@ -11393,6 +11417,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 
                 // Update vocab state
                 vocab.feynmanLastExplanation = explanation;
+                vocab.feynmanLastSentence = sentence;
                 vocab.feynmanFeedback = parsed;
 
                 const now = Date.now();
@@ -11414,10 +11439,10 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     vocab.srInterval = srsDays;
                     vocab.srNextReview = now + (srsDays * 86400000);
 
-                    addXP(20);
+                    addXP(25);
                     SoundFX.play('levelup');
                     triggerConfetti();
-                    showToast(`Luar biasa! Penjelasan Anda Paham Sempurna (+20 XP)! Review berikutnya: ${srsDays >= 999 ? 'Tuntas Permanen' : srsDays + ' hari lagi'}.`, "success");
+                    showToast(`Luar biasa! Pemahaman & Kalimat Anda Paham Sempurna (+25 XP)! Review berikutnya: ${srsDays >= 999 ? 'Tuntas Permanen' : srsDays + ' hari lagi'}.`, "success");
                 } else if (parsed.level === 'partial') {
                     vocab.consecutiveMasteryCount = 0;
                     vocab.feynmanLevel = Math.max(1, vocab.feynmanLevel || 1);
@@ -11427,7 +11452,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 
                     addXP(10);
                     SoundFX.play('correct');
-                    showToast(`Cukup Paham (+10 XP). Simak catatan perbaikan AI dan review besok!`, "info");
+                    showToast(`Cukup Paham (+10 XP). Simak formula & model kalimat perbaikan dari AI!`, "info");
                 } else {
                     vocab.consecutiveMasteryCount = 0;
                     vocab.feynmanLevel = 0;
@@ -11436,7 +11461,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     vocab.srNextReview = now + (1 * 86400000);
 
                     SoundFX.play('error');
-                    showToast(`Miskonsepsi terdeteksi. Pelajari kembali artinya dan coba jelaskan lagi besok.`, "error");
+                    showToast(`Miskonsepsi atau salah struktur. Simak panduan AI dan perbaiki kalimatmu!`, "error");
                 }
 
                 saveVocabBank();
@@ -11448,9 +11473,152 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    if (btnText) btnText.innerText = "Uji Pemahaman dengan AI Examiner (+20 XP)";
+                    if (btnText) btnText.innerText = "Uji Pemahaman & Tata Bahasa (+25 XP)";
                 }
             }
+        }
+
+        function renderFeynmanFeedbackCard(feedback, vocab) {
+            if (!feedback) return '';
+
+            const isMastery = feedback.level === 'mastery' || feedback.score >= 80;
+            const isPartial = feedback.level === 'partial' || (feedback.score >= 50 && feedback.score < 80);
+            const borderC = isMastery ? 'border-emerald-500/50' : (isPartial ? 'border-amber-500/50' : 'border-rose-500/50');
+            const bgC = isMastery ? 'from-emerald-950/30 via-slate-900 to-slate-950' : (isPartial ? 'from-amber-950/30 via-slate-900 to-slate-950' : 'from-rose-950/30 via-slate-900 to-slate-950');
+            const textC = isMastery ? 'text-emerald-400' : (isPartial ? 'text-amber-400' : 'text-rose-400');
+            const badgeBg = isMastery ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : (isPartial ? 'bg-amber-950 text-amber-300 border-amber-500/40' : 'bg-rose-950 text-rose-300 border-rose-500/40');
+            const icon = isMastery ? 'fa-circle-check' : (isPartial ? 'fa-triangle-exclamation' : 'fa-circle-xmark');
+
+            // Grammar errors chips
+            let errorsHtml = '';
+            if (feedback.grammarErrors && feedback.grammarErrors.length > 0) {
+                errorsHtml = `
+                    <div class="space-y-1.5 p-3 rounded-xl bg-rose-950/40 border border-rose-500/40">
+                        <div class="text-[11px] font-mono font-bold text-rose-400 uppercase flex items-center gap-1.5">
+                            <i class="fa-solid fa-spell-check"></i> Koreksi Ejaan & Struktur Gramatika:
+                        </div>
+                        <div class="space-y-1 pl-1">
+                            ${feedback.grammarErrors.map(err => `
+                                <div class="text-xs text-rose-200 flex items-start gap-2">
+                                    <i class="fa-solid fa-xmark text-rose-400 mt-0.5 text-[10px]"></i>
+                                    <span>${err}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Syntax formulas
+            let formulasHtml = '';
+            if (feedback.syntaxFormulas && feedback.syntaxFormulas.length > 0) {
+                formulasHtml = `
+                    <div class="space-y-1.5 p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/40">
+                        <div class="text-[11px] font-mono font-bold text-indigo-400 uppercase flex items-center gap-1.5">
+                            <i class="fa-solid fa-graduation-cap"></i> Formula Sintaks Standar IELTS (Band 8.0+):
+                        </div>
+                        <div class="space-y-1.5 pt-0.5">
+                            ${feedback.syntaxFormulas.map((f, i) => `
+                                <div class="flex items-start gap-2 bg-slate-950/90 p-2 rounded-lg border border-indigo-500/20 font-mono text-xs text-indigo-200">
+                                    <span class="text-indigo-400 font-bold">${i+1}.</span>
+                                    <span class="flex-1 select-all font-semibold">${f}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Upgraded sentence
+            let upgradedHtml = '';
+            if (feedback.upgradedSentence) {
+                upgradedHtml = `
+                    <div class="space-y-1.5 p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40">
+                        <div class="text-[11px] font-mono font-bold text-emerald-400 uppercase flex items-center justify-between flex-wrap gap-2">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-sparkles"></i> Model Kalimat Sempurna (Band 8.5+ Upgrade):</span>
+                            <button onclick="speakWord('${feedback.upgradedSentence.replace(/'/g, "\\'")}', 'en-GB')" class="px-2 py-0.5 rounded bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 text-[10px] font-mono font-bold flex items-center gap-1 shadow-sm" title="Dengarkan pelafalan kalimat ini">
+                                <i class="fa-solid fa-volume-high text-[9px]"></i> Dengar
+                            </button>
+                        </div>
+                        <div class="text-xs text-emerald-100 font-sans leading-relaxed italic pl-1 border-l-2 border-emerald-500">
+                            "${feedback.upgradedSentence}"
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Retry Action Button
+            let retryButtonHtml = '';
+            if (!isMastery) {
+                retryButtonHtml = `
+                    <div class="pt-2 border-t border-slate-800 flex justify-end">
+                        <button onclick="retryFeynmanSentenceDrill()" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:opacity-90 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>🔁 Perbaiki Kalimat & Uji Ulang (+25 XP)</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="p-4 rounded-2xl bg-gradient-to-r ${bgC} border ${borderC} space-y-3.5 shadow-lg">
+                    <!-- Header Score -->
+                    <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800/80 pb-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${badgeBg} flex items-center gap-1">
+                                <i class="fa-solid ${icon}"></i> ${feedback.statusLabel || 'Evaluasi AI'}
+                            </span>
+                        </div>
+                        <div class="text-lg font-mono font-black ${textC}">
+                            Skor: ${feedback.score || 0}%
+                        </div>
+                    </div>
+
+                    <!-- Meaning & Sentence Diagnosis -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                        <!-- Meaning Feedback -->
+                        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
+                            <div class="text-[10px] font-mono font-bold text-amber-400 uppercase flex items-center gap-1">
+                                <i class="fa-solid fa-lightbulb text-[9px]"></i> Evaluasi Makna / Analogi:
+                            </div>
+                            <p class="text-xs text-slate-200 font-sans leading-relaxed">${feedback.meaningCritique || feedback.critique || '-'}</p>
+                        </div>
+
+                        <!-- Sentence Feedback -->
+                        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
+                            <div class="text-[10px] font-mono font-bold text-emerald-400 uppercase flex items-center gap-1">
+                                <i class="fa-solid fa-pen-fancy text-[9px]"></i> Evaluasi Penggunaan & Kolokasi:
+                            </div>
+                            <p class="text-xs text-slate-200 font-sans leading-relaxed">${feedback.sentenceCritique || 'Belum ada kalimat yang dimasukkan.'}</p>
+                        </div>
+                    </div>
+
+                    <!-- Grammar Errors List -->
+                    ${errorsHtml}
+
+                    <!-- Formulas & Teaching Box -->
+                    ${formulasHtml}
+
+                    <!-- Upgraded Sentence Model -->
+                    ${upgradedHtml}
+
+                    <!-- Action Retry -->
+                    ${retryButtonHtml}
+                </div>
+            `;
+        }
+
+        function retryFeynmanSentenceDrill() {
+            const inputSentence = document.getElementById('input-feynman-sentence');
+            const inputSection = document.getElementById('vocab-feynman-input-section');
+            if (inputSentence) {
+                inputSentence.focus();
+                inputSentence.select();
+            }
+            if (inputSection) {
+                inputSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            showToast("Silakan perbaiki kalimat Anda berdasarkan formula di atas dan klik 'Uji' lagi! ✍️", "info");
         }
 
         async function startFastTrackMasteryChallenge() {

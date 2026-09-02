@@ -360,4 +360,20 @@ Transformasi total visualisasi hasil evaluasi pelafalan AI dari sekadar markdown
 6. **Quick Action Bar**:
    - Tombol instan *"Dengarkan Native"* dan *"🎙️ Rekam Uji Ulang (+15 XP)"* di bagian bawah kartu tanpa perlu scroll ke atas.
 
+---
+
+## 🧠 BAGIAN H: DUAL FEYNMAN RECALL & SENTENCE USAGE PRODUCTION LAB (v8.0 UPDATE)
+
+Evolusi sistem Feynman dari sekadar uji definisi pasif menjadi **Laboratorium Produksi Kalimat Aktif 2-Tahap dengan AI Tutoring & Interactive Retry Loop**:
+
+1. **Dual Input Architecture**:
+   - **Langkah 1 (Arti / Analogi Konsep)**: Mendorong siswa menjelaskan makna kata dengan kata-kata sendiri atau analogi sederhana (ELI5).
+   - **Langkah 2 (Contoh Kalimat Praktik)**: Mendorong siswa merangkai 1 kalimat utuh dalam konteks IELTS untuk menguji penguasaan *part of speech*, preposisi, dan kolokasi.
+2. **AI Teaching & Collocation Audit**:
+   - **Audit Gramatika & Typo**: Mendeteksi kesalahan ejaan (*misal: disrepectfull -> disrespectful*) dan kesalahan struktur kata sifat/kata kerja/kata benda.
+   - **Formula Sintaks Standar IELTS (Band 8.0+)**: Memberikan rumus/pola resmi penggunaan kata dalam kalimat profesional.
+   - **Model Kalimat Perbaikan**: Menampilkan kalimat versi upgrade berstandar C1/C2 IELTS dengan tombol dengar audio (*TTS*).
+3. **Interactive Retry & Polish Loop**:
+   - Tombol *"🔁 Perbaiki Kalimat & Uji Ulang (+25 XP)"* jika skor $<80\%$, yang memfokuskan kembali kursor ke kotak kalimat agar siswa langsung mempraktikkan ajaran AI hingga mencapai level Mastery.
+
 
