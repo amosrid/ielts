@@ -327,4 +327,18 @@ Berdasarkan kebutuhan taktis pembelajar agar tidak terjebak menggunakan kata san
    - **⚠️ Register Trap Warning Alert**: Peringatan keras jika kata tersebut memiliki jebakan register yang sering memotong nilai peserta Indonesia.
    - **Filter Samping Register**: Memfilter bank kata berdasarkan `Writing Ready`, `Speaking Only`, `Formal`, dan `Casual`.
 
+---
+
+## 🎙️ BAGIAN F: SYSTEM PROMPT V2 — AI VOCAB PRONUNCIATION COACH (v7.2 UPDATE)
+
+1. **Prinsip Kejujuran Ilmiah & Anti-Presisi Palsu**:
+   - Skor dibulatkan ke kelipatan 5 (55%, 70%, 85%) untuk menghindari ilusi pengukuran akustik laboratorium.
+   - Menghapus klaim palsu "Prediksi Band IELTS dari 1 Kata Tunggal".
+2. **Dynamic 3-Tier Output Length**:
+   - `Skor 90-100%`: Pujian singkat + skor (tanpa daftar kesalahan yang dicari-cari).
+   - `Skor 75-89%`: Section *"Yang Perlu Disempurnakan"* (1 catatan halus untuk naik level).
+   - `Skor <75%`: Section *"Yang Perlu Diperbaiki"* (Maksimal 3 poin diurutkan berdasarkan Prioritas 1, 2, 3).
+3. **Phonetic Anchoring dengan Padanan Kata Inggris Simpel**:
+   - Memadankan bunyi vokal/konsonan yang sulit dengan kata dasar bahasa Inggris yang 100% familiar (contoh: *vokal /ɪ/ seperti di kata 'sit', bukan 'seat'*), dikombinasikan dengan ejaan kapitalisasi stress lidah Indonesia.
+
 
