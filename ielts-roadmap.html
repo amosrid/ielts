@@ -1,9 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="light-mode">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IeltsGo — AI-Powered IELTS Mastery v6.4</title>
+    <!-- Early Zero-Flicker Theme Detection (Default: Light Mode) -->
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem('ielts_color_mode');
+                if (saved === 'dark') {
+                    document.documentElement.classList.remove('light-mode');
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.add('light-mode');
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -21,15 +36,15 @@
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#090d16',
-                        cardBg: '#131c2e',
-                        cardBorder: '#1e293b',
-                        phase1: '#10b981',
-                        phase2: '#3b82f6',
-                        phase3: '#a855f7',
-                        phase4: '#f59e0b',
-                        phase5: '#06b6d4',
-                        boss: '#ef4444',
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                        cardBorder: '#334155',
+                        phase1: '#059669',
+                        phase2: '#0284c7',
+                        phase3: '#7c3aed',
+                        phase4: '#d97706',
+                        phase5: '#0891b2',
+                        boss: '#e11d48',
                     },
                     fontFamily: {
                         sans: ['Outfit', 'sans-serif'],
@@ -42,9 +57,10 @@
     
     <style>
         body {
-            background-color: #090d16;
-            color: #f8fafc;
+            background-color: #f8fafc;
+            color: #334155;
             font-family: 'Outfit', sans-serif;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
         .glow-phase1 { box-shadow: 0 0 25px rgba(16, 185, 129, 0.2); }
         .glow-phase2 { box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); }
@@ -97,15 +113,25 @@
 
         /* Dashboard glow */
         .glow-dashboard { box-shadow: 0 0 28px rgba(99, 102, 241, 0.18); }
-        .glow-vocab { box-shadow: 0 0 28px rgba(16, 185, 129, 0.18); }
+        /* Dashboard & Vocab Glows */
+        .glow-dashboard { box-shadow: 0 0 28px rgba(5, 150, 105, 0.12); }
+        .glow-vocab { box-shadow: 0 0 28px rgba(5, 150, 105, 0.15); }
 
-        /* CEFR Badge colors */
-        .cefr-a1 { background:#064e3b; color:#6ee7b7; border-color:#059669; }
-        .cefr-a2 { background:#0f4a5e; color:#67e8f9; border-color:#0891b2; }
-        .cefr-b1 { background:#1e3a8a; color:#93c5fd; border-color:#2563eb; }
-        .cefr-b2 { background:#4c1d95; color:#c4b5fd; border-color:#7c3aed; }
-        .cefr-c1 { background:#7c2d12; color:#fdba74; border-color:#ea580c; }
-        .cefr-c2 { background:#7f1d1d; color:#fca5a5; border-color:#dc2626; }
+        /* CEFR Badges - Default Light Mode (Modern Clean Academy) */
+        .cefr-c2 { background: #faf5ff; color: #6b21a8; border: 1px solid #e9d5ff; font-weight: 700; }
+        .cefr-c1 { background: #faf5ff; color: #7c3aed; border: 1px solid #ddd6fe; font-weight: 700; }
+        .cefr-b2 { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 700; }
+        .cefr-b1 { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; font-weight: 700; }
+        .cefr-a2 { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-weight: 700; }
+        .cefr-a1 { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-weight: 700; }
+
+        /* Dark Mode CEFR Badges */
+        html:not(.light-mode) .cefr-c2 { background: #581c87; color: #f3e8ff; border-color: #7e22ce; }
+        html:not(.light-mode) .cefr-c1 { background: #4c1d95; color: #ede9fe; border-color: #6d28d9; }
+        html:not(.light-mode) .cefr-b2 { background: #064e3b; color: #d1fae5; border-color: #047857; }
+        html:not(.light-mode) .cefr-b1 { background: #0c4a6e; color: #e0f2fe; border-color: #0369a1; }
+        html:not(.light-mode) .cefr-a2 { background: #1e293b; color: #cbd5e1; border-color: #334155; }
+        html:not(.light-mode) .cefr-a1 { background: #0f172a; color: #94a3b8; border-color: #1e293b; }
 
         /* Flashcard flip animation */
         .flashcard { perspective: 1000px; }
@@ -116,170 +142,128 @@
 
         /* Review due amber pulse */
         @keyframes reviewPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.5); }
-            50% { box-shadow: 0 0 0 7px rgba(245,158,11,0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(217, 119, 6, 0); }
         }
         .review-due-pulse { animation: reviewPulse 2s ease-in-out infinite; }
 
         /* Vocab card hover */
         .vocab-item { transition: all 0.18s ease; }
-        .vocab-item:hover { background: #1e293b; transform: translateX(2px); }
+        .vocab-item:hover { transform: translateY(-1px); }
 
         /* Dashboard widget fade-in */
         @keyframes widgetFadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .widget-fadein { animation: widgetFadeIn 0.35s ease forwards; }
-        .widget-fadein:nth-child(2) { animation-delay: 0.05s; }
-        .widget-fadein:nth-child(3) { animation-delay: 0.10s; }
-        .widget-fadein:nth-child(4) { animation-delay: 0.15s; }
-        .widget-fadein:nth-child(5) { animation-delay: 0.20s; }
-        .widget-fadein:nth-child(6) { animation-delay: 0.25s; }
+        .widget-fadein { animation: widgetFadeIn 0.3s ease forwards; }
 
         /* Pronunciation recording */
-        .vocab-rec-active { border-color: #f43f5e !important; }
+        .vocab-rec-active { border-color: #e11d48 !important; }
 
-        /* =========================================================================
-           CAMBRIDGE ACADEMIC PRO (PROPOSAL 1) — UNIFIED DESIGN SYSTEM
-           Harmonized Dark Mode (Deep Obsidian Navy) & Light Mode (Warm Pearl Crisp)
-           ========================================================================= */
-
-        /* ----- 1. DARK MODE BASE CANONICAL TOKENS ----- */
-        body {
-            background-color: #0a0e17 !important;
-            color: #f8fafc !important;
-        }
-        header {
-            background: rgba(10, 14, 23, 0.95) !important;
-            border-bottom: 1px solid #1e293b !important;
-        }
-        #main-sidebar > div {
-            background-color: #0d121f !important;
-            border-color: #1e293b !important;
-        }
-
-        /* Dark Mode General Surfaces */
-        .bg-slate-900,
-        .bg-slate-900\/90,
-        .bg-slate-900\/80,
-        .bg-slate-900\/70 {
-            background-color: #111827 !important;
-            border-color: #1e293b !important;
-        }
-        .bg-slate-950,
-        .bg-slate-950\/90,
-        .bg-slate-950\/85,
-        .bg-slate-950\/80 {
-            background-color: #0b0f19 !important;
-            border-color: #1e293b !important;
-        }
-        .border-slate-800,
-        .border-slate-800\/80,
-        .border-slate-800\/50,
-        .border-slate-800\/40,
-        .border-slate-900,
-        .border-slate-700 {
-            border-color: #1e293b !important;
-        }
-
-        /* Dark Mode Typography Hierarchy */
-        .text-slate-100, .text-slate-200 { color: #f8fafc !important; }
-        .text-slate-300 { color: #cbd5e1 !important; }
-        .text-slate-400 { color: #94a3b8 !important; }
-        .text-slate-500 { color: #64748b !important; }
-
-        /* Dark Mode Inputs & Controls */
-        input[type="text"],
-        input[type="password"],
-        textarea,
-        select {
-            background-color: #070a10 !important;
-            border-color: #1e293b !important;
-            color: #f8fafc !important;
-        }
-        input::placeholder, textarea::placeholder {
-            color: #64748b !important;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: #10b981 !important;
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
-        }
-
-        /* Dark Mode Filter Buttons & Inactive Pills */
-        button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]) {
-            background-color: #0d121f !important;
-            border-color: #1e293b !important;
-            color: #cbd5e1 !important;
-        }
-        button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]):hover {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-        }
-
-        /* Dark Mode CEFR Badges */
-        .cefr-c2 { background: rgba(126, 34, 206, 0.25) !important; color: #d8b4fe !important; border-color: rgba(168, 85, 247, 0.4) !important; }
-        .cefr-c1 { background: rgba(30, 64, 175, 0.25) !important; color: #93c5fd !important; border-color: rgba(59, 130, 246, 0.4) !important; }
-        .cefr-b2 { background: rgba(6, 95, 70, 0.25) !important; color: #6ee7b7 !important; border-color: rgba(16, 185, 129, 0.4) !important; }
-        .cefr-b1 { background: rgba(180, 83, 9, 0.25) !important; color: #fde68a !important; border-color: rgba(245, 158, 11, 0.4) !important; }
-        .cefr-a2 { background: rgba(14, 116, 144, 0.25) !important; color: #a5f3fc !important; border-color: rgba(6, 182, 212, 0.4) !important; }
-        .cefr-a1 { background: rgba(51, 65, 85, 0.3) !important; color: #cbd5e1 !important; border-color: rgba(100, 116, 139, 0.4) !important; }
-
-        /* Dark Mode Vocab Item Cards */
-        .vocab-item {
-            background: #111827 !important;
-            border-color: #1e293b !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-        }
-        .vocab-item:hover {
-            background: #151e30 !important;
-            border-color: #334155 !important;
-            transform: translateY(-1px);
-        }
-        .vocab-item.vocab-item-mastered {
-            background: linear-gradient(135deg, #111827 0%, #1c1917 100%) !important;
-            border-color: rgba(245, 158, 11, 0.35) !important;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.08) !important;
-        }
-        .vocab-item.vocab-item-unlearned {
-            border-color: rgba(244, 63, 94, 0.3) !important;
-        }
-        .vocab-item.vocab-item-due {
-            border-color: rgba(245, 158, 11, 0.4) !important;
-        }
-
-
-        /* ----- 2. LIGHT MODE (WARM PEARL CRISP) CANONICAL TOKENS ----- */
+        /* ===== PROPOSAL 1: MODERN CLEAN ACADEMY (LIGHT MODE THEME SYSTEM) ===== */
         html.light-mode body {
             background-color: #f8fafc !important;
-            color: #0f172a !important;
+            color: #334155 !important;
         }
         html.light-mode header {
-            background: rgba(255, 255, 255, 0.95) !important;
+            background: rgba(255, 255, 255, 0.94) !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06) !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+            backdrop-filter: blur(8px) !important;
         }
         html.light-mode main { background: transparent !important; }
 
-        /* Light Mode Sidebar */
-        html.light-mode #main-sidebar { background-color: #ffffff !important; }
+        /* General Card & Panel Surfaces across ALL tabs */
+        html.light-mode .bg-slate-950,
+        html.light-mode .bg-slate-950\/90,
+        html.light-mode .bg-slate-950\/85,
+        html.light-mode .bg-slate-950\/80,
+        html.light-mode .bg-slate-900,
+        html.light-mode .bg-slate-900\/90,
+        html.light-mode .bg-slate-900\/80,
+        html.light-mode .bg-slate-900\/70 {
+            background-color: #ffffff !important;
+        }
+        html.light-mode .bg-slate-800,
+        html.light-mode .bg-slate-800\/90,
+        html.light-mode .bg-slate-800\/80,
+        html.light-mode .bg-slate-800\/50,
+        html.light-mode .bg-slate-800\/40 {
+            background-color: #f8fafc !important;
+        }
+
+        /* General Borders across ALL tabs */
+        html.light-mode .border-slate-900,
+        html.light-mode .border-slate-800,
+        html.light-mode .border-slate-800\/90,
+        html.light-mode .border-slate-800\/80,
+        html.light-mode .border-slate-800\/50,
+        html.light-mode .border-slate-800\/40,
+        html.light-mode .border-slate-700,
+        html.light-mode .border-slate-700\/50 {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* General Typography */
+        html.light-mode h1,
+        html.light-mode h2,
+        html.light-mode h3,
+        html.light-mode h4,
+        html.light-mode .text-slate-100,
+        html.light-mode .text-slate-200 {
+            color: #0f172a !important;
+        }
+        html.light-mode .text-slate-300 {
+            color: #334155 !important;
+        }
+        html.light-mode .text-slate-400 {
+            color: #64748b !important;
+        }
+        html.light-mode .text-slate-500 {
+            color: #94a3b8 !important;
+        }
+
+        /* Top Header HUD in Light Mode */
+        html.light-mode #hud-level-title { color: #d97706 !important; font-weight: 700 !important; }
+        html.light-mode #hud-xp-text,
+        html.light-mode #hud-next-xp { color: #059669 !important; font-weight: 700 !important; }
+        html.light-mode #hud-progress-percent { color: #0f172a !important; font-weight: 700 !important; }
+        html.light-mode #btn-hud-api-key,
+        html.light-mode #btn-color-mode-desktop,
+        html.light-mode #btn-color-mode-mobile,
+        html.light-mode header button:not([class*="bg-emerald"]):not([class*="bg-indigo"]) {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #475569 !important;
+        }
+        html.light-mode header button:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        /* Sidebar Navigation */
+        html.light-mode #main-sidebar {
+            background-color: #ffffff !important;
+        }
         html.light-mode #main-sidebar > div {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05) !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
         }
         html.light-mode #nav-dashboard {
-            background-color: #eef2ff !important;
-            border-color: #c7d2fe !important;
-            color: #4338ca !important;
+            background-color: #ecfdf5 !important;
+            border-color: #a7f3d0 !important;
+            color: #065f46 !important;
+            font-weight: 700 !important;
         }
         html.light-mode #nav-dashboard span:first-child {
-            background-color: #e0e7ff !important;
-            color: #4f46e5 !important;
-            border-color: #c7d2fe !important;
+            background-color: #d1fae5 !important;
+            color: #047857 !important;
+            border-color: #a7f3d0 !important;
         }
         html.light-mode #badge-streak-sidebar {
-            background-color: #fef3c7 !important;
+            background-color: #fffbeb !important;
             color: #92400e !important;
             border-color: #fde68a !important;
         }
@@ -293,14 +277,14 @@
             color: #0f172a !important;
         }
         html.light-mode #nav-roadmap-main span:first-child {
-            background-color: #cffafe !important;
-            color: #0891b2 !important;
-            border-color: #a5f3fc !important;
+            background-color: #f0fdfa !important;
+            color: #0f766e !important;
+            border-color: #99f6e4 !important;
         }
         html.light-mode #badge-roadmap-total {
-            background-color: #cffafe !important;
-            color: #0e7490 !important;
-            border-color: #a5f3fc !important;
+            background-color: #f0fdfa !important;
+            color: #0f766e !important;
+            border-color: #99f6e4 !important;
         }
         html.light-mode #roadmap-subnav-list {
             border-color: #e2e8f0 !important;
@@ -318,87 +302,138 @@
             border: 1px solid #e2e8f0 !important;
         }
         html.light-mode #nav-boss {
-            color: #b91c1c !important;
-            border-color: #fecaca !important;
-            background-color: #fef2f2 !important;
+            color: #be123c !important;
+            border-color: #fecdd3 !important;
+            background-color: #fff1f2 !important;
         }
-        html.light-mode #nav-boss:hover { background-color: #fee2e2 !important; }
+        html.light-mode #nav-boss:hover {
+            background-color: #ffe4e6 !important;
+        }
         html.light-mode #nav-vocab-logger {
             background-color: #ecfdf5 !important;
             border-color: #a7f3d0 !important;
             color: #065f46 !important;
         }
-        html.light-mode #nav-vocab-logger:hover { background-color: #d1fae5 !important; }
+        html.light-mode #nav-vocab-logger:hover {
+            background-color: #d1fae5 !important;
+        }
         html.light-mode #vocab-review-badge {
             background-color: #d1fae5 !important;
             color: #065f46 !important;
             border-color: #a7f3d0 !important;
         }
         html.light-mode #nav-speaking-lab {
-            background-color: #fff1f2 !important;
-            border-color: #fecdd3 !important;
-            color: #9f1239 !important;
+            background-color: #f0f9ff !important;
+            border-color: #bae6fd !important;
+            color: #0369a1 !important;
         }
-        html.light-mode #nav-speaking-lab:hover { background-color: #ffe4e6 !important; }
+        html.light-mode #nav-speaking-lab:hover {
+            background-color: #e0f2fe !important;
+        }
         html.light-mode #speaking-lab-new-badge {
-            background-color: #ffe4e6 !important;
-            color: #9f1239 !important;
-            border-color: #fecdd3 !important;
+            background-color: #e0f2fe !important;
+            color: #0369a1 !important;
+            border-color: #bae6fd !important;
         }
         html.light-mode #nav-ai-lab {
-            background-color: #eef2ff !important;
-            border-color: #c7d2fe !important;
-            color: #3730a3 !important;
+            background-color: #faf5ff !important;
+            border-color: #e9d5ff !important;
+            color: #6b21a8 !important;
         }
-        html.light-mode #nav-ai-lab:hover { background-color: #e0e7ff !important; }
+        html.light-mode #nav-ai-lab:hover {
+            background-color: #f3e8ff !important;
+        }
         html.light-mode #sidebar-model-badge {
-            background-color: #e0e7ff !important;
-            color: #3730a3 !important;
-            border-color: #c7d2fe !important;
+            background-color: #f3e8ff !important;
+            color: #6b21a8 !important;
+            border-color: #e9d5ff !important;
         }
 
-        /* Light Mode General Card & Panel Surfaces */
-        html.light-mode .bg-slate-900,
-        html.light-mode .bg-slate-900\/90,
-        html.light-mode .bg-slate-900\/80,
-        html.light-mode .bg-slate-900\/70,
-        html.light-mode .bg-slate-950,
-        html.light-mode .bg-slate-950\/90,
-        html.light-mode .bg-slate-950\/85,
-        html.light-mode .bg-slate-950\/80 {
+        /* Hero Banners Across Tabs */
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-indigo-950"],
+        html.light-mode #tab-dashboard .from-indigo-950\/90,
+        html.light-mode #tab-ai-lab .from-indigo-950 {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 45%, #ecfdf5 100%) !important;
+            border-color: #a7f3d0 !important;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.06) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-emerald-950"],
+        html.light-mode #tab-phase1 .from-emerald-950\/80,
+        html.light-mode #tab-vocab-logger .from-emerald-950\/90 {
+            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 45%, #f0fdf4 100%) !important;
+            border-color: #a7f3d0 !important;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.06) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-blue-950"],
+        html.light-mode #tab-phase2 .from-blue-950\/80 {
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 45%, #eff6ff 100%) !important;
+            border-color: #bae6fd !important;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.06) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-purple-950"],
+        html.light-mode #tab-phase3 .from-purple-950\/80 {
+            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 45%, #fdf4ff 100%) !important;
+            border-color: #e9d5ff !important;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.06) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-amber-950"],
+        html.light-mode #tab-phase4 .from-amber-950\/80 {
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 45%, #fefce8 100%) !important;
+            border-color: #fde68a !important;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.06) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-cyan-950"],
+        html.light-mode #tab-phase5 .from-cyan-950\/80 {
+            background: linear-gradient(135deg, #ecfeff 0%, #ffffff 45%, #f0fdfa 100%) !important;
+            border-color: #a5f3fc !important;
+            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.06) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-rose-950"],
+        html.light-mode #tab-speaking-lab .from-rose-950\/80 {
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 45%, #f8fafc 100%) !important;
+            border-color: #bae6fd !important;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.06) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-red-950"],
+        html.light-mode #tab-boss .from-red-950 {
+            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 45%, #fef2f2 100%) !important;
+            border-color: #fecdd3 !important;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.06) !important;
+        }
+
+        /* Banner Headings & Typography */
+        html.light-mode .tab-content h2,
+        html.light-mode .tab-content h3 {
+            color: #0f172a !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"] h2,
+        html.light-mode [class*="bg-gradient-to-r"] h3 {
+            color: #0f172a !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"] p {
+            color: #475569 !important;
+        }
+
+        /* Hero Badges & Status in Banners */
+        html.light-mode #dash-greeting-badge { color: #64748b !important; }
+        html.light-mode #dash-streak-count { color: #d97706 !important; }
+        html.light-mode #dash-level-text { color: #059669 !important; }
+
+        /* Stage Cards & Quest Cards */
+        html.light-mode .stage-card {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
         }
-        html.light-mode .bg-slate-800,
-        html.light-mode .bg-slate-800\/90,
-        html.light-mode .bg-slate-800\/80,
-        html.light-mode .bg-slate-800\/50,
-        html.light-mode .bg-slate-800\/40 {
+        html.light-mode .stage-card pre,
+        html.light-mode .stage-card .bg-slate-950\/80,
+        html.light-mode .stage-card .bg-slate-950 {
             background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-
-        /* Light Mode High-Contrast Typography (Crisp & Readable) */
-        html.light-mode .text-slate-100,
-        html.light-mode .text-slate-200 {
-            color: #0f172a !important;
-        }
-        html.light-mode .text-slate-300 {
-            color: #334155 !important;
-        }
-        html.light-mode .text-slate-400 {
-            color: #475569 !important;
-            font-weight: 500 !important;
-        }
-        html.light-mode .text-slate-500 {
-            color: #64748b !important;
-        }
-        html.light-mode .text-white:not(button):not(button *):not([class*="bg-emerald-600"]):not([class*="bg-rose-600"]):not([class*="bg-blue-600"]):not([class*="bg-indigo-600"]):not([class*="bg-amber-600"]):not([class*="bg-cyan-600"]):not([class*="bg-red-600"]):not([class*="bg-purple-600"]) {
+            border: 1px solid #e2e8f0 !important;
             color: #0f172a !important;
         }
 
-        /* Light Mode Form Inputs & Selects */
+        /* Form Inputs & Textareas */
         html.light-mode input[type="text"],
         html.light-mode input[type="password"],
         html.light-mode textarea,
@@ -411,44 +446,37 @@
         html.light-mode textarea::placeholder {
             color: #94a3b8 !important;
         }
-        html.light-mode input:focus,
-        html.light-mode select:focus,
-        html.light-mode textarea:focus {
-            border-color: #059669 !important;
-            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.15) !important;
+
+        /* Audio Buttons in Light Mode */
+        html.light-mode button[onclick*="speakWord"],
+        html.light-mode button[onclick*="speakAffirmation"] {
+            background-color: #f0f9ff !important;
+            border-color: #bae6fd !important;
+            color: #0284c7 !important;
+            font-weight: 700 !important;
+        }
+        html.light-mode button[onclick*="speakWord"]:hover,
+        html.light-mode button[onclick*="speakAffirmation"]:hover {
+            background-color: #e0f2fe !important;
+            color: #0369a1 !important;
         }
 
-        /* Light Mode CEFR Badges */
-        html.light-mode .cefr-c2 { background: #faf5ff !important; color: #7e22ce !important; border-color: #d8b4fe !important; }
-        html.light-mode .cefr-c1 { background: #eff6ff !important; color: #1d4ed8 !important; border-color: #93c5fd !important; }
-        html.light-mode .cefr-b2 { background: #ecfdf5 !important; color: #047857 !important; border-color: #a7f3d0 !important; }
-        html.light-mode .cefr-b1 { background: #fffbeb !important; color: #b45309 !important; border-color: #fde68a !important; }
-        html.light-mode .cefr-a2 { background: #ecfeff !important; color: #0e7490 !important; border-color: #a5f3fc !important; }
-        html.light-mode .cefr-a1 { background: #f1f5f9 !important; color: #334155 !important; border-color: #cbd5e1 !important; }
-
-        /* Light Mode Vocab Item Cards */
+        /* Vocab Cards & Items in Light Mode */
         html.light-mode .vocab-item {
-            background: #ffffff !important;
+            background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
-        }
-        html.light-mode .vocab-item:hover {
-            background: #f8fafc !important;
-            border-color: #cbd5e1 !important;
-            box-shadow: 0 10px 25px -3px rgba(15, 23, 42, 0.08) !important;
-            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
         }
         html.light-mode .vocab-item.vocab-item-mastered {
-            background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%) !important;
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #fefce8 100%) !important;
             border-color: #fde68a !important;
-            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.08) !important;
         }
         html.light-mode .vocab-item.vocab-item-unlearned {
-            background: #ffffff !important;
+            background-color: #ffffff !important;
             border-color: #fecdd3 !important;
         }
         html.light-mode .vocab-item.vocab-item-due {
-            background: #fffbeb !important;
+            background-color: #fffbeb !important;
             border-color: #fde68a !important;
         }
         html.light-mode .vocab-item .vocab-word-title {
@@ -456,6 +484,12 @@
         }
         html.light-mode .vocab-item .vocab-word-title:hover {
             color: #059669 !important;
+        }
+        html.light-mode .vocab-item .text-slate-300 {
+            color: #334155 !important;
+        }
+        html.light-mode .vocab-item .text-slate-400 {
+            color: #64748b !important;
         }
         html.light-mode .vocab-item button[onclick*="openVocabCard"] {
             background-color: #ecfdf5 !important;
@@ -467,116 +501,41 @@
             background-color: #d1fae5 !important;
             color: #064e3b !important;
         }
-        html.light-mode .vocab-item button[onclick*="speakWord"] {
-            background-color: #fff1f2 !important;
-            border-color: #fecdd3 !important;
-            color: #9f1239 !important;
-        }
-        html.light-mode .vocab-item button[onclick*="speakWord"]:hover {
-            background-color: #ffe4e6 !important;
-        }
 
-        /* Light Mode Filter Pills & Badges */
-        html.light-mode button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]) {
-            background-color: #f1f5f9 !important;
-            border-color: #e2e8f0 !important;
-            color: #334155 !important;
-        }
-        html.light-mode button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]):hover {
-            background-color: #e2e8f0 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #btn-toggle-filter-panel:not([class*="bg-indigo-600"]) {
-            background-color: #f1f5f9 !important;
-            border-color: #e2e8f0 !important;
-            color: #334155 !important;
-        }
-        html.light-mode #vocab-filter-detail-panel {
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #vocab-filter-detail-panel .bg-slate-950\/80 {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #cefr-filter-chips button:not([class*="bg-emerald-600"]),
-        html.light-mode #register-filter-chips button:not([class*="bg-indigo-600"]) {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #475569 !important;
-        }
-
-        /* ----- 3. HARMONIZED HERO BANNERS (BOTH MODES) ----- */
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-indigo-950"],
-        html.light-mode #tab-dashboard .from-indigo-950\/90,
-        html.light-mode #tab-ai-lab .from-indigo-950 {
-            background: linear-gradient(135deg, #eef2ff 0%, #ffffff 50%, #ecfeff 100%) !important;
-            border-color: #c7d2fe !important;
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-emerald-950"],
-        html.light-mode #tab-phase1 .from-emerald-950\/80,
-        html.light-mode #tab-vocab-logger .from-emerald-950\/90 {
-            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 50%, #f0fdf4 100%) !important;
-            border-color: #a7f3d0 !important;
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-blue-950"],
-        html.light-mode #tab-phase2 .from-blue-950\/80 {
-            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f0f9ff 100%) !important;
-            border-color: #bfdbfe !important;
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-purple-950"],
-        html.light-mode #tab-phase3 .from-purple-950\/80 {
-            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 50%, #fdf4ff 100%) !important;
-            border-color: #e9d5ff !important;
-            box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-amber-950"],
-        html.light-mode #tab-phase4 .from-amber-950\/80 {
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #fefce8 100%) !important;
+        /* Status & Feynman Badges */
+        html.light-mode .badge-feynman-mastered {
+            background-color: #fef3c7 !important;
+            color: #92400e !important;
             border-color: #fde68a !important;
-            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.08) !important;
+            font-weight: 700 !important;
         }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-cyan-950"],
-        html.light-mode #tab-phase5 .from-cyan-950\/80 {
-            background: linear-gradient(135deg, #ecfeff 0%, #ffffff 50%, #f0fdfa 100%) !important;
-            border-color: #a5f3fc !important;
-            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.08) !important;
+        html.light-mode .badge-feynman-due {
+            background-color: #fffbeb !important;
+            color: #b45309 !important;
+            border-color: #fde68a !important;
+            font-weight: 700 !important;
         }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-rose-950"],
-        html.light-mode #tab-speaking-lab .from-rose-950\/80 {
-            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 50%, #fdf2f8 100%) !important;
+        html.light-mode .badge-feynman-learning {
+            background-color: #ecfdf5 !important;
+            color: #065f46 !important;
+            border-color: #a7f3d0 !important;
+            font-weight: 700 !important;
+        }
+        html.light-mode .badge-feynman-unlearned {
+            background-color: #fff1f2 !important;
+            color: #9f1239 !important;
             border-color: #fecdd3 !important;
-            box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-red-950"],
-        html.light-mode #tab-boss .from-red-950 {
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fff1f2 100%) !important;
-            border-color: #fecaca !important;
-            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.08) !important;
+            font-weight: 700 !important;
         }
 
-        /* Banner Headings & Typography */
-        html.light-mode .tab-content h2,
-        html.light-mode .tab-content h3,
-        html.light-mode [class*="bg-gradient-to-r"] h2,
-        html.light-mode [class*="bg-gradient-to-r"] h3 {
-            color: #0f172a !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"] p {
-            color: #475569 !important;
-        }
-
-        /* Modals in Light Mode */
+        /* Modals & Popups in Light Mode */
         html.light-mode .modal-backdrop {
             background-color: rgba(15, 23, 42, 0.6) !important;
             backdrop-filter: blur(8px) !important;
         }
         html.light-mode #modal-vocab-card > div,
         html.light-mode #modal-vocab-review > div,
-        html.light-mode #modal-flashcard-review > div,
-        html.light-mode #modal-api-key > div,
+        html.light-mode #api-key-modal > div,
         html.light-mode #modal-affirmations-manager > div,
         html.light-mode #quest-modal > div,
         html.light-mode #mini-boss-modal > div,
@@ -586,22 +545,101 @@
         html.light-mode #modal-reset > div {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2) !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
         }
-        html.light-mode #modal-vocab-review .bg-slate-950 {
+        html.light-mode #daily-affirmation-card {
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #eff6ff 100%) !important;
+            border-color: #fde68a !important;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.06) !important;
+        }
+        html.light-mode #modal-vocab-card .bg-slate-950\/90,
+        html.light-mode #modal-vocab-card .bg-slate-900,
+        html.light-mode #modal-vocab-review .bg-slate-950,
+        html.light-mode #quest-modal .bg-slate-950,
+        html.light-mode #mini-boss-modal .bg-slate-950 {
             background-color: #f8fafc !important;
             border-color: #e2e8f0 !important;
-            color: #0f172a !important;
         }
+        html.light-mode #modal-vocab-card #vocab-card-word,
         html.light-mode #modal-vocab-review #review-card-word {
             color: #0f172a !important;
         }
+        html.light-mode #vocab-card-indonesian-guide {
+            background-color: #fffbeb !important;
+            border-color: #fde68a !important;
+            color: #78350f !important;
+        }
+        html.light-mode #vocab-card-high-yield-box {
+            background-color: #fffbeb !important;
+            border-color: #fde68a !important;
+            color: #92400e !important;
+        }
+        html.light-mode #vocab-card-trap-box {
+            background-color: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #9f1239 !important;
+        }
 
-        /* Solid & Gradient Action Buttons text keep white */
+        /* Speaking Lab in Light Mode */
+        html.light-mode #tab-speaking-lab .bg-slate-900,
+        html.light-mode #tab-speaking-lab .bg-slate-900\/90,
+        html.light-mode #tab-speaking-lab .bg-slate-950 {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #speaking-generated-card-part1,
+        html.light-mode #speaking-generated-card-part2,
+        html.light-mode #speaking-generated-card-part3 {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+        }
+        html.light-mode #speaking-inaudible-banner,
+        html.light-mode .speaking-inaudible-box {
+            background-color: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #9f1239 !important;
+        }
+
+        /* Action Buttons with Solid Colors Keep White Text */
         html.light-mode button[class*="bg-emerald-600"],
         html.light-mode button[class*="bg-indigo-600"],
         html.light-mode button[class*="bg-rose-600"],
         html.light-mode button[class*="bg-blue-600"],
+        html.light-mode button[class*="bg-sky-600"],
+        html.light-mode button[class*="bg-purple-600"] {
+            color: #ffffff !important;
+        }
+
+        /* Custom Scrollbars */
+        html.light-mode ::-webkit-scrollbar-track { background: #f8fafc; }
+        html.light-mode ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        html.light-mode ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* ===== POLISHED DARK MODE HARMONY (DEEP SLATE) ===== */
+        html:not(.light-mode) body {
+            background-color: #0f172a !important;
+            color: #cbd5e1 !important;
+        }
+        html:not(.light-mode) .bg-slate-950,
+        html:not(.light-mode) .bg-slate-950\/90,
+        html:not(.light-mode) .bg-slate-950\/80 {
+            background-color: #090d16 !important;
+            border-color: #1e293b !important;
+        }
+        html:not(.light-mode) .bg-slate-900,
+        html:not(.light-mode) .bg-slate-900\/90,
+        html:not(.light-mode) .bg-slate-900\/80 {
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        html:not(.light-mode) .border-slate-800,
+        html:not(.light-mode) .border-slate-800\/80 {
+            border-color: #334155 !important;
+        }
+        html:not(.light-mode) .text-white {
+            color: #f8fafc !important;
+        }
         html.light-mode button[class*="bg-cyan-600"],
         html.light-mode button[class*="bg-amber-600"],
         html.light-mode button[class*="bg-gradient-to-r"],
@@ -624,7 +662,7 @@
             color: #ffffff !important;
         }
 
-        /* Smooth Theme Transition */
+        /* Smooth Transition */
         body, header, aside, main, div, section, button, p, span {
             transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         }
@@ -723,8 +761,8 @@
         <!-- Left Sidebar Navigation (mobile: drawer, desktop: always visible) -->
         <aside id="main-sidebar" class="hidden lg:block lg:col-span-3 space-y-4 fixed lg:static inset-y-0 left-0 z-40 w-72 lg:w-auto pt-16 lg:pt-0 px-4 lg:px-0 bg-slate-950 lg:bg-transparent overflow-y-auto lg:overflow-visible">
             <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 space-y-2 sticky top-20 shadow-xl">
-                <!-- 1. Dashboard Nav -->
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
+                <!-- 1. Dashboard Nav Button -->
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full text-left p-2.5 rounded-xl border border-indigo-500/40 bg-indigo-950/30 text-indigo-300 font-semibold text-xs flex items-center justify-between transition-all shadow-sm">
                     <div class="flex items-center space-x-2">
                         <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[11px] border border-indigo-500/30">
                             <i class="fa-solid fa-gauge-high"></i>
@@ -736,7 +774,7 @@
 
                 <!-- 2. Roadmap Quests Accordion Group -->
                 <div class="space-y-1 pt-1">
-                    <button onclick="toggleRoadmapNav(event)" id="nav-roadmap-main" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
+                    <button onclick="toggleRoadmapNav(event)" id="nav-roadmap-main" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 hover:bg-slate-800/50 text-slate-300 font-semibold text-xs flex items-center justify-between transition-all">
                         <div class="flex items-center space-x-2">
                             <span class="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-[11px] border border-cyan-500/30">
                                 <i class="fa-solid fa-map-location-dot"></i>
@@ -797,44 +835,36 @@
                 </div>
 
                 <!-- 3. Vocab Logger Nav -->
-                <button onclick="switchTab('vocab-logger')" id="nav-vocab-logger" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
+                <button onclick="switchTab('vocab-logger')" id="nav-vocab-logger" class="nav-btn w-full text-left p-2.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 hover:bg-emerald-900/30 text-emerald-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
-                        <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[11px] border border-emerald-500/30">
-                            <i class="fa-solid fa-book-bookmark"></i>
-                        </span>
+                        <i class="fa-solid fa-book-bookmark text-emerald-400"></i>
                         <span>Vocab Logger</span>
                     </div>
                     <span id="vocab-review-badge" class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded-md font-mono border border-emerald-500/30">0</span>
                 </button>
 
                 <!-- 4. Speaking Lab Nav -->
-                <button onclick="switchTab('speaking-lab')" id="nav-speaking-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
+                <button onclick="switchTab('speaking-lab')" id="nav-speaking-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-rose-500/30 bg-rose-950/20 hover:bg-rose-900/30 text-rose-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
-                        <span class="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-[11px] border border-rose-500/30">
-                            <i class="fa-solid fa-microphone"></i>
-                        </span>
+                        <i class="fa-solid fa-microphone text-rose-400"></i>
                         <span>Speaking Lab</span>
                     </div>
                     <span id="speaking-lab-new-badge" class="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded-md font-mono border border-rose-500/30 badge-blink">NEW</span>
                 </button>
 
                 <!-- 5. Synthesis Lab Nav (4-Skill Integrated English & IELTS) -->
-                <button onclick="switchTab('synthesis-lab')" id="nav-synthesis-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
+                <button onclick="switchTab('synthesis-lab')" id="nav-synthesis-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-teal-500/30 bg-teal-950/20 hover:bg-teal-900/30 text-teal-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
-                        <span class="w-6 h-6 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-[11px] border border-teal-500/30">
-                            <i class="fa-solid fa-layer-group"></i>
-                        </span>
+                        <i class="fa-solid fa-layer-group text-teal-400"></i>
                         <span>Synthesis Lab</span>
                     </div>
                     <span class="text-[9px] bg-teal-500/20 text-teal-300 px-1.5 py-0.5 rounded-md font-mono border border-teal-500/30">4-IN-1</span>
                 </button>
 
                 <!-- 6. AI Glitch Lab Nav -->
-                <button onclick="switchTab('ai-lab')" id="nav-ai-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
+                <button onclick="switchTab('ai-lab')" id="nav-ai-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-indigo-500/30 bg-indigo-950/20 hover:bg-indigo-900/30 text-indigo-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
-                        <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[11px] border border-indigo-500/30">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        </span>
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i>
                         <span>AI Glitch Lab</span>
                     </div>
                     <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded-md font-mono border border-indigo-500/30" id="sidebar-model-badge">3.7 FLASH</span>
@@ -5638,9 +5668,9 @@
 
         function updateSettingsModalUI() {
             // Theme label
-            const isLight = document.documentElement.classList.contains('light-theme') || document.body.classList.contains('light-theme');
+            const isLight = document.documentElement.classList.contains('light-mode');
             const themeLabel = document.getElementById('settings-theme-label');
-            if (themeLabel) themeLabel.innerText = isLight ? 'Terang' : 'Gelap';
+            if (themeLabel) themeLabel.innerText = isLight ? 'Terang (Default)' : 'Gelap';
 
             // Audio FX label & icon
             const audioLabel = document.getElementById('settings-audio-label');
@@ -9190,14 +9220,19 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
             if (isLight) {
                 // Switch to dark
                 html.classList.remove('light-mode');
+                html.classList.add('dark');
                 localStorage.setItem('ielts_color_mode', 'dark');
                 _updateColorModeIcons('dark');
+                showToast("Beralih ke Mode Malam (Deep Slate)", "info");
             } else {
                 // Switch to light
                 html.classList.add('light-mode');
+                html.classList.remove('dark');
                 localStorage.setItem('ielts_color_mode', 'light');
                 _updateColorModeIcons('light');
+                showToast("Beralih ke Mode Siang (Clean Academy)", "info");
             }
+            if (typeof updateSettingsModalUI === 'function') updateSettingsModalUI();
         }
 
         function _updateColorModeIcons(mode) {
@@ -9214,11 +9249,14 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
 
         function initColorMode() {
             const saved = localStorage.getItem('ielts_color_mode');
-            if (saved === 'light') {
-                document.documentElement.classList.add('light-mode');
-                _updateColorModeIcons('light');
-            } else {
+            if (saved === 'dark') {
+                document.documentElement.classList.remove('light-mode');
+                document.documentElement.classList.add('dark');
                 _updateColorModeIcons('dark');
+            } else {
+                document.documentElement.classList.add('light-mode');
+                document.documentElement.classList.remove('dark');
+                _updateColorModeIcons('light');
             }
         }
 
