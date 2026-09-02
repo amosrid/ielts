@@ -3000,6 +3000,29 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <!-- Register & IELTS Context Filter Pills (v7.1) -->
+                            <div class="pt-3 border-t border-slate-800 space-y-2">
+                                <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">Filter Register & IELTS:</div>
+                                <div class="grid grid-cols-2 gap-1.5 font-mono text-[10px]">
+                                    <button onclick="setVocabFilter('reg_writing')" id="filter-btn-reg_writing" class="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 hover:border-emerald-500/40 text-left px-2 flex items-center justify-between">
+                                        <span>📝 Writing Ready</span>
+                                        <span id="filter-count-reg_writing" class="text-[9px] bg-slate-900 px-1.5 py-0.2 rounded text-slate-400">0</span>
+                                    </button>
+                                    <button onclick="setVocabFilter('reg_speaking')" id="filter-btn-reg_speaking" class="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 hover:border-sky-500/40 text-left px-2 flex items-center justify-between">
+                                        <span>🎙️ Speaking Only</span>
+                                        <span id="filter-count-reg_speaking" class="text-[9px] bg-slate-900 px-1.5 py-0.2 rounded text-slate-400">0</span>
+                                    </button>
+                                    <button onclick="setVocabFilter('reg_formal')" id="filter-btn-reg_formal" class="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 hover:border-purple-500/40 text-left px-2 flex items-center justify-between">
+                                        <span>🟢 Formal</span>
+                                        <span id="filter-count-reg_formal" class="text-[9px] bg-slate-900 px-1.5 py-0.2 rounded text-slate-400">0</span>
+                                    </button>
+                                    <button onclick="setVocabFilter('reg_casual')" id="filter-btn-reg_casual" class="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500/40 text-left px-2 flex items-center justify-between">
+                                        <span>🔴 Casual</span>
+                                        <span id="filter-count-reg_casual" class="text-[9px] bg-slate-900 px-1.5 py-0.2 rounded text-slate-400">0</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Spaced Repetition Logic Card -->
@@ -4128,6 +4151,34 @@
                     </div>
                     <div id="vocab-card-indonesian-guide" class="text-xs text-amber-200 font-mono font-bold bg-amber-950/40 p-2.5 rounded-lg border border-amber-500/30 leading-relaxed"></div>
                     <p class="text-[10px] text-slate-400 font-mono">*Huruf KAPITAL menandakan suku kata yang ditekan (syllable stress).</p>
+                </div>
+            </div>
+
+            <!-- Register & IELTS Context Suitability Section (v7.1) -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 space-y-2.5" id="vocab-card-register-section">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="text-[11px] font-mono font-bold text-indigo-400 uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-tags"></i> Register & Kesesuaian Konteks IELTS:
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-wrap" id="vocab-card-register-badges">
+                        <span id="vocab-badge-register" class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-200 border border-slate-700">Formal</span>
+                        <span id="vocab-badge-ielts" class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40">Writing & Speaking OK</span>
+                    </div>
+                </div>
+
+                <!-- Context Description -->
+                <p id="vocab-card-register-desc" class="text-xs text-slate-300 leading-relaxed font-sans"></p>
+
+                <!-- High Yield Context Box (Conditional) -->
+                <div id="vocab-card-high-yield-box" class="hidden p-2.5 rounded-lg bg-gradient-to-r from-amber-950/40 to-orange-950/30 border border-amber-500/40 flex items-start gap-2 text-xs text-amber-200">
+                    <i class="fa-solid fa-fire text-amber-400 mt-0.5 text-sm"></i>
+                    <div id="vocab-card-high-yield-text" class="font-medium leading-relaxed"></div>
+                </div>
+
+                <!-- Register Trap Alert Box (Conditional) -->
+                <div id="vocab-card-trap-box" class="hidden p-2.5 rounded-lg bg-rose-950/40 border border-rose-500/40 flex items-start gap-2 text-xs text-rose-200">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-400 mt-0.5 text-sm"></i>
+                    <div id="vocab-card-trap-text" class="font-medium leading-relaxed"></div>
                 </div>
             </div>
 
@@ -9635,7 +9686,7 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
             currentVocabFilter = filter;
             
             // Update filter button styles
-            ['all', 'due', 'mastered', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'].forEach(f => {
+            ['all', 'due', 'mastered', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1', 'reg_writing', 'reg_speaking', 'reg_formal', 'reg_casual'].forEach(f => {
                 const btn = document.getElementById(`filter-btn-${f}`);
                 if (btn) {
                     if (f === filter) {
@@ -9680,6 +9731,21 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                 if (el) el.innerText = cefrCounts[lvl] || 0;
             });
 
+            // Register & IELTS Filter Counts
+            const regWritingCount = vocabBank.filter(v => (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic')).length;
+            const regSpeakingCount = vocabBank.filter(v => v.ieltsSuitability?.status === 'speaking_only').length;
+            const regFormalCount = vocabBank.filter(v => v.registerLevel === 'formal' || v.registerLevel === 'written_academic' || !v.registerLevel).length;
+            const regCasualCount = vocabBank.filter(v => v.registerLevel === 'casual').length;
+
+            const fcRw = document.getElementById('filter-count-reg_writing');
+            if (fcRw) fcRw.innerText = regWritingCount;
+            const fcRs = document.getElementById('filter-count-reg_speaking');
+            if (fcRs) fcRs.innerText = regSpeakingCount;
+            const fcRf = document.getElementById('filter-count-reg_formal');
+            if (fcRf) fcRf.innerText = regFormalCount;
+            const fcRc = document.getElementById('filter-count-reg_casual');
+            if (fcRc) fcRc.innerText = regCasualCount;
+
             // Filter List
             let filtered = vocabBank.filter(v => {
                 // Filter Mode
@@ -9690,6 +9756,14 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                     return v.status === 'mastered';
                 } else if (['C2', 'C1', 'B2', 'B1', 'A2', 'A1'].includes(currentVocabFilter)) {
                     return v.cefr === currentVocabFilter;
+                } else if (currentVocabFilter === 'reg_writing') {
+                    return (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic');
+                } else if (currentVocabFilter === 'reg_speaking') {
+                    return v.ieltsSuitability?.status === 'speaking_only';
+                } else if (currentVocabFilter === 'reg_formal') {
+                    return v.registerLevel === 'formal' || v.registerLevel === 'written_academic' || !v.registerLevel;
+                } else if (currentVocabFilter === 'reg_casual') {
+                    return v.registerLevel === 'casual';
                 }
                 return true;
             });
@@ -9699,7 +9773,9 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                 filtered = filtered.filter(v => 
                     v.word.toLowerCase().includes(searchQuery) ||
                     (v.meaningId && v.meaningId.toLowerCase().includes(searchQuery)) ||
-                    (v.meaningEn && v.meaningEn.toLowerCase().includes(searchQuery))
+                    (v.meaningEn && v.meaningEn.toLowerCase().includes(searchQuery)) ||
+                    (v.registerLabel && v.registerLabel.toLowerCase().includes(searchQuery)) ||
+                    (v.highYieldContext && v.highYieldContext.toLowerCase().includes(searchQuery))
                 );
             }
 
@@ -9756,14 +9832,29 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                     borderClass = 'border-emerald-500/20';
                 }
 
+                // Register Mini Badge
+                const regMini = v.registerLevel === 'casual'
+                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-500/30 font-bold">🔴 Casual</span>`
+                    : (v.registerLevel === 'semi_formal'
+                        ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-950/80 text-sky-300 border border-sky-500/30 font-bold">🟡 Agak Formal</span>`
+                        : (v.registerLevel === 'written_academic'
+                            ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-950/80 text-purple-300 border border-purple-500/30 font-bold">📝 Writing Only</span>`
+                            : `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 font-bold">🟢 Formal</span>`));
+
+                const highYieldBadge = v.highYieldContext
+                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-1" title="${v.highYieldContext}"><i class="fa-solid fa-fire text-amber-400"></i> High-Yield</span>`
+                    : '';
+
                 return `
                     <div class="${bgClass} border ${borderClass} rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 vocab-item ${itemStatusClass} shadow-md transition-all hover:border-slate-700">
-                        <div class="space-y-1 flex-1 cursor-pointer" onclick="openVocabCard('${v.id}')">
-                            <div class="flex items-center space-x-2">
+                        <div class="space-y-1.5 flex-1 cursor-pointer" onclick="openVocabCard('${v.id}')">
+                            <div class="flex items-center space-x-2 flex-wrap gap-y-1">
                                 <span class="vocab-word-title text-base font-black text-white hover:text-emerald-300 transition-colors">${v.word}</span>
                                 <span class="text-[11px] font-mono text-slate-400 italic">${v.pos || ''}</span>
                                 <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${(v.cefr || 'b2').toLowerCase()}">${v.cefr}</span>
                                 <span class="text-xs font-mono text-emerald-400">${v.ipa || ''}</span>
+                                ${regMini}
+                                ${highYieldBadge}
                             </div>
                             <p class="text-xs text-slate-300 line-clamp-1 font-medium">${v.meaningId || v.meaningEn || ''}</p>
                             <div class="text-[10px] font-mono text-amber-300/90 flex items-center gap-1">
@@ -9832,6 +9923,16 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                     targetEntry.word = finalWord;
                     targetEntry.pos = analysis.pos || targetEntry.pos || 'noun';
                     targetEntry.cefr = analysis.cefr || targetEntry.cefr || 'B2';
+                    targetEntry.registerLevel = analysis.registerLevel || targetEntry.registerLevel || 'formal';
+                    targetEntry.registerLabel = analysis.registerLabel || targetEntry.registerLabel || 'Formal Akademik';
+                    targetEntry.ieltsSuitability = analysis.ieltsSuitability || targetEntry.ieltsSuitability || {
+                        status: 'both',
+                        badgeText: '🌐 Writing & Speaking OK',
+                        badgeColor: 'emerald',
+                        description: 'Aman dan direkomendasikan untuk IELTS Writing Task 2 dan Speaking.'
+                    };
+                    targetEntry.highYieldContext = analysis.highYieldContext !== undefined ? analysis.highYieldContext : (targetEntry.highYieldContext || null);
+                    targetEntry.registerTrapAlert = analysis.registerTrapAlert !== undefined ? analysis.registerTrapAlert : (targetEntry.registerTrapAlert || null);
                     targetEntry.meaningId = analysis.meaningId || targetEntry.meaningId;
                     targetEntry.meaningEn = analysis.meaningEn || targetEntry.meaningEn;
                     targetEntry.indonesianGuide = analysis.indonesianGuide || `${finalWord.toUpperCase()}`;
@@ -9855,6 +9956,16 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                     word: finalWord,
                     pos: analysis.pos || 'noun',
                     cefr: analysis.cefr || 'B2',
+                    registerLevel: analysis.registerLevel || 'formal',
+                    registerLabel: analysis.registerLabel || 'Formal Akademik',
+                    ieltsSuitability: analysis.ieltsSuitability || {
+                        status: 'both',
+                        badgeText: '🌐 Writing & Speaking OK',
+                        badgeColor: 'emerald',
+                        description: 'Aman dan direkomendasikan untuk IELTS Writing Task 2 dan Speaking.'
+                    },
+                    highYieldContext: analysis.highYieldContext || null,
+                    registerTrapAlert: analysis.registerTrapAlert || null,
                     meaningId: analysis.meaningId || 'Arti kata bahasa Inggris',
                     meaningEn: analysis.meaningEn || 'English definition',
                     indonesianGuide: analysis.indonesianGuide || `${finalWord.toUpperCase()}`,
@@ -9911,6 +10022,21 @@ CRITICAL PRE-ANALYSIS:
 2. Is the submitted word NOT English at all?
    - Set "isNonEnglish": true, "rejectionReason": "Kata '${word}' bukan kata bahasa Inggris.", and empty others.
 
+REGISTER & IELTS SUITABILITY CLASSIFICATION (CRITICAL FOR IELTS LEARNERS):
+- "registerLevel": One of ["casual", "semi_formal", "formal", "written_academic"]
+  * "casual": Slang, informal, everyday idioms (e.g. "hang out", "kids", "awesome", "a bunch of", "wanna").
+  * "semi_formal": Neutral everyday professional/conversational (e.g. "significant", "convenient", "reliable", "perspective", "essential").
+  * "formal": High-level academic & formal language (e.g. "substantiate", "mitigate", "ubiquitous", "deterioration", "prevalent").
+  * "written_academic": Highly formal/written-only academic words (e.g. "aforementioned", "notwithstanding", "subsequent", "thus").
+- "registerLabel": Indonesian human-readable label: "Casual / Santai" | "Agak Formal / Netral" | "Formal Akademik" | "Tulisan Resmi (Written Only)".
+- "ieltsSuitability": An object containing:
+  * "status": "both" | "speaking_only" | "writing_only" | "non_ielts"
+  * "badgeText": "🌐 Writing & Speaking OK" | "🎙️ Speaking Only (Haram di Writing)" | "📝 Writing Only (Jarang Lisan)" | "☕ Sehari-hari Saja (Bukan IELTS)"
+  * "badgeColor": "emerald" (for both) | "sky" (for speaking_only) | "purple" (for writing_only) | "amber" (for non_ielts)
+  * "description": A sharp 1-2 sentence explanation in Bahasa Indonesia about exactly where this word is suitable and where it is forbidden.
+- "highYieldContext": If this word frequently appears in specific IELTS modules or themes (e.g. "🔥 High-Yield: Sering dipakai di IELTS Writing Task 2 (Topik Lingkungan & Sains)" or "🔥 High-Yield: Khas untuk Speaking Part 1 (Topik Daily Routine & Hobbies)"), return that string. If it is a generic/regular word with no special high-frequency theme, return null.
+- "registerTrapAlert": If there is a common dangerous trap for Indonesian students (e.g. for 'kids': "⚠️ JEBAKAN REGISTER: Jangan gunakan 'kids' di Writing Task 2! Gunakan 'children' atau 'adolescents' agar Lexical Resource tidak dipotong ke Band 5.5." or for 'indubitably': "⚠️ JEBAKAN REGISTER: Terlalu kaku untuk percakapan lisan santai!"), return that warning. If safe, return null.
+
 PHONETIC & EXPLANATION GUIDELINES (TARGET ACCENT: ${accentName}):
 - "indonesianGuide": 100% HURUF ALFABET INDONESIA (A-Z) TANPA SIMBOL IPA! Wajib menyertakan bedah suku kata demi suku kata yang ditekan dengan HURUF BESAR (KAPITAL) dan tanda intonasi ↗ ↘ serta asosiasi bunyi kata Indonesia di dalam kurung.
   * Format: "EJAAN-GLOBAL ↘ (suku1: seperti '...', SUKU_KAPITAL: ditekan kuat / stress, suku3: ...)"
@@ -9919,7 +10045,7 @@ PHONETIC & EXPLANATION GUIDELINES (TARGET ACCENT: ${accentName}):
   * Contoh ridiculous: "ri-DI-kyu-les ↘ (ri: 'ri' cepat, DI: ditekan kuat seperti 'titik', kyu: seperti 'kios/Q', les: berima 'poles')"
   * Sesuai Target Aksen: ${accentName}.
 - "ipa": Official Cambridge IPA phonetics symbol (e.g. "/luːz/", "/ˈɒb.vi.əs/").
-- "childExplanation": A vivid, intuitive mental model / analogy written in CLEAR SIMPLE ENGLISH (Explain Like I'm 5 / ELI5) so that anyone can immediately understand the essence of this word without confusing jargon (e.g. "Imagine you have a bright red toy on clean white snow — everyone sees it right away without even thinking. That is 'obvious' (easy to see and understand).").
+- "childExplanation": A vivid, intuitive mental model / analogy written in CLEAR SIMPLE ENGLISH (Explain Like I'm 5 / ELI5) so that anyone can immediately understand the essence of this word without confusing jargon.
 - "dailyExamples": Array of 2 realistic daily/casual conversation sentences using this word.
 
 Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
@@ -9929,6 +10055,16 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
   "rejectionReason": null,
   "pos": "verb | noun | adjective | adverb",
   "cefr": "A1 | A2 | B1 | B2 | C1 | C2",
+  "registerLevel": "casual | semi_formal | formal | written_academic",
+  "registerLabel": "Formal Akademik",
+  "ieltsSuitability": {
+    "status": "both | speaking_only | writing_only | non_ielts",
+    "badgeText": "🌐 Writing & Speaking OK",
+    "badgeColor": "emerald | sky | purple | amber",
+    "description": "Sangat direkomendasikan untuk esai Writing Task 2 dan diskusi Speaking Part 3."
+  },
+  "highYieldContext": "🔥 High-Yield: Sering dipakai di IELTS Writing Task 2 (Topik: Lingkungan & Sains)",
+  "registerTrapAlert": null,
   "meaningId": "Arti bahasa Indonesia yang akurat dan ringkas",
   "meaningEn": "Clear concise English academic definition",
   "indonesianGuide": "Ejaan global dengan KAPITAL STRESS + bedah suku kata asosiasi kata Indonesia",
@@ -9964,6 +10100,16 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     word: 'establish',
                     pos: 'verb',
                     cefr: 'B2',
+                    registerLevel: 'formal',
+                    registerLabel: 'Formal Akademik',
+                    ieltsSuitability: {
+                        status: 'both',
+                        badgeText: '🌐 Writing & Speaking OK',
+                        badgeColor: 'emerald',
+                        description: 'Sangat direkomendasikan di Writing Task 2 dan Speaking Part 3 untuk menyatakan pembentukan aturan, institusi, atau pembuktian fakta.'
+                    },
+                    highYieldContext: '🔥 High-Yield: Sering dipakai di Writing Task 2 (Topik: Kebijakan Pemerintah & Regulasi)',
+                    registerTrapAlert: null,
                     meaningId: 'Mendirikan, membentuk, atau membuktikan kebenaran suatu hal secara permanen.',
                     meaningEn: 'To set up on a firm or permanent basis; to prove or demonstrate.',
                     indonesianGuide: "es-TAB-lisy ↘ (es: seperti 'es batu', TAB: ditekan kuat / stress, lisy: akhiri desis lembut /sh/)",
@@ -9991,6 +10137,16 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     word: 'ubiquitous',
                     pos: 'adjective',
                     cefr: 'C1',
+                    registerLevel: 'formal',
+                    registerLabel: 'Formal Akademik',
+                    ieltsSuitability: {
+                        status: 'both',
+                        badgeText: '🌐 Writing & Speaking OK',
+                        badgeColor: 'emerald',
+                        description: 'Wajib dikuasai untuk menggantikan kata klise "everywhere". Cocok di Writing Task 2 dan Speaking Part 3.'
+                    },
+                    highYieldContext: '🔥 High-Yield: Sering dipakai di IELTS Writing Task 2 (Topik: Teknologi, AI, & Media Sosial)',
+                    registerTrapAlert: '⚠️ JEBAKAN REGISTER: Jangan gunakan di percakapan super santai warung kopi (terdengar terlalu puitis/akademik). Gunakan "everywhere".',
                     meaningId: 'Ada di mana-mana pada waktu yang sama; sangat lazim ditemui.',
                     meaningEn: 'Present, appearing, or found everywhere.',
                     indonesianGuide: "yu-BI-kwi-tes ↘ (yu: seperti 'you', BI: ditekan kuat / stress, kwi: seperti 'quick', tes: akhiri vokal santai)",
@@ -10018,6 +10174,16 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     word: 'mitigate',
                     pos: 'verb',
                     cefr: 'C1',
+                    registerLevel: 'formal',
+                    registerLabel: 'Formal Akademik',
+                    ieltsSuitability: {
+                        status: 'both',
+                        badgeText: '🌐 Writing & Speaking OK',
+                        badgeColor: 'emerald',
+                        description: 'Kosa kata emas C1 untuk esai pemecahan masalah (Problem-Solution Essay).'
+                    },
+                    highYieldContext: '🔥 High-Yield: Esai Task 2 Topik Lingkungan, Perubahan Iklim & Krisis Finansial',
+                    registerTrapAlert: null,
                     meaningId: 'Meringankan, meredakan, atau mengurangi keparahan/dampak buruk.',
                     meaningEn: 'Make less severe, serious, or painful.',
                     indonesianGuide: "MI-ti-geit ↘ (MI: ditekan kuat / stress, ti: vokal 'i' pendek tajam, geit: berima 'gate/kaget')",
@@ -10045,6 +10211,16 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     word: 'coherent',
                     pos: 'adjective',
                     cefr: 'B2',
+                    registerLevel: 'formal',
+                    registerLabel: 'Formal Akademik',
+                    ieltsSuitability: {
+                        status: 'both',
+                        badgeText: '🌐 Writing & Speaking OK',
+                        badgeColor: 'emerald',
+                        description: 'Sangat bagus untuk menjelaskan struktur argumen, ide ilmiah, dan alur penalaran.'
+                    },
+                    highYieldContext: '🔥 High-Yield: Pembahasan Academic Writing & Critical Thinking',
+                    registerTrapAlert: null,
                     meaningId: 'Tersusun secara logis, runtut, dan mudah dipahami dalam esai.',
                     meaningEn: 'Logical, consistent, and clearly articulated.',
                     indonesianGuide: "ko-HI-rent ↘ (ko: 'ko' bulat, HI: ditekan kuat / stress, rent: akhiri 'r' lembut /rent/)",
@@ -10072,6 +10248,16 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     word: 'substantiate',
                     pos: 'verb',
                     cefr: 'C2',
+                    registerLevel: 'written_academic',
+                    registerLabel: 'Tulisan Resmi (Written High-Academic)',
+                    ieltsSuitability: {
+                        status: 'writing_only',
+                        badgeText: '📝 Writing Ready (Jarang Lisan)',
+                        badgeColor: 'purple',
+                        description: 'Sangat disukai penguji di Writing Task 2 untuk menyatakan pembuktian tesis ilmiah. Jarang diucapkan lisan kecuali di seminar/sidang formal.'
+                    },
+                    highYieldContext: '🔥 High-Yield: Menulis Body Paragraph Task 2 untuk mengaitkan bukti empiris dengan klaim',
+                    registerTrapAlert: '⚠️ JEBAKAN REGISTER: Terlalu berat dan kaku untuk Speaking Part 1 / percakapan santai. Gunakan "back up with proof" atau "prove" saat berbicara lisan santai.',
                     meaningId: 'Memperkuat atau membuktikan suatu klaim/pendapat dengan bukti nyata.',
                     meaningEn: 'To provide evidence to support or prove the truth of something.',
                     indonesianGuide: "seb-STAN-syi-yeit ↘ (seb: seperti 'sebab', STAN: ditekan kuat / stress, syi: desis 'sy', yeit: berima 'eight')",
@@ -10255,6 +10441,73 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 audioPreview.src = '';
             }
 
+            // Register & IELTS Context Suitability (v7.1)
+            const regBadge = document.getElementById('vocab-badge-register');
+            const ieltsBadge = document.getElementById('vocab-badge-ielts');
+            const regDesc = document.getElementById('vocab-card-register-desc');
+            const highYieldBox = document.getElementById('vocab-card-high-yield-box');
+            const highYieldText = document.getElementById('vocab-card-high-yield-text');
+            const trapBox = document.getElementById('vocab-card-trap-box');
+            const trapText = document.getElementById('vocab-card-trap-text');
+
+            const regLabel = vocab.registerLabel || (vocab.registerLevel === 'casual' ? '🔴 Casual / Santai' : (vocab.registerLevel === 'semi_formal' ? '🟡 Agak Formal / Netral' : (vocab.registerLevel === 'written_academic' ? '🟣 Tulisan Resmi (Written)' : '🟢 Formal Akademik')));
+            if (regBadge) {
+                regBadge.innerText = regLabel;
+                if (vocab.registerLevel === 'casual') {
+                    regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/40";
+                } else if (vocab.registerLevel === 'semi_formal') {
+                    regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-500/40";
+                } else if (vocab.registerLevel === 'written_academic') {
+                    regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-300 border border-purple-500/40";
+                } else {
+                    regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40";
+                }
+            }
+
+            const ieltsInfo = vocab.ieltsSuitability || {
+                status: 'both',
+                badgeText: '🌐 Writing & Speaking OK',
+                badgeColor: 'emerald',
+                description: 'Aman dan direkomendasikan untuk IELTS Writing Task 2 dan Speaking.'
+            };
+
+            if (ieltsBadge) {
+                ieltsBadge.innerText = ieltsInfo.badgeText || '🌐 Writing & Speaking OK';
+                if (ieltsInfo.badgeColor === 'purple' || ieltsInfo.status === 'writing_only') {
+                    ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-300 border border-purple-500/40";
+                } else if (ieltsInfo.badgeColor === 'sky' || ieltsInfo.status === 'speaking_only') {
+                    ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-500/40";
+                } else if (ieltsInfo.badgeColor === 'amber' || ieltsInfo.status === 'non_ielts') {
+                    ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/40";
+                } else {
+                    ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40";
+                }
+            }
+
+            if (regDesc) {
+                regDesc.innerText = ieltsInfo.description || (vocab.registerLevel === 'casual' ? 'Kata santai/informal — cocok untuk Speaking Part 1 atau obrolan sehari-hari, namun hindari di Writing Task 2.' : 'Kosa kata register formal/akademis yang siap meningkatkan nilai Lexical Resource di IELTS.');
+            }
+
+            if (highYieldBox && highYieldText) {
+                if (vocab.highYieldContext) {
+                    highYieldBox.classList.remove('hidden');
+                    highYieldText.innerText = vocab.highYieldContext;
+                } else {
+                    highYieldBox.classList.add('hidden');
+                    highYieldText.innerText = '';
+                }
+            }
+
+            if (trapBox && trapText) {
+                if (vocab.registerTrapAlert) {
+                    trapBox.classList.remove('hidden');
+                    trapText.innerText = vocab.registerTrapAlert;
+                } else {
+                    trapBox.classList.add('hidden');
+                    trapText.innerText = '';
+                }
+            }
+
             // Mastered Button state
             const masteredBtn = document.getElementById('btn-card-mastered');
             if (masteredBtn) {
@@ -10346,6 +10599,11 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 }
                 vocab.pos = analysis.pos || vocab.pos;
                 vocab.cefr = analysis.cefr || vocab.cefr;
+                vocab.registerLevel = analysis.registerLevel || vocab.registerLevel || 'formal';
+                vocab.registerLabel = analysis.registerLabel || vocab.registerLabel || 'Formal Akademik';
+                vocab.ieltsSuitability = analysis.ieltsSuitability || vocab.ieltsSuitability;
+                vocab.highYieldContext = analysis.highYieldContext !== undefined ? analysis.highYieldContext : vocab.highYieldContext;
+                vocab.registerTrapAlert = analysis.registerTrapAlert !== undefined ? analysis.registerTrapAlert : vocab.registerTrapAlert;
                 vocab.meaningId = analysis.meaningId || vocab.meaningId;
                 vocab.meaningEn = analysis.meaningEn || vocab.meaningEn;
                 vocab.indonesianGuide = analysis.indonesianGuide || vocab.indonesianGuide;

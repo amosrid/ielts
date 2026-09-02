@@ -309,4 +309,22 @@ Berdasarkan umpan balik pengujian audio riil di lapangan:
      - Dihapus nilai default statis. Diganti dengan regex parsing dinamis yang mengekstrak nilai riil dari hasil analisis Gemini (`Kelantangan Vokal` dan `Prediksi IELTS Speaking Delivery`).
      - Prompt diperketat: jika suara pelan, datar, atau kurang bersemangat, AI wajib melabelinya sebagai `Terlalu Pelan / Lemah / Datar (Kurang Bersemangat)` dan memangkas skor delivery.
 
+---
+
+## 🏷️ BAGIAN E: SISTEM REGISTER & KESESUAIAN KONTEKS IELTS (v7.1 UPDATE)
+
+Berdasarkan kebutuhan taktis pembelajar agar tidak terjebak menggunakan kata santai di esai formal atau kata kaku di percakapan lisan:
+
+1. **4 Kuadran Register & IELTS Usability Matrix**:
+   - `🔴 Casual / Santai`: Slang, idiom santai sehari-hari (`hang out`, `kids`, `a bunch of`). Cocok untuk percakapan lisan / Speaking Part 1, **❌ HARAM di Writing Task 1 & 2**.
+   - `🟡 Agak Formal / Netral`: Kosakata umum profesional (`significant`, `convenient`, `perspective`). Bebas digunakan di Writing & Speaking.
+   - `🟢 Formal Akademik`: Kosakata C1/C2 esai (`mitigate`, `ubiquitous`, `exacerbate`). Wajib di Writing Task 2 dan sangat disukai di Speaking Part 3.
+   - `🟣 Tulisan Resmi (Written High-Academic)`: Kosakata resmi tertulis (`substantiate`, `aforementioned`, `notwithstanding`). Sering dipakai di jurnal/esai, jarang diucapkan secara lisan.
+
+2. **Visualisasi Antarmuka di Vocab Bank**:
+   - **Badge Register & Usability**: Menampilkan label keformalan dan izin modul IELTS (`🌐 Writing & Speaking OK`, `🎙️ Speaking Only`, `📝 Writing Only`, `☕ Sehari-hari Saja`).
+   - **🔥 High-Yield Context Magnet**: Otomatis muncul jika kata tersebut merupakan kosakata kunci topik tertentu (misal: *Writing Task 2 Lingkungan & Teknologi*).
+   - **⚠️ Register Trap Warning Alert**: Peringatan keras jika kata tersebut memiliki jebakan register yang sering memotong nilai peserta Indonesia.
+   - **Filter Samping Register**: Memfilter bank kata berdasarkan `Writing Ready`, `Speaking Only`, `Formal`, dan `Casual`.
+
 
