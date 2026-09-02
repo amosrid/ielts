@@ -341,4 +341,23 @@ Berdasarkan kebutuhan taktis pembelajar agar tidak terjebak menggunakan kata san
 3. **Phonetic Anchoring dengan Padanan Kata Inggris Simpel**:
    - Memadankan bunyi vokal/konsonan yang sulit dengan kata dasar bahasa Inggris yang 100% familiar (contoh: *vokal /ɪ/ seperti di kata 'sit', bukan 'seat'*), dikombinasikan dengan ejaan kapitalisasi stress lidah Indonesia.
 
+---
+
+## 🎨 BAGIAN G: HIGH-END INTERACTIVE PRONUNCIATION COACH UI/UX (v7.3 UPDATE)
+
+Transformasi total visualisasi hasil evaluasi pelafalan AI dari sekadar markdown datar menjadi kartu komponen interaktif:
+
+1. **Hero Score Header & Color-Coded Progress Gauge**:
+   - Menampilkan skor besar font mono + Progress Bar Meter + Tier Badge dinamis (`🏆 Mahir`, `✨ Sangat Baik`, `⚠️ Cukup Jelas`, `🚨 Sulit Dikenali`).
+2. **Priority Action Alert Cards**:
+   - Mengubah teks kesalahan menjadi kotak peringatan bertingkat (`🔴 Prioritas 1`, `🟡 Prioritas 2`, `🔵 Prioritas 3`) dengan penekanan akar penyebab dan solusi motorik.
+3. **Interactive Anchor Words Audio Chips**:
+   - Setiap kata pembanding familiar (`hi`, `fast`, `sit`) di-render sebagai chip tombol interaktif yang bisa diklik untuk mendengarkan audionya langsung.
+4. **Hero Indonesian Transliteration Callout**:
+   - Menampilkan ejaan lidah Indonesia dengan font besar dan kontras tinggi di kotak khusus bernuansa amber.
+5. **Interactive 3x Repetition Drill Counter**:
+   - 3 tombol interaktif `[ 1. word ○ ]`, `[ 2. word ○ ]`, `[ 3. word ○ ]` yang berubah menjadi centang hijau `✓` saat diklik oleh siswa, memberikan efek suara *levelup* dan bonus mikro XP (+5 XP).
+6. **Quick Action Bar**:
+   - Tombol instan *"Dengarkan Native"* dan *"🎙️ Rekam Uji Ulang (+15 XP)"* di bagian bawah kartu tanpa perlu scroll ke atas.
+
 
