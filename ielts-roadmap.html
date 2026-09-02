@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="light-mode">
 <head>
     <meta charset="UTF-8">
@@ -55,778 +55,7 @@
         }
     </script>
     
-    <style>
-        body {
-            background-color: #f8fafc;
-            color: #334155;
-            font-family: 'Outfit', sans-serif;
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-        .glow-phase1 { box-shadow: 0 0 25px rgba(16, 185, 129, 0.2); }
-        .glow-phase2 { box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); }
-        .glow-phase3 { box-shadow: 0 0 25px rgba(168, 85, 247, 0.2); }
-        .glow-phase4 { box-shadow: 0 0 25px rgba(245, 158, 11, 0.2); }
-        .glow-phase5 { box-shadow: 0 0 25px rgba(6, 182, 212, 0.2); }
-        .glow-boss { box-shadow: 0 0 30px rgba(239, 68, 68, 0.3); }
-        .glow-speaking { box-shadow: 0 0 28px rgba(244, 63, 94, 0.25); }
-        
-        .progress-bar-glow {
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 7px;
-            height: 7px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #090d16;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #334155;
-        }
-
-        /* Speaking Lab waveform canvas */
-        .waveform-canvas {
-            background: #020617;
-            border-radius: 0.75rem;
-        }
-        /* Recording pulse ring */
-        @keyframes recPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(244,63,94,0.5); }
-            50% { box-shadow: 0 0 0 8px rgba(244,63,94,0); }
-        }
-        .rec-pulse { animation: recPulse 1s ease-in-out infinite; }
-
-        /* Badge NEW blink */
-        @keyframes badgeBlink {
-            0%,100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .badge-blink { animation: badgeBlink 1.4s ease-in-out infinite; }
-
-        /* ===== IeltsGo v6.0 — Dashboard & Vocab Logger CSS ===== */
-
-        /* Dashboard glow */
-        .glow-dashboard { box-shadow: 0 0 28px rgba(99, 102, 241, 0.18); }
-        /* Dashboard & Vocab Glows */
-        .glow-dashboard { box-shadow: 0 0 28px rgba(5, 150, 105, 0.12); }
-        .glow-vocab { box-shadow: 0 0 28px rgba(5, 150, 105, 0.15); }
-
-        /* CEFR Badges - Default Light Mode (Modern Clean Academy) */
-        .cefr-c2 { background: #faf5ff; color: #6b21a8; border: 1px solid #e9d5ff; font-weight: 700; }
-        .cefr-c1 { background: #faf5ff; color: #7c3aed; border: 1px solid #ddd6fe; font-weight: 700; }
-        .cefr-b2 { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 700; }
-        .cefr-b1 { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; font-weight: 700; }
-        .cefr-a2 { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-weight: 700; }
-        .cefr-a1 { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-weight: 700; }
-
-        /* Dark Mode CEFR Badges */
-        html:not(.light-mode) .cefr-c2 { background: #581c87; color: #f3e8ff; border-color: #7e22ce; }
-        html:not(.light-mode) .cefr-c1 { background: #4c1d95; color: #ede9fe; border-color: #6d28d9; }
-        html:not(.light-mode) .cefr-b2 { background: #064e3b; color: #d1fae5; border-color: #047857; }
-        html:not(.light-mode) .cefr-b1 { background: #0c4a6e; color: #e0f2fe; border-color: #0369a1; }
-        html:not(.light-mode) .cefr-a2 { background: #1e293b; color: #cbd5e1; border-color: #334155; }
-        html:not(.light-mode) .cefr-a1 { background: #0f172a; color: #94a3b8; border-color: #1e293b; }
-
-        /* Flashcard flip animation */
-        .flashcard { perspective: 1000px; }
-        .flashcard-inner { transition: transform 0.45s ease; transform-style: preserve-3d; position: relative; }
-        .flashcard-front, .flashcard-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-        .flashcard-back { transform: rotateY(180deg); position: absolute; top:0; left:0; width:100%; }
-        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
-
-        /* Review due amber pulse */
-        @keyframes reviewPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
-            50% { box-shadow: 0 0 0 6px rgba(217, 119, 6, 0); }
-        }
-        .review-due-pulse { animation: reviewPulse 2s ease-in-out infinite; }
-
-        /* Vocab card hover */
-        .vocab-item { transition: all 0.18s ease; }
-        .vocab-item:hover { transform: translateY(-1px); }
-
-        /* Dashboard widget fade-in */
-        @keyframes widgetFadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .widget-fadein { animation: widgetFadeIn 0.3s ease forwards; }
-
-        /* Pronunciation recording */
-        .vocab-rec-active { border-color: #e11d48 !important; }
-
-        /* ===== PROPOSAL 1: MODERN CLEAN ACADEMY (LIGHT MODE THEME SYSTEM) ===== */
-        html.light-mode body {
-            background-color: #f8fafc !important;
-            color: #334155 !important;
-        }
-        html.light-mode header {
-            background: rgba(255, 255, 255, 0.94) !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-            backdrop-filter: blur(8px) !important;
-        }
-        html.light-mode main { background: transparent !important; }
-
-        /* General Card & Panel Surfaces across ALL tabs */
-        html.light-mode .bg-slate-950,
-        html.light-mode .bg-slate-950\/90,
-        html.light-mode .bg-slate-950\/85,
-        html.light-mode .bg-slate-950\/80,
-        html.light-mode .bg-slate-900,
-        html.light-mode .bg-slate-900\/90,
-        html.light-mode .bg-slate-900\/80,
-        html.light-mode .bg-slate-900\/70 {
-            background-color: #ffffff !important;
-        }
-        html.light-mode .bg-slate-800,
-        html.light-mode .bg-slate-800\/90,
-        html.light-mode .bg-slate-800\/80,
-        html.light-mode .bg-slate-800\/50,
-        html.light-mode .bg-slate-800\/40 {
-            background-color: #f8fafc !important;
-        }
-
-        /* General Borders across ALL tabs */
-        html.light-mode .border-slate-900,
-        html.light-mode .border-slate-800,
-        html.light-mode .border-slate-800\/90,
-        html.light-mode .border-slate-800\/80,
-        html.light-mode .border-slate-800\/50,
-        html.light-mode .border-slate-800\/40,
-        html.light-mode .border-slate-700,
-        html.light-mode .border-slate-700\/50 {
-            border-color: #e2e8f0 !important;
-        }
-
-        /* General Typography & Text Contrast Hierarchy */
-        html.light-mode h1,
-        html.light-mode h2,
-        html.light-mode h3,
-        html.light-mode h4,
-        html.light-mode .text-slate-100,
-        html.light-mode .text-slate-200 {
-            color: #0f172a !important;
-        }
-        html.light-mode .text-slate-300 {
-            color: #334155 !important;
-        }
-        html.light-mode .text-slate-400 {
-            color: #64748b !important;
-        }
-        html.light-mode .text-slate-500 {
-            color: #94a3b8 !important;
-        }
-
-        /* High-Contrast Saturated Color Accents in Light Mode */
-        html.light-mode .text-emerald-300,
-        html.light-mode .text-emerald-400 { color: #059669 !important; }
-        html.light-mode .text-cyan-300,
-        html.light-mode .text-cyan-400 { color: #0891b2 !important; }
-        html.light-mode .text-blue-300,
-        html.light-mode .text-blue-400 { color: #0284c7 !important; }
-        html.light-mode .text-amber-300,
-        html.light-mode .text-amber-400 { color: #d97706 !important; }
-        html.light-mode .text-purple-300,
-        html.light-mode .text-purple-400 { color: #7c3aed !important; }
-        html.light-mode .text-rose-300,
-        html.light-mode .text-rose-400 { color: #e11d48 !important; }
-        html.light-mode .text-red-300,
-        html.light-mode .text-red-400 { color: #dc2626 !important; }
-        html.light-mode .text-indigo-300,
-        html.light-mode .text-indigo-400 { color: #4f46e5 !important; }
-        html.light-mode .text-teal-300,
-        html.light-mode .text-teal-400 { color: #0f766e !important; }
-
-        /* Saturated Hover States in Light Mode */
-        html.light-mode .hover\:text-white:hover { color: #0f172a !important; }
-        html.light-mode .hover\:bg-slate-900:hover,
-        html.light-mode .hover\:bg-slate-800:hover,
-        html.light-mode .hover\:bg-slate-700:hover {
-            background-color: #f1f5f9 !important;
-        }
-
-        /* Soft Pastel Chip & Box Backgrounds in Light Mode */
-        html.light-mode .bg-emerald-950,
-        html.light-mode .bg-emerald-950\/80,
-        html.light-mode .bg-emerald-950\/60,
-        html.light-mode .bg-emerald-950\/40,
-        html.light-mode .bg-emerald-950\/30,
-        html.light-mode .bg-emerald-950\/20 {
-            background-color: #ecfdf5 !important;
-            border-color: #a7f3d0 !important;
-        }
-        html.light-mode .bg-amber-950,
-        html.light-mode .bg-amber-950\/80,
-        html.light-mode .bg-amber-950\/60,
-        html.light-mode .bg-amber-950\/40,
-        html.light-mode .bg-amber-950\/30,
-        html.light-mode .bg-amber-950\/20 {
-            background-color: #fffbeb !important;
-            border-color: #fde68a !important;
-        }
-        html.light-mode .bg-blue-950,
-        html.light-mode .bg-blue-950\/80,
-        html.light-mode .bg-blue-950\/60,
-        html.light-mode .bg-blue-950\/40,
-        html.light-mode .bg-blue-950\/30,
-        html.light-mode .bg-blue-950\/20 {
-            background-color: #f0f9ff !important;
-            border-color: #bae6fd !important;
-        }
-        html.light-mode .bg-cyan-950,
-        html.light-mode .bg-cyan-950\/80,
-        html.light-mode .bg-cyan-950\/60,
-        html.light-mode .bg-cyan-950\/40,
-        html.light-mode .bg-cyan-950\/30,
-        html.light-mode .bg-cyan-950\/20 {
-            background-color: #ecfeff !important;
-            border-color: #a5f3fc !important;
-        }
-        html.light-mode .bg-purple-950,
-        html.light-mode .bg-purple-950\/80,
-        html.light-mode .bg-purple-950\/60,
-        html.light-mode .bg-purple-950\/40,
-        html.light-mode .bg-purple-950\/30,
-        html.light-mode .bg-purple-950\/20 {
-            background-color: #faf5ff !important;
-            border-color: #e9d5ff !important;
-        }
-        html.light-mode .bg-rose-950,
-        html.light-mode .bg-rose-950\/80,
-        html.light-mode .bg-rose-950\/60,
-        html.light-mode .bg-rose-950\/40,
-        html.light-mode .bg-rose-950\/30,
-        html.light-mode .bg-rose-950\/20 {
-            background-color: #fff1f2 !important;
-            border-color: #fecdd3 !important;
-        }
-        html.light-mode .bg-indigo-950,
-        html.light-mode .bg-indigo-950\/80,
-        html.light-mode .bg-indigo-950\/60,
-        html.light-mode .bg-indigo-950\/40,
-        html.light-mode .bg-indigo-950\/30,
-        html.light-mode .bg-indigo-950\/20 {
-            background-color: #eef2ff !important;
-            border-color: #c7d2fe !important;
-        }
-        html.light-mode .bg-teal-950,
-        html.light-mode .bg-teal-950\/80,
-        html.light-mode .bg-teal-950\/60,
-        html.light-mode .bg-teal-950\/40,
-        html.light-mode .bg-teal-950\/30,
-        html.light-mode .bg-teal-950\/20 {
-            background-color: #f0fdfa !important;
-            border-color: #99f6e4 !important;
-        }
-        html.light-mode .bg-red-950,
-        html.light-mode .bg-red-950\/80,
-        html.light-mode .bg-red-950\/60,
-        html.light-mode .bg-red-950\/40,
-        html.light-mode .bg-red-950\/30 {
-            background-color: #fef2f2 !important;
-            border-color: #fecaca !important;
-        }
-
-        /* Border Accent Overrides in Light Mode */
-        html.light-mode .border-emerald-500\/40,
-        html.light-mode .border-emerald-500\/30,
-        html.light-mode .border-emerald-500\/20 { border-color: #a7f3d0 !important; }
-        html.light-mode .border-amber-500\/40,
-        html.light-mode .border-amber-500\/30,
-        html.light-mode .border-amber-500\/20 { border-color: #fde68a !important; }
-        html.light-mode .border-blue-500\/40,
-        html.light-mode .border-blue-500\/30,
-        html.light-mode .border-blue-500\/20 { border-color: #bae6fd !important; }
-        html.light-mode .border-cyan-500\/40,
-        html.light-mode .border-cyan-500\/30,
-        html.light-mode .border-cyan-500\/20 { border-color: #a5f3fc !important; }
-        html.light-mode .border-purple-500\/40,
-        html.light-mode .border-purple-500\/30,
-        html.light-mode .border-purple-500\/20 { border-color: #e9d5ff !important; }
-        html.light-mode .border-rose-500\/40,
-        html.light-mode .border-rose-500\/30,
-        html.light-mode .border-rose-500\/20 { border-color: #fecdd3 !important; }
-        html.light-mode .border-indigo-500\/40,
-        html.light-mode .border-indigo-500\/30,
-        html.light-mode .border-indigo-500\/20 { border-color: #c7d2fe !important; }
-        html.light-mode .border-teal-500\/40,
-        html.light-mode .border-teal-500\/30,
-        html.light-mode .border-teal-500\/20 { border-color: #99f6e4 !important; }
-        html.light-mode .border-red-500\/40,
-        html.light-mode .border-red-500\/30,
-        html.light-mode .border-red-500\/20 { border-color: #fecaca !important; }
-
-        /* Top Header HUD in Light Mode */
-        html.light-mode #hud-level-title { color: #d97706 !important; font-weight: 700 !important; }
-        html.light-mode #hud-xp-text,
-        html.light-mode #hud-next-xp { color: #059669 !important; font-weight: 700 !important; }
-        html.light-mode #hud-progress-percent { color: #0f172a !important; font-weight: 700 !important; }
-        html.light-mode #btn-hud-api-key,
-        html.light-mode #btn-color-mode-desktop,
-        html.light-mode #btn-color-mode-mobile,
-        html.light-mode header button:not([class*="bg-emerald"]):not([class*="bg-indigo"]) {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-            color: #475569 !important;
-        }
-        html.light-mode header button:hover {
-            background-color: #f1f5f9 !important;
-            color: #0f172a !important;
-        }
-
-        /* Sidebar Navigation - Unified Modern Clean Academy */
-        html.light-mode #main-sidebar {
-            background-color: #ffffff !important;
-        }
-        html.light-mode #main-sidebar > div {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
-        }
-        
-        /* Unified Inactive Button */
-        .nav-btn {
-            background-color: transparent !important;
-            border-color: transparent !important;
-            color: #64748b !important;
-            font-weight: 600 !important;
-            transition: all 0.15s ease !important;
-        }
-        .nav-btn span:first-child,
-        .nav-btn i {
-            color: #64748b !important;
-            background-color: #f1f5f9 !important;
-            border-color: #e2e8f0 !important;
-            transition: all 0.15s ease !important;
-        }
-        .nav-btn:hover {
-            background-color: #f8fafc !important;
-            color: #0f172a !important;
-        }
-        .nav-btn:hover span:first-child,
-        .nav-btn:hover i {
-            color: #0f172a !important;
-        }
-
-        /* Unified Active Button (Single Highlight) */
-        .nav-btn.nav-btn-active,
-        .nav-btn.active {
-            background-color: #ecfdf5 !important;
-            border-color: #a7f3d0 !important;
-            color: #065f46 !important;
-            font-weight: 700 !important;
-            box-shadow: 0 1px 3px rgba(5, 150, 105, 0.08) !important;
-        }
-        .nav-btn.nav-btn-active span:first-child,
-        .nav-btn.nav-btn-active i,
-        .nav-btn.active span:first-child,
-        .nav-btn.active i {
-            background-color: #d1fae5 !important;
-            color: #059669 !important;
-            border-color: #a7f3d0 !important;
-        }
-
-        /* Roadmap Accordion Submenu */
-        html.light-mode #roadmap-subnav-list {
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode .nav-sub-btn {
-            color: #64748b !important;
-        }
-        html.light-mode .nav-sub-btn:hover {
-            background-color: #f1f5f9 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode .nav-sub-btn.active,
-        html.light-mode .nav-sub-btn.nav-sub-btn-active {
-            background-color: #ecfdf5 !important;
-            color: #065f46 !important;
-            font-weight: 700 !important;
-        }
-        html.light-mode .nav-sub-btn span[id^="badge-phase"] {
-            background-color: #f1f5f9 !important;
-            color: #64748b !important;
-            border: 1px solid #e2e8f0 !important;
-        }
-
-        /* Sidebar Badges */
-        html.light-mode #badge-streak-sidebar {
-            background-color: #fffbeb !important;
-            color: #92400e !important;
-            border-color: #fde68a !important;
-        }
-        html.light-mode #badge-roadmap-total {
-            background-color: #f1f5f9 !important;
-            color: #475569 !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #vocab-review-badge {
-            background-color: #f1f5f9 !important;
-            color: #475569 !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #speaking-lab-new-badge {
-            background-color: #f0f9ff !important;
-            color: #0284c7 !important;
-            border-color: #bae6fd !important;
-        }
-        html.light-mode #sidebar-model-badge {
-            background-color: #f1f5f9 !important;
-            color: #475569 !important;
-            border-color: #e2e8f0 !important;
-        }
-
-        /* Hero Banners Across Tabs */
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-indigo-950"],
-        html.light-mode #tab-dashboard .from-indigo-950\/90,
-        html.light-mode #tab-ai-lab .from-indigo-950 {
-            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 45%, #ecfdf5 100%) !important;
-            border-color: #a7f3d0 !important;
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.06) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-emerald-950"],
-        html.light-mode #tab-phase1 .from-emerald-950\/80,
-        html.light-mode #tab-vocab-logger .from-emerald-950\/90 {
-            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 45%, #f0fdf4 100%) !important;
-            border-color: #a7f3d0 !important;
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.06) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-blue-950"],
-        html.light-mode #tab-phase2 .from-blue-950\/80 {
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 45%, #eff6ff 100%) !important;
-            border-color: #bae6fd !important;
-            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.06) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-purple-950"],
-        html.light-mode #tab-phase3 .from-purple-950\/80 {
-            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 45%, #fdf4ff 100%) !important;
-            border-color: #e9d5ff !important;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.06) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-amber-950"],
-        html.light-mode #tab-phase4 .from-amber-950\/80 {
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 45%, #fefce8 100%) !important;
-            border-color: #fde68a !important;
-            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.06) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-cyan-950"],
-        html.light-mode #tab-phase5 .from-cyan-950\/80 {
-            background: linear-gradient(135deg, #ecfeff 0%, #ffffff 45%, #f0fdfa 100%) !important;
-            border-color: #a5f3fc !important;
-            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.06) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-rose-950"],
-        html.light-mode #tab-speaking-lab .from-rose-950\/80 {
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 45%, #f8fafc 100%) !important;
-            border-color: #bae6fd !important;
-            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.06) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-red-950"],
-        html.light-mode #tab-boss .from-red-950 {
-            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 45%, #fef2f2 100%) !important;
-            border-color: #fecdd3 !important;
-            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.06) !important;
-        }
-
-        /* Banner Headings & Typography */
-        html.light-mode .tab-content h2,
-        html.light-mode .tab-content h3 {
-            color: #0f172a !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"] h2,
-        html.light-mode [class*="bg-gradient-to-r"] h3 {
-            color: #0f172a !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"] p {
-            color: #475569 !important;
-        }
-
-        /* Hero Badges & Status in Banners */
-        html.light-mode #dash-greeting-badge { color: #64748b !important; }
-        html.light-mode #dash-streak-count { color: #d97706 !important; }
-        html.light-mode #dash-level-text { color: #059669 !important; }
-
-        /* Stage Cards & Quest Cards */
-        html.light-mode .stage-card {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-        }
-        html.light-mode .stage-card pre,
-        html.light-mode .stage-card .bg-slate-950\/80,
-        html.light-mode .stage-card .bg-slate-950 {
-            background-color: #f8fafc !important;
-            border: 1px solid #e2e8f0 !important;
-            color: #0f172a !important;
-        }
-
-        /* Form Inputs & Textareas */
-        html.light-mode input[type="text"],
-        html.light-mode input[type="password"],
-        html.light-mode textarea,
-        html.light-mode select {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode input::placeholder,
-        html.light-mode textarea::placeholder {
-            color: #94a3b8 !important;
-        }
-
-        /* Audio Buttons in Light Mode */
-        html.light-mode button[onclick*="speakWord"],
-        html.light-mode button[onclick*="speakAffirmation"] {
-            background-color: #f0f9ff !important;
-            border-color: #bae6fd !important;
-            color: #0284c7 !important;
-            font-weight: 700 !important;
-        }
-        html.light-mode button[onclick*="speakWord"]:hover,
-        html.light-mode button[onclick*="speakAffirmation"]:hover {
-            background-color: #e0f2fe !important;
-            color: #0369a1 !important;
-        }
-
-        /* Vocab Cards & Items in Light Mode */
-        html.light-mode .vocab-item {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
-        }
-        html.light-mode .vocab-item.vocab-item-mastered {
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #fefce8 100%) !important;
-            border-color: #fde68a !important;
-        }
-        html.light-mode .vocab-item.vocab-item-unlearned {
-            background-color: #ffffff !important;
-            border-color: #fecdd3 !important;
-        }
-        html.light-mode .vocab-item.vocab-item-due {
-            background-color: #fffbeb !important;
-            border-color: #fde68a !important;
-        }
-        html.light-mode .vocab-item .vocab-word-title {
-            color: #0f172a !important;
-        }
-        html.light-mode .vocab-item .vocab-word-title:hover {
-            color: #059669 !important;
-        }
-        html.light-mode .vocab-item .text-slate-300 {
-            color: #334155 !important;
-        }
-        html.light-mode .vocab-item .text-slate-400 {
-            color: #64748b !important;
-        }
-        html.light-mode .vocab-item button[onclick*="openVocabCard"] {
-            background-color: #ecfdf5 !important;
-            border-color: #a7f3d0 !important;
-            color: #065f46 !important;
-            font-weight: 700 !important;
-        }
-        html.light-mode .vocab-item button[onclick*="openVocabCard"]:hover {
-            background-color: #d1fae5 !important;
-            color: #064e3b !important;
-        }
-
-        /* Status & Feynman Badges */
-        html.light-mode .badge-feynman-mastered {
-            background-color: #fef3c7 !important;
-            color: #92400e !important;
-            border-color: #fde68a !important;
-            font-weight: 700 !important;
-        }
-        html.light-mode .badge-feynman-due {
-            background-color: #fffbeb !important;
-            color: #b45309 !important;
-            border-color: #fde68a !important;
-            font-weight: 700 !important;
-        }
-        html.light-mode .badge-feynman-learning {
-            background-color: #ecfdf5 !important;
-            color: #065f46 !important;
-            border-color: #a7f3d0 !important;
-            font-weight: 700 !important;
-        }
-        html.light-mode .badge-feynman-unlearned {
-            background-color: #fff1f2 !important;
-            color: #9f1239 !important;
-            border-color: #fecdd3 !important;
-            font-weight: 700 !important;
-        }
-
-        /* Modals & Popups in Light Mode */
-        html.light-mode .modal-backdrop {
-            background-color: rgba(15, 23, 42, 0.6) !important;
-            backdrop-filter: blur(8px) !important;
-        }
-        html.light-mode #modal-vocab-card > div,
-        html.light-mode #modal-vocab-review > div,
-        html.light-mode #api-key-modal > div,
-        html.light-mode #modal-affirmations-manager > div,
-        html.light-mode #quest-modal > div,
-        html.light-mode #mini-boss-modal > div,
-        html.light-mode #modal-quest > div,
-        html.light-mode #modal-achievements > div,
-        html.light-mode #modal-prompt > div,
-        html.light-mode #modal-reset > div {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
-        }
-        html.light-mode #daily-affirmation-card {
-            background: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-        }
-        html.light-mode #daily-affirmation-card h3 {
-            color: #0f172a !important;
-        }
-        html.light-mode #daily-affirmation-card button[onclick*="openAffirmationsManager"] {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-            color: #d97706 !important;
-        }
-        html.light-mode #modal-vocab-card .bg-slate-950\/90,
-        html.light-mode #modal-vocab-card .bg-slate-900,
-        html.light-mode #modal-vocab-review .bg-slate-950,
-        html.light-mode #quest-modal .bg-slate-950,
-        html.light-mode #mini-boss-modal .bg-slate-950 {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #modal-vocab-card #vocab-card-word,
-        html.light-mode #modal-vocab-review #review-card-word {
-            color: #0f172a !important;
-        }
-        html.light-mode #vocab-card-indonesian-guide {
-            background-color: #fffbeb !important;
-            border-color: #fde68a !important;
-            color: #78350f !important;
-        }
-        html.light-mode #vocab-card-high-yield-box {
-            background-color: #fffbeb !important;
-            border-color: #fde68a !important;
-            color: #92400e !important;
-        }
-        html.light-mode #vocab-card-trap-box {
-            background-color: #fff1f2 !important;
-            border-color: #fecdd3 !important;
-            color: #9f1239 !important;
-        }
-
-        /* Speaking Lab in Light Mode */
-        html.light-mode #tab-speaking-lab .bg-slate-900,
-        html.light-mode #tab-speaking-lab .bg-slate-900\/90,
-        html.light-mode #tab-speaking-lab .bg-slate-950 {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #speaking-generated-card-part1,
-        html.light-mode #speaking-generated-card-part2,
-        html.light-mode #speaking-generated-card-part3 {
-            background-color: #f8fafc !important;
-            border-color: #cbd5e1 !important;
-        }
-        html.light-mode #speaking-inaudible-banner,
-        html.light-mode .speaking-inaudible-box {
-            background-color: #fff1f2 !important;
-            border-color: #fecdd3 !important;
-            color: #9f1239 !important;
-        }
-        html.light-mode .speaking-audit-band-card,
-        html.light-mode .speaking-audit-detail {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode .speaking-audit-detail summary {
-            background-color: #f8fafc !important;
-            color: #0f172a !important;
-        }
-        html.light-mode .speaking-audit-detail summary:hover {
-            background-color: #f1f5f9 !important;
-        }
-        html.light-mode .speaking-audit-detail > div {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            color: #334155 !important;
-        }
-
-        /* Action Buttons with Solid Colors Keep White Text */
-        html.light-mode button[class*="bg-emerald-600"],
-        html.light-mode button[class*="bg-indigo-600"],
-        html.light-mode button[class*="bg-rose-600"],
-        html.light-mode button[class*="bg-blue-600"],
-        html.light-mode button[class*="bg-sky-600"],
-        html.light-mode button[class*="bg-purple-600"] {
-            color: #ffffff !important;
-        }
-
-        /* Custom Scrollbars */
-        html.light-mode ::-webkit-scrollbar-track { background: #f8fafc; }
-        html.light-mode ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        html.light-mode ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* ===== POLISHED DARK MODE HARMONY (DEEP SLATE) ===== */
-        html:not(.light-mode) body {
-            background-color: #0f172a !important;
-            color: #cbd5e1 !important;
-        }
-        html:not(.light-mode) .bg-slate-950,
-        html:not(.light-mode) .bg-slate-950\/90,
-        html:not(.light-mode) .bg-slate-950\/80 {
-            background-color: #090d16 !important;
-            border-color: #1e293b !important;
-        }
-        html:not(.light-mode) .bg-slate-900,
-        html:not(.light-mode) .bg-slate-900\/90,
-        html:not(.light-mode) .bg-slate-900\/80 {
-            background-color: #1e293b !important;
-            border-color: #334155 !important;
-        }
-        html:not(.light-mode) .border-slate-800,
-        html:not(.light-mode) .border-slate-800\/80 {
-            border-color: #334155 !important;
-        }
-        html:not(.light-mode) .text-white {
-            color: #f8fafc !important;
-        }
-        html.light-mode button[class*="bg-cyan-600"],
-        html.light-mode button[class*="bg-amber-600"],
-        html.light-mode button[class*="bg-gradient-to-r"],
-        html.light-mode button[class*="from-rose-500"],
-        html.light-mode button[class*="from-rose-600"],
-        html.light-mode button[class*="from-amber-500"],
-        html.light-mode button[class*="from-amber-600"],
-        html.light-mode button[class*="from-emerald-500"],
-        html.light-mode button[class*="from-emerald-600"] {
-            color: #ffffff !important;
-        }
-        html.light-mode button[class*="bg-emerald-600"] *,
-        html.light-mode button[class*="bg-indigo-600"] *,
-        html.light-mode button[class*="bg-rose-600"] *,
-        html.light-mode button[class*="bg-blue-600"] *,
-        html.light-mode button[class*="bg-cyan-600"] *,
-        html.light-mode button[class*="bg-amber-600"] *,
-        html.light-mode button[class*="bg-gradient-to-r"] *,
-        html.light-mode button[class*="from-"] * {
-            color: #ffffff !important;
-        }
-
-        /* Smooth Transition */
-        body, header, aside, main, div, section, button, p, span {
-            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-        }
-    </style>
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
@@ -2423,9 +1652,9 @@
             <!-- SPEAKING LAB SECTION (NEW v5.0) -->
             <div id="tab-speaking-lab" class="tab-content hidden space-y-6">
                 <!-- Header Banner -->
-                <div class="bg-gradient-to-r from-sky-950/40 via-slate-900 to-indigo-950/40 p-6 rounded-2xl border border-sky-500/30 glow-speaking relative overflow-hidden shadow-lg">
+                <div class="bg-gradient-to-r from-rose-950/80 via-slate-900 to-slate-900 p-6 rounded-2xl border border-rose-500/30 glow-speaking relative overflow-hidden">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-mono font-bold text-sky-400 tracking-wider uppercase bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20">
+                        <span class="text-xs font-mono font-bold text-rose-400 tracking-wider uppercase bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
                             <i class="fa-solid fa-microphone mr-1.5"></i> IELTS SPEAKING LAB • GRAMMAR-TO-SPEECH SCAFFOLDING
                         </span>
                         <span class="text-xs text-amber-400 font-mono"><i class="fa-solid fa-bolt mr-1"></i> Reward: +150 XP per Evaluation</span>
@@ -2437,23 +1666,23 @@
                 </div>
 
                 <!-- Stage Knowledge Scaffolding & Target Accent Context Bar -->
-                <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shadow-sm">
+                <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold text-sm border border-sky-500/20">
+                        <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-sm border border-rose-500/30">
                             <i class="fa-solid fa-layer-group"></i>
                         </div>
                         <div>
                             <div class="text-xs font-mono font-bold text-slate-300 uppercase">Active Grammar Scaffolding:</div>
-                            <div id="speaking-unlocked-stages-summary" class="text-xs text-emerald-400 font-mono font-bold">0 Stage Unlocked</div>
+                            <div id="speaking-unlocked-stages-summary" class="text-xs text-emerald-400 font-mono">0 Stage Unlocked</div>
                         </div>
                     </div>
 
                     <!-- Target Accent & Phonetics Goal Selector -->
                     <div class="flex items-center space-x-2.5 w-full lg:w-auto justify-between lg:justify-end bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
-                        <label for="speaking-target-accent" class="text-[11px] font-mono font-bold text-sky-400 whitespace-nowrap flex items-center gap-1.5">
+                        <label for="speaking-target-accent" class="text-[11px] font-mono font-bold text-rose-300 whitespace-nowrap flex items-center gap-1.5">
                             <i class="fa-solid fa-earth-americas"></i> Target Accent:
                         </label>
-                        <select id="speaking-target-accent" onchange="updateSpeakingTargetAccent()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1 font-mono focus:outline-none focus:border-sky-500 cursor-pointer">
+                        <select id="speaking-target-accent" onchange="updateSpeakingTargetAccent()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1 font-mono focus:outline-none focus:border-rose-500 cursor-pointer">
                             <option value="british_rp">🇬🇧 British RP (Received Pronunciation)</option>
                             <option value="general_american">🇺🇸 General American (US Standard)</option>
                             <option value="australian">🇦🇺 Australian English</option>
@@ -2463,7 +1692,7 @@
                 </div>
 
                 <!-- Vocab Logger Integration Controller (v6.2) -->
-                <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-3 shadow-sm">
+                <div class="bg-slate-900/90 border border-indigo-500/30 p-4 rounded-2xl space-y-3">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <label class="flex items-center space-x-2.5 cursor-pointer">
                             <input type="checkbox" id="toggle-speaking-use-vocab" onchange="toggleSpeakingVocabIntegration()" class="w-4 h-4 rounded text-indigo-600 bg-slate-950 border-slate-700 focus:ring-indigo-500 cursor-pointer">
@@ -2499,8 +1728,8 @@
                 </div>
 
                 <!-- 3 Speaking Mode Switcher Tabs -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 font-mono text-xs font-bold shadow-sm">
-                    <button onclick="switchSpeakingMode('part1')" id="tab-btn-speaking-part1" class="py-2.5 px-3 rounded-xl bg-sky-600 text-white font-bold flex items-center justify-center gap-2 transition-all shadow-md">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 font-mono text-xs font-bold">
+                    <button onclick="switchSpeakingMode('part1')" id="tab-btn-speaking-part1" class="py-2.5 px-3 rounded-xl bg-rose-600 text-white flex items-center justify-center gap-2 transition-all shadow-md">
                         <i class="fa-solid fa-book-open-reader"></i>
                         <span>Part 1: Shadowing & Read-Aloud</span>
                     </button>
@@ -2522,21 +1751,21 @@
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-3">
                             <div>
                                 <h3 class="text-base font-bold text-white flex items-center gap-2">
-                                    <i class="fa-solid fa-microphone-lines text-sky-400"></i>
+                                    <i class="fa-solid fa-microphone-lines text-rose-400"></i>
                                     <span>Part 1: Guided Shadowing & Intonation Drill</span>
                                 </h3>
                                 <p class="text-xs text-slate-400">Latih artikulasi, ritme, dan kelancaran membaca monolog berbobot Band 8.0+ berbasis stage Anda.</p>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <div class="flex items-center space-x-1.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-mono">
-                                    <span class="text-slate-400 font-bold"><i class="fa-solid fa-text-width text-sky-400"></i> Panjang:</span>
-                                    <select id="select-speaking-length-part1" class="bg-slate-900 text-sky-300 font-bold rounded-lg px-2 py-1 border border-slate-700 focus:outline-none text-xs">
+                                    <span class="text-slate-400 font-bold"><i class="fa-solid fa-text-width text-rose-400"></i> Panjang:</span>
+                                    <select id="select-speaking-length-part1" class="bg-slate-900 text-rose-300 font-bold rounded-lg px-2 py-1 border border-slate-700 focus:outline-none text-xs">
                                         <option value="short">Ringkas (3-4 Kalimat)</option>
                                         <option value="medium" selected>Sedang (6-8 Kalimat)</option>
                                         <option value="long">Panjang (10-14 Kalimat / Full)</option>
                                     </select>
                                 </div>
-                                <button onclick="generateSpeakingPrompt('part1')" id="btn-generate-speaking-part1" class="px-4 py-2 bg-gradient-to-r from-sky-600 to-blue-600 hover:opacity-90 text-white font-bold text-xs rounded-xl transition-all shadow-lg flex items-center gap-2">
+                                <button onclick="generateSpeakingPrompt('part1')" id="btn-generate-speaking-part1" class="px-4 py-2 bg-gradient-to-r from-rose-600 to-pink-600 hover:opacity-90 text-white font-bold text-xs rounded-xl transition-all shadow-lg flex items-center gap-2">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <span>Generate Teks Baru</span>
                                 </button>
@@ -2650,7 +1879,7 @@
                                 </h3>
                                 <p class="text-xs text-slate-400">1 Menit persiapan menyusun poin $\rightarrow$ 2 Menit berbicara penuh menggunakan grammar target.</p>
                             </div>
-                            <button onclick="generateSpeakingPrompt('part2')" id="btn-generate-speaking-part2" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:opacity-90 text-white font-bold text-xs rounded-xl transition-all shadow-lg flex items-center gap-2">
+                            <button onclick="generateSpeakingPrompt('part2')" id="btn-generate-speaking-part2" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-rose-600 hover:opacity-90 text-white font-bold text-xs rounded-xl transition-all shadow-lg flex items-center gap-2">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                                 <span>Generate Cue Card</span>
                             </button>
@@ -7879,10 +7108,10 @@ Structure your comprehensive diagnostic report in Markdown using EXACTLY these h
                 const content = document.getElementById(`speaking-mode-${m}`);
                 if (btn && content) {
                     if (m === mode) {
-                        btn.className = "py-2.5 px-3 rounded-xl bg-sky-600 text-white font-bold flex items-center justify-center gap-2 transition-all shadow-md";
+                        btn.className = "py-2.5 px-3 rounded-xl bg-rose-600 text-white flex items-center justify-center gap-2 transition-all shadow-md";
                         content.classList.remove('hidden');
                     } else {
-                        btn.className = "py-2.5 px-3 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 font-semibold flex items-center justify-center gap-2 transition-all";
+                        btn.className = "py-2.5 px-3 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-900 flex items-center justify-center gap-2 transition-all";
                         content.classList.add('hidden');
                     }
                 }
