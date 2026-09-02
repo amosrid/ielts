@@ -706,8 +706,13 @@
         html.light-mode #vocab-feynman-feedback-box .bg-emerald-950\/30 .text-emerald-100 {
             color: #064e3b !important;
         }
+        html.light-mode #input-vocab-word,
         html.light-mode #input-vocab-search,
-        html.light-mode #select-vocab-sort {
+        html.light-mode #select-vocab-cefr,
+        html.light-mode #select-vocab-register,
+        html.light-mode #select-vocab-sort,
+        html.light-mode #input-review-feynman-expl,
+        html.light-mode #input-review-feynman-sentence {
             background-color: #ffffff !important;
             border-color: #cbd5e1 !important;
             color: #0f172a !important;
@@ -717,6 +722,28 @@
         }
         html.light-mode #tab-vocab-logger label {
             color: #475569 !important;
+        }
+        html.light-mode #tab-vocab-logger .vocab-item {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
+        html.light-mode #tab-vocab-logger .vocab-item.vocab-item-mastered {
+            background: linear-gradient(to right, #ffffff, #fffbeb) !important;
+            border-color: #fde68a !important;
+        }
+        html.light-mode #tab-vocab-logger .vocab-item .vocab-word-title {
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-vocab-logger .vocab-item p {
+            color: #475569 !important;
+        }
+        html.light-mode #modal-vocab-review .bg-slate-950 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #modal-vocab-review #review-card-word {
+            color: #0f172a !important;
         }
         html.light-mode button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]) {
             background-color: #f1f5f9 !important;
@@ -2972,187 +2999,146 @@
             <!-- ========================================================= -->
             <!-- VOCABULARY LOGGER SECTION (v6.0)                          -->
             <!-- ========================================================= -->
-            <div id="tab-vocab-logger" class="tab-content hidden space-y-6">
-                <!-- Header Banner -->
-                <div class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-slate-900 p-6 rounded-2xl border border-emerald-500/30 glow-vocab relative overflow-hidden">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div id="tab-vocab-logger" class="tab-content hidden space-y-5">
+                <!-- 1. Top Command Center Header (Compact & High-Power) -->
+                <div class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-indigo-950/80 p-5 sm:p-6 rounded-2xl border border-emerald-500/30 glow-vocab relative overflow-hidden shadow-xl space-y-4">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <div class="flex items-center space-x-2 mb-2">
+                            <div class="flex items-center space-x-2 mb-1.5 flex-wrap gap-y-1">
                                 <span class="text-xs font-mono font-bold text-emerald-400 tracking-wider uppercase bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                                    <i class="fa-solid fa-book-bookmark mr-1"></i> VOCABULARY LOGGER & CEFR CLASSIFIER
+                                    <i class="fa-solid fa-book-bookmark mr-1"></i> VOCABULARY BANK PRO & CEFR CLASSIFIER
                                 </span>
                                 <span class="text-xs text-amber-400 font-mono"><i class="fa-solid fa-bolt mr-1"></i> +15 XP per Kata Baru</span>
                             </div>
                             <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
                                 <span>IeltsGo Vocabulary Bank</span>
                             </h2>
-                            <p class="text-xs sm:text-sm text-slate-300 mt-1">Simpan kata asing yang Anda temukan saat membaca atau menulis. AI akan mengelompokkan level CEFR (A1–C2), membuat panduan baca lidah Indonesia, dan menjadwalkan Spaced Repetition (Anki-style)!</p>
+                            <p class="text-xs text-slate-300 mt-0.5">Input kata baru untuk diagnosis CEFR, ejaan lidah Indonesia, register IELTS, dan Spaced Repetition dengan AI Examiner.</p>
                         </div>
 
-                        <!-- Review Queue CTA -->
-                        <div class="w-full sm:w-auto">
-                            <button onclick="startReviewSession()" id="btn-vocab-header-review" class="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:opacity-90 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 border border-amber-400/30 whitespace-nowrap">
-                                <i class="fa-solid fa-clock-rotate-left text-sm"></i>
-                                <span>Sesi Review (<span id="vocab-header-due-count">0</span> Kata)</span>
+                        <!-- Review Queue Action -->
+                        <button onclick="startReviewSession()" id="btn-vocab-header-review" class="w-full md:w-auto px-5 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:opacity-90 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 border border-amber-400/30 whitespace-nowrap active:scale-95">
+                            <i class="fa-solid fa-brain text-sm animate-pulse"></i>
+                            <span>Sesi Review AI (<span id="vocab-header-due-count">0</span> Kata)</span>
+                        </button>
+                    </div>
+
+                    <!-- Single-Row Fast Add Input Bar -->
+                    <div class="pt-2 border-t border-slate-800/80">
+                        <div class="flex flex-col sm:flex-row items-stretch gap-2">
+                            <div class="relative flex-1">
+                                <input type="text" id="input-vocab-word" placeholder="Ketik kata bahasa Inggris baru (contoh: establish, mitigate, ubiquitous...)" onkeydown="if(event.key==='Enter') addVocabWord()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500 pl-10 shadow-inner">
+                                <i class="fa-solid fa-font absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+                            </div>
+                            <button onclick="addVocabWord()" id="btn-add-vocab" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-md flex items-center justify-center gap-2 border border-emerald-400/30 whitespace-nowrap active:scale-95">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>Tambah & Analisis AI (+15 XP)</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2-Column Main Workspace: Input & Bank -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    
-                    <!-- Left Sidebar (Col 4): Add New Word & Filters -->
-                    <div class="lg:col-span-4 space-y-5">
-                        
-                        <!-- Add Word Input Card -->
-                        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-                            <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-                                <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold border border-emerald-500/30">
-                                    <i class="fa-solid fa-plus"></i>
-                                </div>
-                                <h3 class="text-sm font-bold text-white">Input Kosakata Baru</h3>
-                            </div>
-
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-mono font-bold text-slate-300 uppercase">Kata Bahasa Inggris:</label>
-                                <div class="relative">
-                                    <input type="text" id="input-vocab-word" placeholder="Contoh: establish, mitigate, ubiquitous..." onkeydown="if(event.key==='Enter') addVocabWord()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500 pl-9">
-                                    <i class="fa-solid fa-font absolute left-3 top-3.5 text-xs text-slate-500"></i>
-                                </div>
-                                <p class="text-[10px] text-slate-500 font-mono">AI Gemini akan otomatis mendiagnosis level CEFR, arti Indonesia, transkripsi IPA, dan contoh kalimatnya.</p>
-                            </div>
-
-                            <button onclick="addVocabWord()" id="btn-add-vocab" class="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-md flex items-center justify-center gap-2 border border-emerald-400/30">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                <span>Tambah & Analisis AI (+15 XP)</span>
-                            </button>
-                        </div>
-
-                        <!-- Filter & CEFR Distribution Card -->
-                        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-                            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                                <h3 class="text-xs font-mono font-bold text-slate-300 uppercase flex items-center gap-1.5">
-                                    <i class="fa-solid fa-filter text-emerald-400"></i> Filter Bank Vocab
-                                </h3>
-                                <button onclick="setVocabFilter('all')" class="text-[10px] font-mono text-slate-400 hover:text-white underline">Reset Filter</button>
-                            </div>
-
-                            <div class="space-y-1.5 font-mono text-xs">
-                                <button onclick="setVocabFilter('all')" id="filter-btn-all" class="w-full p-2 rounded-xl bg-emerald-600 text-white flex items-center justify-between font-bold transition-all text-[11px]">
-                                    <span class="flex items-center gap-2"><i class="fa-solid fa-layer-group"></i> Semua Kata</span>
-                                    <span id="filter-count-all" class="bg-emerald-950/80 px-2 py-0.5 rounded-full text-[10px]">0</span>
-                                </button>
-                                <button onclick="setVocabFilter('due')" id="filter-btn-due" class="w-full p-2 rounded-xl text-slate-300 hover:bg-slate-800 flex items-center justify-between transition-all text-[11px]">
-                                    <span class="flex items-center gap-2 text-amber-300"><i class="fa-solid fa-clock-rotate-left"></i> Perlu Direview</span>
-                                    <span id="filter-count-due" class="bg-amber-950 text-amber-300 px-2 py-0.5 rounded-full text-[10px] border border-amber-500/30 font-bold">0</span>
-                                </button>
-                                <button onclick="setVocabFilter('mastered')" id="filter-btn-mastered" class="w-full p-2 rounded-xl text-slate-300 hover:bg-slate-800 flex items-center justify-between transition-all text-[11px]">
-                                    <span class="flex items-center gap-2 text-cyan-300"><i class="fa-solid fa-circle-check"></i> Sudah Hafal (Mastered)</span>
-                                    <span id="filter-count-mastered" class="bg-slate-950 px-2 py-0.5 rounded-full text-[10px]">0</span>
-                                </button>
-                            </div>
-
-                            <!-- CEFR Badges Filter Pills -->
-                            <div class="pt-3 border-t border-slate-800 space-y-2">
-                                <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">Filter Berdasarkan CEFR:</div>
-                                <div class="grid grid-cols-3 gap-1.5 font-mono text-[11px]">
-                                    <button onclick="setVocabFilter('C2')" id="filter-btn-C2" class="p-1.5 rounded-lg border text-center cefr-c2 hover:opacity-90 font-bold">
-                                        C2 (<span id="filter-count-C2">0</span>)
-                                    </button>
-                                    <button onclick="setVocabFilter('C1')" id="filter-btn-C1" class="p-1.5 rounded-lg border text-center cefr-c1 hover:opacity-90 font-bold">
-                                        C1 (<span id="filter-count-C1">0</span>)
-                                    </button>
-                                    <button onclick="setVocabFilter('B2')" id="filter-btn-B2" class="p-1.5 rounded-lg border text-center cefr-b2 hover:opacity-90 font-bold">
-                                        B2 (<span id="filter-count-B2">0</span>)
-                                    </button>
-                                    <button onclick="setVocabFilter('B1')" id="filter-btn-B1" class="p-1.5 rounded-lg border text-center cefr-b1 hover:opacity-90 font-bold">
-                                        B1 (<span id="filter-count-B1">0</span>)
-                                    </button>
-                                    <button onclick="setVocabFilter('A2')" id="filter-btn-A2" class="p-1.5 rounded-lg border text-center cefr-a2 hover:opacity-90 font-bold">
-                                        A2 (<span id="filter-count-A2">0</span>)
-                                    </button>
-                                    <button onclick="setVocabFilter('A1')" id="filter-btn-A1" class="p-1.5 rounded-lg border text-center cefr-a1 hover:opacity-90 font-bold">
-                                        A1 (<span id="filter-count-A1">0</span>)
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Register & IELTS Context Filter Pills (v7.1) -->
-                            <div class="pt-3 border-t border-slate-800 space-y-2">
-                                <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">Filter Register & IELTS:</div>
-                                <div class="grid grid-cols-2 gap-1.5 font-mono text-[10px]">
-                                    <button onclick="setVocabFilter('reg_writing')" id="filter-btn-reg_writing" class="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 hover:border-emerald-500/40 text-left px-2 flex items-center justify-between">
-                                        <span>📝 Writing Ready</span>
-                                        <span id="filter-count-reg_writing" class="text-[9px] bg-slate-900 px-1.5 py-0.2 rounded text-slate-400">0</span>
-                                    </button>
-                                    <button onclick="setVocabFilter('reg_speaking')" id="filter-btn-reg_speaking" class="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 hover:border-sky-500/40 text-left px-2 flex items-center justify-between">
-                                        <span>🎙️ Speaking Only</span>
-                                        <span id="filter-count-reg_speaking" class="text-[9px] bg-slate-900 px-1.5 py-0.2 rounded text-slate-400">0</span>
-                                    </button>
-                                    <button onclick="setVocabFilter('reg_formal')" id="filter-btn-reg_formal" class="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 hover:border-purple-500/40 text-left px-2 flex items-center justify-between">
-                                        <span>🟢 Formal</span>
-                                        <span id="filter-count-reg_formal" class="text-[9px] bg-slate-900 px-1.5 py-0.2 rounded text-slate-400">0</span>
-                                    </button>
-                                    <button onclick="setVocabFilter('reg_casual')" id="filter-btn-reg_casual" class="p-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 hover:border-amber-500/40 text-left px-2 flex items-center justify-between">
-                                        <span>🔴 Casual</span>
-                                        <span id="filter-count-reg_casual" class="text-[9px] bg-slate-900 px-1.5 py-0.2 rounded text-slate-400">0</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Spaced Repetition Logic Card -->
-                        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-2 text-[11px] text-slate-400 font-mono">
-                            <div class="font-bold text-slate-300 flex items-center gap-1.5">
-                                <i class="fa-solid fa-brain text-indigo-400"></i> Algoritma SM-2 Spaced Repetition
-                            </div>
-                            <p class="leading-relaxed text-[10px]">
-                                Kata baru akan direview H+1. Setiap kali Anda berhasil menjawab benar, interval pengulangan otomatis berlipat (1d &rarr; 2.5d &rarr; 6d &rarr; 15d) agar tersimpan permanen di memori jangka panjang.
-                            </p>
-                        </div>
+                <!-- 2. Unified Multi-Filter & Search Command Bar -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
+                    <!-- Status Filter Segmented Pills -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin text-xs font-mono">
+                        <button onclick="setVocabFilterStatus('all')" id="filter-btn-status-all" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>Semua Kata (<span id="filter-count-all">0</span>)</span>
+                        </button>
+                        <button onclick="setVocabFilterStatus('due')" id="filter-btn-status-due" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-amber-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            <span>Perlu Review (<span id="filter-count-due">0</span>)</span>
+                        </button>
+                        <button onclick="setVocabFilterStatus('writing_ready')" id="filter-btn-status-writing_ready" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-pen-nib"></i>
+                            <span>Writing Ready (<span id="filter-count-writing_ready">0</span>)</span>
+                        </button>
+                        <button onclick="setVocabFilterStatus('speaking_only')" id="filter-btn-status-speaking_only" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-sky-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-microphone"></i>
+                            <span>Speaking Only (<span id="filter-count-speaking_only">0</span>)</span>
+                        </button>
+                        <button onclick="setVocabFilterStatus('mastered')" id="filter-btn-status-mastered" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-yellow-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-crown"></i>
+                            <span>Bebas Review (<span id="filter-count-mastered">0</span>)</span>
+                        </button>
+                        <button onclick="setVocabFilterStatus('unlearned')" id="filter-btn-status-unlearned" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-rose-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>Belum Dipelajari (<span id="filter-count-unlearned">0</span>)</span>
+                        </button>
                     </div>
 
-                    <!-- Right Main Area (Col 8): Search Bar & Vocab List -->
-                    <div class="lg:col-span-8 space-y-4">
-                        
-                        <!-- Search & Sort Bar -->
-                        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 flex flex-col sm:flex-row justify-between items-center gap-3">
-                            <div class="relative w-full sm:w-72">
-                                <input type="text" id="input-vocab-search" placeholder="Cari kata atau arti..." oninput="renderVocabBank()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 pl-8 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
-                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-500"></i>
-                            </div>
-
-                            <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
-                                <label for="select-vocab-sort" class="text-[11px] font-mono text-slate-400 whitespace-nowrap">Urutkan:</label>
-                                <select id="select-vocab-sort" onchange="renderVocabBank()" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl px-2.5 py-1.5 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer">
-                                    <option value="recent">Terbaru Ditambahkan</option>
-                                    <option value="due">Jadwal Review Terdekat</option>
-                                    <option value="cefr_desc">Level CEFR (C2 &rarr; A1)</option>
-                                    <option value="cefr_asc">Level CEFR (A1 &rarr; C2)</option>
-                                    <option value="alpha">Alfabet (A-Z)</option>
-                                </select>
-                            </div>
+                    <!-- Multi-Filter Dropdown Controls & Search Row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 pt-2 border-t border-slate-800/80 items-center font-mono text-xs">
+                        <!-- Search Box (Col 4) -->
+                        <div class="lg:col-span-4 relative">
+                            <input type="text" id="input-vocab-search" placeholder="Cari kata, arti, atau sinonim..." oninput="renderVocabBank()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 pl-8 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 shadow-inner">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-500"></i>
                         </div>
 
-                        <!-- Vocab Bank Cards Container -->
-                        <div id="vocab-bank-list" class="space-y-2.5">
-                            <!-- Rendered Dynamically by JS -->
+                        <!-- CEFR Dropdown (Col 2) -->
+                        <div class="lg:col-span-2">
+                            <select id="select-vocab-cefr" onchange="setVocabFilterCefr(this.value)" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl p-2.5 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer">
+                                <option value="all">Level: Semua CEFR</option>
+                                <option value="C2">Level C2 (Mastery)</option>
+                                <option value="C1">Level C1 (Effective)</option>
+                                <option value="B2">Level B2 (Vantage)</option>
+                                <option value="B1">Level B1 (Threshold)</option>
+                                <option value="A2">Level A2 (Waystage)</option>
+                                <option value="A1">Level A1 (Breakthrough)</option>
+                            </select>
                         </div>
 
-                        <!-- Empty State Container -->
-                        <div id="vocab-bank-empty" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-10 text-center space-y-4">
-                            <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 mx-auto flex items-center justify-center text-2xl border border-emerald-500/20">
-                                <i class="fa-solid fa-book-open"></i>
-                            </div>
-                            <div class="space-y-1">
-                                <h4 class="text-base font-bold text-white">Bank Kosakata Masih Kosong</h4>
-                                <p class="text-xs text-slate-400 max-w-md mx-auto">Mulai tambahkan kata bahasa Inggris yang ingin Anda kuasai pada form di sebelah kiri, atau coba tambahkan starter pack berikut:</p>
-                            </div>
-                            <button onclick="seedSampleVocabBank()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-300 font-mono text-xs font-bold rounded-xl transition-all border border-emerald-500/30">
-                                <i class="fa-solid fa-sparkles mr-1.5"></i> Tambahkan 5 Kosakata IELTS Band 8.0 Starter Pack
+                        <!-- Register Dropdown (Col 3) -->
+                        <div class="lg:col-span-3">
+                            <select id="select-vocab-register" onchange="setVocabFilterRegister(this.value)" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl p-2.5 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer">
+                                <option value="all">Register: Semua Keformalan</option>
+                                <option value="formal">🟢 Formal Akademik</option>
+                                <option value="semi_formal">🟡 Agak Formal / Netral</option>
+                                <option value="casual">🔴 Casual / Santai</option>
+                                <option value="written_academic">🟣 Tulisan Resmi (Written)</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort By Dropdown (Col 3) -->
+                        <div class="lg:col-span-3 flex items-center gap-1.5">
+                            <select id="select-vocab-sort" onchange="renderVocabBank()" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl p-2.5 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer">
+                                <option value="recent">Terbaru Ditambahkan</option>
+                                <option value="feynman_asc">🔴 Pemahaman: Terendah &rarr; Tertinggi</option>
+                                <option value="feynman_desc">🟢 Pemahaman: Tertinggi &rarr; Terendah</option>
+                                <option value="due_first">🟡 Jatuh Tempo Review Hari Ini</option>
+                                <option value="cefr_desc">Level CEFR (C2 &rarr; A1)</option>
+                                <option value="cefr_asc">Level CEFR (A1 &rarr; C2)</option>
+                                <option value="alpha">Alfabet (A-Z)</option>
+                            </select>
+                            <button onclick="resetVocabFilters()" title="Reset Semua Filter" class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all shadow-sm">
+                                <i class="fa-solid fa-rotate-left text-xs"></i>
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 3. Vocab Bank Cards Grid (2-Column Responsive High-Efficiency Cards) -->
+                <div id="vocab-bank-list" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    <!-- Rendered Dynamically by JS -->
+                </div>
+
+                <!-- Empty State Container -->
+                <div id="vocab-bank-empty" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-10 text-center space-y-4">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 mx-auto flex items-center justify-center text-2xl border border-emerald-500/20">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="text-base font-bold text-white">Tidak Ada Kosakata yang Cocok</h4>
+                        <p class="text-xs text-slate-400 max-w-md mx-auto">Tidak ada kata yang sesuai dengan kombinasi filter dan pencarian aktif. Coba reset filter atau tambahkan kata baru.</p>
+                    </div>
+                    <div class="flex justify-center gap-2 pt-2 flex-wrap">
+                        <button onclick="resetVocabFilters()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs font-bold rounded-xl transition-all border border-slate-700">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Semua Filter
+                        </button>
+                        <button onclick="seedSampleVocabBank()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold rounded-xl transition-all shadow-md">
+                            <i class="fa-solid fa-sparkles mr-1"></i> +5 Kosakata IELTS Starter Pack
+                        </button>
                     </div>
                 </div>
             </div>
@@ -4426,19 +4412,30 @@
         </div>
     </div>
 
-    <!-- Spaced Repetition Flashcard Review Modal (v6.0) -->
+    <!-- Spaced Repetition Flashcard & AI Examiner Review Modal (v9.0) -->
     <div id="modal-vocab-review" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-amber-500/40 w-full max-w-xl rounded-2xl p-6 space-y-5 shadow-2xl relative">
-            <button onclick="closeReviewModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+        <div class="bg-slate-900 border border-amber-500/40 w-full max-w-2xl rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[92vh] flex flex-col overflow-y-auto">
+            <button onclick="closeReviewModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg z-10 p-1">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
             <!-- Review Header & Progress -->
             <div class="space-y-2 border-b border-slate-800 pb-3">
-                <div class="flex justify-between items-center text-xs font-mono">
-                    <span class="text-amber-400 font-bold flex items-center gap-1.5 uppercase">
-                        <i class="fa-solid fa-brain"></i> Sesi Spaced Repetition (Anki-Style)
-                    </span>
+                <div class="flex justify-between items-center text-xs font-mono flex-wrap gap-2 pr-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-amber-400 font-bold flex items-center gap-1.5 uppercase">
+                            <i class="fa-solid fa-brain"></i> Sesi Spaced Repetition
+                        </span>
+                        <!-- Dual Mode Toggle Pills -->
+                        <div class="inline-flex rounded-lg bg-slate-950 p-0.5 border border-slate-800 text-[10px]">
+                            <button onclick="setReviewMode('ai')" id="btn-review-mode-ai" class="px-2.5 py-1 rounded-md bg-indigo-600 text-white font-bold transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> 🤖 Uji AI Examiner
+                            </button>
+                            <button onclick="setReviewMode('flashcard')" id="btn-review-mode-flashcard" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-bolt"></i> ⚡ Flashcard Cepat
+                            </button>
+                        </div>
+                    </div>
                     <span class="text-slate-400">Kartu <strong id="review-cur-idx" class="text-white">1</strong> dari <strong id="review-total-idx" class="text-white">5</strong></span>
                 </div>
                 <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden p-0.5 border border-slate-800">
@@ -4446,80 +4443,113 @@
                 </div>
             </div>
 
-            <!-- Flashcard Container -->
-            <div id="review-flashcard-box" class="min-h-[260px] bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between items-center text-center space-y-4 relative">
+            <!-- Active Card Container (Main Workspace) -->
+            <div id="review-active-card-container" class="space-y-4">
                 
-                <!-- Front View (Prompt / Word) -->
-                <div id="review-card-front" class="w-full space-y-4 my-auto">
-                    <span id="review-card-cefr" class="text-xs font-mono font-bold px-2.5 py-0.5 rounded border cefr-b2">B2</span>
-                    <h3 id="review-card-word" class="text-3xl font-black text-white tracking-wide">establish</h3>
-                    <div id="review-card-ipa" class="text-xs font-mono text-emerald-400">/ɪˈstæb.lɪʃ/</div>
-                    <p class="text-xs text-slate-400 font-mono">Apakah Anda masih ingat arti dan cara penggunaannya?</p>
-                    
-                    <button onclick="flipReviewCard()" class="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:opacity-90 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 mx-auto">
-                        <i class="fa-solid fa-eye"></i>
-                        <span>Lihat Jawaban & Cara Baca</span>
+                <!-- Target Word Hero Header -->
+                <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between flex-wrap gap-3 shadow-inner">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                            <span id="review-card-word" class="text-2xl font-black text-white tracking-wide">establish</span>
+                            <span id="review-card-pos" class="text-xs font-mono text-slate-400 italic">verb</span>
+                            <span id="review-card-cefr" class="text-xs font-mono font-bold px-2 py-0.5 rounded border cefr-b2">B2</span>
+                            <span id="review-card-register" class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/30 font-bold">🟢 Formal</span>
+                        </div>
+                        <div id="review-card-ipa" class="text-xs font-mono text-emerald-400">/ɪˈstæb.lɪʃ/</div>
+                    </div>
+                    <button onclick="speakCurrentReviewWord()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-rose-300 rounded-xl text-xs font-mono border border-rose-500/30 flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-volume-high"></i>
+                        <span>Dengar UK</span>
                     </button>
                 </div>
 
-                <!-- Back View (Revealed Answer) -->
-                <div id="review-card-back" class="hidden w-full space-y-3 text-left">
-                    <div class="flex justify-between items-center border-b border-slate-900 pb-2">
-                        <div>
-                            <span id="review-back-word" class="text-lg font-bold text-white">establish</span>
-                            <span id="review-back-pos" class="text-xs font-mono text-slate-400 ml-1 italic">verb</span>
-                        </div>
-                        <button onclick="speakCurrentReviewWord()" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-rose-300 rounded-lg text-xs font-mono border border-rose-500/30 flex items-center gap-1">
-                            <i class="fa-solid fa-volume-high"></i>
-                            <span>UK Audio</span>
+                <!-- MODE 1: AI ACTIVE EXAMINER DRILL (Default) -->
+                <div id="review-mode-ai-box" class="space-y-3.5">
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-mono font-bold text-slate-300 flex items-center justify-between">
+                            <span><i class="fa-solid fa-lightbulb text-amber-400 mr-1"></i> 1. Makna / Analogi Konsep (Bahasamu Sendiri):</span>
+                            <span class="text-[10px] text-slate-500 font-mono">ELI5 / Konsep</span>
+                        </label>
+                        <textarea id="input-review-feynman-expl" rows="2" placeholder="Jelaskan artinya dengan kata-katamu sendiri (Bahasa Indonesia atau Simple English)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed shadow-inner"></textarea>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-mono font-bold text-slate-300 flex items-center justify-between">
+                            <span><i class="fa-solid fa-pen-fancy text-emerald-400 mr-1"></i> 2. Contoh Kalimat Praktik Anda (IELTS Context):</span>
+                            <span class="text-[10px] text-slate-500 font-mono">English Sentence</span>
+                        </label>
+                        <textarea id="input-review-feynman-sentence" rows="2" placeholder="Tulis 1 contoh kalimat menggunakan kata ini..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 resize-none leading-relaxed shadow-inner"></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center gap-2 pt-1">
+                        <button onclick="skipReviewWord()" class="text-[11px] font-mono text-slate-400 hover:text-white underline">Lewati Kata Ini</button>
+                        <button onclick="submitReviewAiEvaluation()" id="btn-submit-review-ai" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-emerald-600 hover:opacity-95 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 border border-indigo-400/30">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span id="btn-submit-review-ai-text">Uji & Nilai AI Examiner (+25 XP)</span>
                         </button>
                     </div>
 
-                    <div>
-                        <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">Arti Bahasa Indonesia:</div>
-                        <p id="review-back-meaning-id" class="text-xs text-slate-100 font-semibold"></p>
+                    <!-- AI Evaluation Result Box in Review Modal -->
+                    <div id="review-ai-feedback-box" class="hidden p-4 rounded-2xl bg-slate-950 border text-xs font-sans leading-relaxed space-y-3 shadow-lg"></div>
+                </div>
+
+                <!-- MODE 2: FLASHCARD CEPAT (Manual Flip & SM-2) -->
+                <div id="review-mode-flashcard-box" class="hidden space-y-4">
+                    <div id="review-flashcard-front" class="min-h-[160px] bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-center items-center text-center space-y-3">
+                        <p class="text-xs text-slate-400 font-mono">Apakah Anda masih ingat arti, ejaan lidah, dan contoh kalimatnya?</p>
+                        <button onclick="flipReviewCard()" class="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:opacity-90 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2">
+                            <i class="fa-solid fa-eye"></i>
+                            <span>Buka Jawaban & Panduan Baca</span>
+                        </button>
                     </div>
 
-                    <div class="bg-amber-950/40 p-2.5 rounded-lg border border-amber-500/30 font-mono text-xs">
-                        <div class="text-[10px] font-bold text-amber-400 uppercase mb-0.5">Cara Baca Lidah Indonesia:</div>
-                        <div id="review-back-guide" class="text-amber-200 font-bold"></div>
-                    </div>
+                    <div id="review-flashcard-back" class="hidden space-y-3 text-left">
+                        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                            <div>
+                                <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">Arti Bahasa Indonesia:</div>
+                                <p id="review-back-meaning-id" class="text-xs text-slate-100 font-semibold"></p>
+                            </div>
+                            <div class="bg-amber-950/40 p-2.5 rounded-lg border border-amber-500/30 font-mono text-xs">
+                                <div class="text-[10px] font-bold text-amber-400 uppercase mb-0.5">Cara Baca Lidah Indonesia:</div>
+                                <div id="review-back-guide" class="text-amber-200 font-bold"></div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">Contoh Kalimat:</div>
+                                <p id="review-back-example" class="text-xs text-slate-300 italic"></p>
+                            </div>
+                        </div>
 
-                    <div>
-                        <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">Contoh Kalimat:</div>
-                        <p id="review-back-example" class="text-xs text-slate-300 italic"></p>
+                        <!-- SM-2 Rating Buttons -->
+                        <div class="grid grid-cols-3 gap-2 font-mono text-xs pt-1">
+                            <button onclick="rateReviewCard('forgot')" class="p-2.5 bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-500/40 rounded-xl font-bold flex flex-col items-center gap-1 transition-all">
+                                <span>😕 Lupa</span>
+                                <span class="text-[10px] text-red-400 font-normal">Ulangi Besok (1d)</span>
+                            </button>
+                            <button onclick="rateReviewCard('hard')" class="p-2.5 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-500/40 rounded-xl font-bold flex flex-col items-center gap-1 transition-all">
+                                <span>🤔 Ragu / Susah</span>
+                                <span class="text-[10px] text-amber-400 font-normal">Interval x1.2</span>
+                            </button>
+                            <button onclick="rateReviewCard('got_it')" class="p-2.5 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 rounded-xl font-bold flex flex-col items-center gap-1 transition-all">
+                                <span>✅ Hafal & Lancar</span>
+                                <span class="text-[10px] text-emerald-400 font-normal">Interval x2.5</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SM-2 Rating Action Buttons (Active on Back) -->
-            <div id="review-rating-actions" class="hidden grid grid-cols-3 gap-2 font-mono text-xs">
-                <button onclick="rateReviewCard('forgot')" class="p-3 bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-500/40 rounded-xl font-bold flex flex-col items-center gap-1 transition-all">
-                    <span>😕 Lupa</span>
-                    <span class="text-[10px] text-red-400 font-normal">Ulangi Besok (1d)</span>
-                </button>
-                <button onclick="rateReviewCard('hard')" class="p-3 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-500/40 rounded-xl font-bold flex flex-col items-center gap-1 transition-all">
-                    <span>🤔 Ragu / Susah</span>
-                    <span class="text-[10px] text-amber-400 font-normal">Interval x1.2</span>
-                </button>
-                <button onclick="rateReviewCard('got_it')" class="p-3 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 rounded-xl font-bold flex flex-col items-center gap-1 transition-all">
-                    <span>✅ Hafal & Lancar</span>
-                    <span class="text-[10px] text-emerald-400 font-normal">Interval x2.5</span>
-                </button>
-            </div>
-
             <!-- Completion View (Shown when session ends) -->
-            <div id="review-completion-box" class="hidden text-center space-y-4 py-4">
+            <div id="review-completion-box" class="hidden text-center space-y-4 py-6">
                 <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center text-3xl border border-emerald-500/30 animate-bounce">
                     <i class="fa-solid fa-circle-check"></i>
                 </div>
                 <div class="space-y-1">
                     <h3 class="text-xl font-black text-white">Sesi Review Selesai!</h3>
-                    <p class="text-xs text-slate-300">Semua kartu yang dijadwalkan hari ini telah berhasil Anda review.</p>
-                    <div class="text-xs font-mono text-amber-400 font-bold pt-2">+50 XP Bonus Spaced Repetition</div>
+                    <p class="text-xs text-slate-300">Semua kartu yang dijadwalkan hari ini telah berhasil Anda uji & review dengan konsisten.</p>
+                    <div class="text-xs font-mono text-amber-400 font-bold pt-2">+50 XP Bonus Sesi Spaced Repetition</div>
                 </div>
                 <button onclick="closeReviewModal()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-lg">
-                    Kembali ke Dashboard
+                    Kembali ke Vocab Bank
                 </button>
             </div>
         </div>
@@ -9771,22 +9801,73 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
             renderVocabBank();
         }
 
-        function setVocabFilter(filter) {
+        let vocabFilterState = {
+            status: 'all',    // 'all' | 'due' | 'writing_ready' | 'speaking_only' | 'mastered' | 'unlearned'
+            cefr: 'all',      // 'all' | 'C2' | 'C1' | 'B2' | 'B1' | 'A2' | 'A1'
+            register: 'all'   // 'all' | 'formal' | 'semi_formal' | 'casual' | 'written_academic'
+        };
+
+        function setVocabFilterStatus(status) {
             SoundFX.play('click');
-            currentVocabFilter = filter;
+            vocabFilterState.status = status;
             
-            // Update filter button styles
-            ['all', 'due', 'mastered', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1', 'reg_writing', 'reg_speaking', 'reg_formal', 'reg_casual'].forEach(f => {
-                const btn = document.getElementById(`filter-btn-${f}`);
+            // Update status pill styling
+            ['all', 'due', 'writing_ready', 'speaking_only', 'mastered', 'unlearned'].forEach(s => {
+                const btn = document.getElementById(`filter-btn-status-${s}`);
                 if (btn) {
-                    if (f === filter) {
-                        btn.classList.add('ring-2', 'ring-white', 'shadow-md');
+                    if (s === status) {
+                        btn.className = "px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm";
                     } else {
-                        btn.classList.remove('ring-2', 'ring-white', 'shadow-md');
+                        btn.className = "px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5";
                     }
                 }
             });
             renderVocabBank();
+        }
+
+        function setVocabFilterCefr(cefr) {
+            SoundFX.play('click');
+            vocabFilterState.cefr = cefr;
+            renderVocabBank();
+        }
+
+        function setVocabFilterRegister(reg) {
+            SoundFX.play('click');
+            vocabFilterState.register = reg;
+            renderVocabBank();
+        }
+
+        function resetVocabFilters() {
+            SoundFX.play('click');
+            vocabFilterState = { status: 'all', cefr: 'all', register: 'all' };
+            const selectCefr = document.getElementById('select-vocab-cefr');
+            if (selectCefr) selectCefr.value = 'all';
+            const selectReg = document.getElementById('select-vocab-register');
+            if (selectReg) selectReg.value = 'all';
+            const searchInput = document.getElementById('input-vocab-search');
+            if (searchInput) searchInput.value = '';
+            const selectSort = document.getElementById('select-vocab-sort');
+            if (selectSort) selectSort.value = 'recent';
+            
+            setVocabFilterStatus('all');
+            showToast("Filter kosakata telah di-reset.", "info");
+        }
+
+        // Backward compatibility
+        function setVocabFilter(filter) {
+            if (['all', 'due', 'mastered', 'unlearned'].includes(filter)) {
+                setVocabFilterStatus(filter);
+            } else if (filter === 'reg_writing') {
+                setVocabFilterStatus('writing_ready');
+            } else if (filter === 'reg_speaking') {
+                setVocabFilterStatus('speaking_only');
+            } else if (filter === 'reg_formal') {
+                setVocabFilterRegister('formal');
+            } else if (filter === 'reg_casual') {
+                setVocabFilterRegister('casual');
+            } else if (['C2', 'C1', 'B2', 'B1', 'A2', 'A1'].includes(filter)) {
+                setVocabFilterCefr(filter);
+            }
         }
 
         function renderVocabBank() {
@@ -9801,78 +9882,90 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
             const sortBy = sortSelect ? sortSelect.value : 'recent';
             const now = Date.now();
 
-            // Update Counts for Filter Buttons
+            // 1. Calculate Realtime Counts for All Status Pills
             const dueCount = getVocabsDueToday().length;
-            const masteredCount = vocabBank.filter(v => v.status === 'mastered').length;
-            
+            const masteredCount = vocabBank.filter(v => v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5)).length;
+            const writingReadyCount = vocabBank.filter(v => (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic')).length;
+            const speakingOnlyCount = vocabBank.filter(v => v.ieltsSuitability?.status === 'speaking_only').length;
+            const unlearnedCount = vocabBank.filter(v => (!v.feynmanLevel || v.feynmanLevel === 0) && v.status !== 'mastered').length;
+
             const filterCountAll = document.getElementById('filter-count-all');
             if (filterCountAll) filterCountAll.innerText = vocabBank.length;
             const filterCountDue = document.getElementById('filter-count-due');
             if (filterCountDue) filterCountDue.innerText = dueCount;
             const filterCountMastered = document.getElementById('filter-count-mastered');
             if (filterCountMastered) filterCountMastered.innerText = masteredCount;
+            const filterCountWriting = document.getElementById('filter-count-writing_ready');
+            if (filterCountWriting) filterCountWriting.innerText = writingReadyCount;
+            const filterCountSpeaking = document.getElementById('filter-count-speaking_only');
+            if (filterCountSpeaking) filterCountSpeaking.innerText = speakingOnlyCount;
+            const filterCountUnlearned = document.getElementById('filter-count-unlearned');
+            if (filterCountUnlearned) filterCountUnlearned.innerText = unlearnedCount;
 
-            const cefrCounts = { C2: 0, C1: 0, B2: 0, B1: 0, A2: 0, A1: 0 };
-            vocabBank.forEach(v => {
-                if (cefrCounts[v.cefr] !== undefined) cefrCounts[v.cefr]++;
-            });
-            ['C2', 'C1', 'B2', 'B1', 'A2', 'A1'].forEach(lvl => {
-                const el = document.getElementById(`filter-count-${lvl}`);
-                if (el) el.innerText = cefrCounts[lvl] || 0;
-            });
-
-            // Register & IELTS Filter Counts
-            const regWritingCount = vocabBank.filter(v => (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic')).length;
-            const regSpeakingCount = vocabBank.filter(v => v.ieltsSuitability?.status === 'speaking_only').length;
-            const regFormalCount = vocabBank.filter(v => v.registerLevel === 'formal' || v.registerLevel === 'written_academic' || !v.registerLevel).length;
-            const regCasualCount = vocabBank.filter(v => v.registerLevel === 'casual').length;
-
-            const fcRw = document.getElementById('filter-count-reg_writing');
-            if (fcRw) fcRw.innerText = regWritingCount;
-            const fcRs = document.getElementById('filter-count-reg_speaking');
-            if (fcRs) fcRs.innerText = regSpeakingCount;
-            const fcRf = document.getElementById('filter-count-reg_formal');
-            if (fcRf) fcRf.innerText = regFormalCount;
-            const fcRc = document.getElementById('filter-count-reg_casual');
-            if (fcRc) fcRc.innerText = regCasualCount;
-
-            // Filter List
+            // 2. Multi-Filter Logic (Combinatorial AND)
             let filtered = vocabBank.filter(v => {
-                // Filter Mode
-                if (currentVocabFilter === 'due') {
-                    if (v.status === 'mastered') return false;
-                    return (v.srNextReview || 0) <= now + 3600000;
-                } else if (currentVocabFilter === 'mastered') {
-                    return v.status === 'mastered';
-                } else if (['C2', 'C1', 'B2', 'B1', 'A2', 'A1'].includes(currentVocabFilter)) {
-                    return v.cefr === currentVocabFilter;
-                } else if (currentVocabFilter === 'reg_writing') {
-                    return (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic');
-                } else if (currentVocabFilter === 'reg_speaking') {
-                    return v.ieltsSuitability?.status === 'speaking_only';
-                } else if (currentVocabFilter === 'reg_formal') {
-                    return v.registerLevel === 'formal' || v.registerLevel === 'written_academic' || !v.registerLevel;
-                } else if (currentVocabFilter === 'reg_casual') {
-                    return v.registerLevel === 'casual';
+                const isMastered = v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5);
+                const isDue = !isMastered && (v.srNextReview || 0) <= now + 3600000;
+                const isWritingReady = (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic');
+                const isSpeakingOnly = v.ieltsSuitability?.status === 'speaking_only';
+                const isUnlearned = !isMastered && (!v.feynmanLevel || v.feynmanLevel === 0);
+
+                // A. Status Filter
+                if (vocabFilterState.status === 'due' && !isDue) return false;
+                if (vocabFilterState.status === 'mastered' && !isMastered) return false;
+                if (vocabFilterState.status === 'writing_ready' && !isWritingReady) return false;
+                if (vocabFilterState.status === 'speaking_only' && !isSpeakingOnly) return false;
+                if (vocabFilterState.status === 'unlearned' && !isUnlearned) return false;
+
+                // B. CEFR Filter
+                if (vocabFilterState.cefr !== 'all' && v.cefr !== vocabFilterState.cefr) return false;
+
+                // C. Register Filter
+                if (vocabFilterState.register === 'formal') {
+                    if (v.registerLevel !== 'formal' && v.registerLevel !== 'written_academic' && v.registerLevel) return false;
+                } else if (vocabFilterState.register === 'semi_formal') {
+                    if (v.registerLevel !== 'semi_formal') return false;
+                } else if (vocabFilterState.register === 'casual') {
+                    if (v.registerLevel !== 'casual') return false;
+                } else if (vocabFilterState.register === 'written_academic') {
+                    if (v.registerLevel !== 'written_academic') return false;
                 }
+
+                // D. Search Query
+                if (searchQuery) {
+                    const match = v.word.toLowerCase().includes(searchQuery) ||
+                        (v.meaningId && v.meaningId.toLowerCase().includes(searchQuery)) ||
+                        (v.meaningEn && v.meaningEn.toLowerCase().includes(searchQuery)) ||
+                        (v.registerLabel && v.registerLabel.toLowerCase().includes(searchQuery)) ||
+                        (v.highYieldContext && v.highYieldContext.toLowerCase().includes(searchQuery)) ||
+                        (v.synonyms && v.synonyms.some(s => s.toLowerCase().includes(searchQuery)));
+                    if (!match) return false;
+                }
+
                 return true;
             });
 
-            // Search Query
-            if (searchQuery) {
-                filtered = filtered.filter(v => 
-                    v.word.toLowerCase().includes(searchQuery) ||
-                    (v.meaningId && v.meaningId.toLowerCase().includes(searchQuery)) ||
-                    (v.meaningEn && v.meaningEn.toLowerCase().includes(searchQuery)) ||
-                    (v.registerLabel && v.registerLabel.toLowerCase().includes(searchQuery)) ||
-                    (v.highYieldContext && v.highYieldContext.toLowerCase().includes(searchQuery))
-                );
-            }
-
-            // Sorting
+            // 3. Sorting (Including Comprehension Level & Review Due First)
             filtered.sort((a, b) => {
                 if (sortBy === 'recent') return (b.dateAdded || 0) - (a.dateAdded || 0);
-                if (sortBy === 'due') return (a.srNextReview || 0) - (b.srNextReview || 0);
+                if (sortBy === 'due_first') {
+                    const isDueA = (a.status !== 'mastered' && (a.srNextReview || 0) <= now + 3600000) ? 1 : 0;
+                    const isDueB = (b.status !== 'mastered' && (b.srNextReview || 0) <= now + 3600000) ? 1 : 0;
+                    if (isDueA !== isDueB) return isDueB - isDueA;
+                    return (a.srNextReview || 0) - (b.srNextReview || 0);
+                }
+                if (sortBy === 'feynman_asc') {
+                    // Level Pemahaman: Terendah ke Tertinggi (0 -> 1 -> 2 -> 3 -> 4 -> 5)
+                    const lvlA = (a.status === 'mastered' || (a.feynmanLevel && a.feynmanLevel >= 5)) ? 5 : (a.feynmanLevel || 0);
+                    const lvlB = (b.status === 'mastered' || (b.feynmanLevel && b.feynmanLevel >= 5)) ? 5 : (b.feynmanLevel || 0);
+                    return lvlA - lvlB;
+                }
+                if (sortBy === 'feynman_desc') {
+                    // Level Pemahaman: Tertinggi ke Terendah (5 -> 4 -> 3 -> 2 -> 1 -> 0)
+                    const lvlA = (a.status === 'mastered' || (a.feynmanLevel && a.feynmanLevel >= 5)) ? 5 : (a.feynmanLevel || 0);
+                    const lvlB = (b.status === 'mastered' || (b.feynmanLevel && b.feynmanLevel >= 5)) ? 5 : (b.feynmanLevel || 0);
+                    return lvlB - lvlA;
+                }
                 if (sortBy === 'cefr_desc') {
                     const order = { C2: 6, C1: 5, B2: 4, B1: 3, A2: 2, A1: 1 };
                     return (order[b.cefr] || 0) - (order[a.cefr] || 0);
@@ -9893,6 +9986,7 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
 
             if (emptyContainer) emptyContainer.classList.add('hidden');
 
+            // 4. Render 2-Column Responsive High-Density Card Grid
             listContainer.innerHTML = filtered.map(v => {
                 const isDue = v.status !== 'mastered' && (v.srNextReview || 0) <= now + 3600000;
                 const isMastered = v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5);
@@ -9918,7 +10012,7 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                     itemStatusClass = 'vocab-item-due';
                 } else {
                     const daysLeft = Math.max(1, Math.ceil(((v.srNextReview || now) - now) / (1000 * 60 * 60 * 24)));
-                    scheduleTag = `<span class="badge-feynman-learning text-[10px] bg-emerald-950/60 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 font-mono font-bold"><i class="fa-solid fa-calendar mr-1"></i> Review: ${daysLeft} hr lagi</span>`;
+                    scheduleTag = `<span class="badge-feynman-learning text-[10px] bg-emerald-950/60 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 font-mono font-bold"><i class="fa-solid fa-calendar mr-1"></i> Lvl ${v.feynmanLevel || 1} • ${daysLeft} hr lagi</span>`;
                     borderClass = 'border-emerald-500/20';
                 }
 
@@ -9936,32 +10030,44 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                     : '';
 
                 return `
-                    <div class="${bgClass} border ${borderClass} rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 vocab-item ${itemStatusClass} shadow-md transition-all hover:border-slate-700">
-                        <div class="space-y-1.5 flex-1 cursor-pointer" onclick="openVocabCard('${v.id}')">
-                            <div class="flex items-center space-x-2 flex-wrap gap-y-1">
-                                <span class="vocab-word-title text-base font-black text-white hover:text-emerald-300 transition-colors">${v.word}</span>
-                                <span class="text-[11px] font-mono text-slate-400 italic">${v.pos || ''}</span>
-                                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${(v.cefr || 'b2').toLowerCase()}">${v.cefr}</span>
-                                <span class="text-xs font-mono text-emerald-400">${v.ipa || ''}</span>
-                                ${regMini}
-                                ${highYieldBadge}
+                    <div class="${bgClass} border ${borderClass} rounded-2xl p-4 flex flex-col justify-between gap-3 vocab-item ${itemStatusClass} shadow-md transition-all hover:border-slate-700 hover:shadow-xl">
+                        <div class="space-y-1.5 cursor-pointer" onclick="openVocabCard('${v.id}')">
+                            <div class="flex items-center justify-between flex-wrap gap-1">
+                                <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                                    <span class="vocab-word-title text-base font-black text-white hover:text-emerald-300 transition-colors">${v.word}</span>
+                                    <span class="text-[11px] font-mono text-slate-400 italic">${v.pos || ''}</span>
+                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${(v.cefr || 'b2').toLowerCase()}">${v.cefr}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    ${regMini}
+                                    ${highYieldBadge}
+                                </div>
                             </div>
-                            <p class="text-xs text-slate-300 line-clamp-1 font-medium">${v.meaningId || v.meaningEn || ''}</p>
-                            <div class="text-[10px] font-mono text-amber-300/90 flex items-center gap-1">
-                                <i class="fa-solid fa-bullhorn text-[9px] text-amber-400"></i> ${v.indonesianGuide || ''}
+                            
+                            <div class="text-xs font-mono text-emerald-400 flex items-center gap-2">
+                                <span>${v.ipa || ''}</span>
+                            </div>
+
+                            <p class="text-xs text-slate-300 line-clamp-2 font-medium leading-relaxed">${v.meaningId || v.meaningEn || ''}</p>
+                            
+                            <div class="text-[10px] font-mono text-amber-300/90 flex items-center gap-1 pt-1 border-t border-slate-800/60">
+                                <i class="fa-solid fa-bullhorn text-[9px] text-amber-400 shrink-0"></i>
+                                <span class="truncate">${v.indonesianGuide || ''}</span>
                             </div>
                         </div>
 
-                        <!-- Right Actions -->
-                        <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-800">
+                        <!-- Card Bottom Bar -->
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
                             ${scheduleTag}
-                            <button onclick="speakWord('${v.word}', 'en-GB')" class="p-2 bg-slate-950 hover:bg-slate-800 text-rose-300 rounded-xl text-xs border border-slate-800" title="Dengarkan Audio UK">
-                                <i class="fa-solid fa-volume-high"></i>
-                            </button>
-                            <button onclick="openVocabCard('${v.id}')" class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-mono font-bold text-xs rounded-xl transition-all border border-emerald-500/30 flex items-center gap-1">
-                                <span>Buka Kartu</span>
-                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
+                            <div class="flex items-center space-x-1.5">
+                                <button onclick="speakWord('${v.word}', 'en-GB')" class="p-1.5 bg-slate-950 hover:bg-slate-800 text-rose-300 rounded-lg text-xs border border-slate-800 transition-all shadow-sm" title="Dengarkan Audio UK">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                </button>
+                                <button onclick="openVocabCard('${v.id}')" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-mono font-bold text-[11px] rounded-lg transition-all border border-emerald-500/30 flex items-center gap-1">
+                                    <span>Buka Kartu</span>
+                                    <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -11853,17 +11959,39 @@ Return ONLY a valid JSON object:
         }
 
         // =========================================================================
-        // IeltsGo v6.0 — SPACED REPETITION FLASHCARD REVIEW ENGINE (SM-2)
+        // IeltsGo v9.0 — ENHANCED SPACED REPETITION & AI EXAMINER REVIEW ENGINE
         // =========================================================================
         let reviewQueue = [];
         let reviewCurrentIndex = 0;
+        let currentReviewMode = 'ai'; // 'ai' | 'flashcard'
 
         function getVocabsDueToday() {
             const now = Date.now();
             return vocabBank.filter(v => {
-                if (v.status === 'mastered') return false;
+                if (v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5)) return false;
                 return (v.srNextReview || 0) <= now + 3600000;
             });
+        }
+
+        function setReviewMode(mode) {
+            SoundFX.play('click');
+            currentReviewMode = mode;
+            const btnAi = document.getElementById('btn-review-mode-ai');
+            const btnFc = document.getElementById('btn-review-mode-flashcard');
+            const aiBox = document.getElementById('review-mode-ai-box');
+            const fcBox = document.getElementById('review-mode-flashcard-box');
+
+            if (mode === 'ai') {
+                if (btnAi) btnAi.className = "px-2.5 py-1 rounded-md bg-indigo-600 text-white font-bold transition-all flex items-center gap-1";
+                if (btnFc) btnFc.className = "px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition-all flex items-center gap-1";
+                if (aiBox) aiBox.classList.remove('hidden');
+                if (fcBox) fcBox.classList.add('hidden');
+            } else {
+                if (btnAi) btnAi.className = "px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition-all flex items-center gap-1";
+                if (btnFc) btnFc.className = "px-2.5 py-1 rounded-md bg-indigo-600 text-white font-bold transition-all flex items-center gap-1";
+                if (aiBox) aiBox.classList.add('hidden');
+                if (fcBox) fcBox.classList.remove('hidden');
+            }
         }
 
         function startReviewSession() {
@@ -11877,6 +12005,7 @@ Return ONLY a valid JSON object:
 
             reviewCurrentIndex = 0;
             document.getElementById('modal-vocab-review').classList.remove('hidden');
+            setReviewMode(currentReviewMode || 'ai');
             renderReviewCard();
         }
 
@@ -11887,11 +12016,13 @@ Return ONLY a valid JSON object:
         }
 
         function renderReviewCard() {
+            const activeCardContainer = document.getElementById('review-active-card-container');
+            const completionBox = document.getElementById('review-completion-box');
+
             if (reviewCurrentIndex >= reviewQueue.length) {
                 // Session Completed
-                document.getElementById('review-flashcard-box').classList.add('hidden');
-                document.getElementById('review-rating-actions').classList.add('hidden');
-                document.getElementById('review-completion-box').classList.remove('hidden');
+                if (activeCardContainer) activeCardContainer.classList.add('hidden');
+                if (completionBox) completionBox.classList.remove('hidden');
                 
                 addXP(50);
                 SoundFX.play('levelup');
@@ -11899,42 +12030,72 @@ Return ONLY a valid JSON object:
                 return;
             }
 
-            document.getElementById('review-flashcard-box').classList.remove('hidden');
-            document.getElementById('review-completion-box').classList.add('hidden');
-            document.getElementById('review-card-front').classList.remove('hidden');
-            document.getElementById('review-card-back').classList.add('hidden');
-            document.getElementById('review-rating-actions').classList.add('hidden');
+            if (activeCardContainer) activeCardContainer.classList.remove('hidden');
+            if (completionBox) completionBox.classList.add('hidden');
 
             const vocab = reviewQueue[reviewCurrentIndex];
 
             // Update Header & Progress Bar
-            document.getElementById('review-cur-idx').innerText = reviewCurrentIndex + 1;
-            document.getElementById('review-total-idx').innerText = reviewQueue.length;
+            const curIdxEl = document.getElementById('review-cur-idx');
+            const totalIdxEl = document.getElementById('review-total-idx');
+            const progressBar = document.getElementById('review-progress-bar');
+            
+            if (curIdxEl) curIdxEl.innerText = reviewCurrentIndex + 1;
+            if (totalIdxEl) totalIdxEl.innerText = reviewQueue.length;
             const pct = Math.round((reviewCurrentIndex / reviewQueue.length) * 100);
-            document.getElementById('review-progress-bar').style.width = `${pct}%`;
+            if (progressBar) progressBar.style.width = `${pct}%`;
 
-            // Front Content
-            document.getElementById('review-card-word').innerText = vocab.word;
-            document.getElementById('review-card-ipa').innerText = vocab.ipa || '';
-            const cefrBadge = document.getElementById('review-card-cefr');
-            if (cefrBadge) {
-                cefrBadge.innerText = vocab.cefr;
-                cefrBadge.className = `text-xs font-mono font-bold px-2.5 py-0.5 rounded border cefr-${(vocab.cefr || 'b2').toLowerCase()}`;
+            // Populate Target Word Header
+            const wordEl = document.getElementById('review-card-word');
+            const posEl = document.getElementById('review-card-pos');
+            const cefrEl = document.getElementById('review-card-cefr');
+            const regEl = document.getElementById('review-card-register');
+            const ipaEl = document.getElementById('review-card-ipa');
+
+            if (wordEl) wordEl.innerText = vocab.word;
+            if (posEl) posEl.innerText = vocab.pos || 'kata';
+            if (cefrEl) {
+                cefrEl.innerText = vocab.cefr || 'B2';
+                cefrEl.className = `text-xs font-mono font-bold px-2 py-0.5 rounded border cefr-${(vocab.cefr || 'b2').toLowerCase()}`;
+            }
+            if (regEl) {
+                const isWritingReady = (vocab.ieltsSuitability?.status === 'both' || vocab.ieltsSuitability?.status === 'writing_only' || vocab.registerLevel === 'formal' || vocab.registerLevel === 'written_academic');
+                regEl.innerText = isWritingReady ? '📝 Writing Ready' : (vocab.registerLabel || '🟢 Formal');
+                regEl.className = isWritingReady ? 'text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/30 font-bold' : 'text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-500/30 font-bold';
+            }
+            if (ipaEl) ipaEl.innerText = vocab.ipa || '';
+
+            // Reset AI Inputs & Feedback Box
+            const inputExpl = document.getElementById('input-review-feynman-expl');
+            const inputSentence = document.getElementById('input-review-feynman-sentence');
+            const feedbackBox = document.getElementById('review-ai-feedback-box');
+            if (inputExpl) inputExpl.value = vocab.feynmanLastExplanation || '';
+            if (inputSentence) inputSentence.value = vocab.feynmanLastSentence || '';
+            if (feedbackBox) {
+                feedbackBox.classList.add('hidden');
+                feedbackBox.innerHTML = '';
             }
 
-            // Back Content
-            document.getElementById('review-back-word').innerText = vocab.word;
-            document.getElementById('review-back-pos').innerText = vocab.pos || '';
-            document.getElementById('review-back-meaning-id').innerText = vocab.meaningId || vocab.meaningEn || '';
-            document.getElementById('review-back-guide').innerText = vocab.indonesianGuide || `${vocab.word.toUpperCase()}`;
-            document.getElementById('review-back-example').innerText = vocab.example || '';
+            // Reset Flashcard Views
+            const fcFront = document.getElementById('review-flashcard-front');
+            const fcBack = document.getElementById('review-flashcard-back');
+            if (fcFront) fcFront.classList.remove('hidden');
+            if (fcBack) fcBack.classList.add('hidden');
+
+            const backMeaning = document.getElementById('review-back-meaning-id');
+            const backGuide = document.getElementById('review-back-guide');
+            const backExample = document.getElementById('review-back-example');
+            if (backMeaning) backMeaning.innerText = vocab.meaningId || vocab.meaningEn || '';
+            if (backGuide) backGuide.innerText = vocab.indonesianGuide || vocab.word.toUpperCase();
+            if (backExample) backExample.innerText = vocab.example || '';
         }
 
         function flipReviewCard() {
             SoundFX.play('click');
-            document.getElementById('review-card-front').classList.add('hidden');
-            document.getElementById('review-card-back').classList.remove('hidden');
-            document.getElementById('review-rating-actions').classList.remove('hidden');
+            const fcFront = document.getElementById('review-flashcard-front');
+            const fcBack = document.getElementById('review-flashcard-back');
+            if (fcFront) fcFront.classList.add('hidden');
+            if (fcBack) fcBack.classList.remove('hidden');
         }
 
         function speakCurrentReviewWord() {
@@ -11951,12 +12112,21 @@ Return ONLY a valid JSON object:
 
             // SM-2 Schedule Update
             if (rating === 'forgot') {
+                vocab.consecutiveMasteryCount = 0;
+                vocab.feynmanLevel = 0;
+                vocab.feynmanStatus = 'unlearned';
                 vocab.srInterval = 1;
                 vocab.srNextReview = Date.now() + (1 * 86400000);
             } else if (rating === 'hard') {
+                vocab.consecutiveMasteryCount = 0;
+                vocab.feynmanLevel = Math.max(1, vocab.feynmanLevel || 1);
+                vocab.feynmanStatus = 'learning';
                 vocab.srInterval = Math.max(1, (vocab.srInterval || 1) * 1.2);
                 vocab.srNextReview = Date.now() + Math.round(vocab.srInterval * 86400000);
             } else if (rating === 'got_it') {
+                vocab.consecutiveMasteryCount = (vocab.consecutiveMasteryCount || 0) + 1;
+                vocab.feynmanLevel = Math.min(4, (vocab.feynmanLevel || 0) + 1);
+                vocab.feynmanStatus = 'mastered';
                 vocab.srInterval = Math.max(1.5, (vocab.srInterval || 1) * 2.5);
                 vocab.srNextReview = Date.now() + Math.round(vocab.srInterval * 86400000);
                 vocab.srReviewCount = (vocab.srReviewCount || 0) + 1;
@@ -11969,6 +12139,189 @@ Return ONLY a valid JSON object:
                 saveVocabBank();
             }
 
+            reviewCurrentIndex++;
+            renderReviewCard();
+        }
+
+        async function submitReviewAiEvaluation() {
+            const vocab = reviewQueue[reviewCurrentIndex];
+            if (!vocab) return;
+
+            const inputExpl = document.getElementById('input-review-feynman-expl');
+            const inputSentence = document.getElementById('input-review-feynman-sentence');
+            const explanation = inputExpl ? inputExpl.value.trim() : '';
+            const sentence = inputSentence ? inputSentence.value.trim() : '';
+
+            if (!explanation && !sentence) {
+                showToast("Silakan tuliskan penjelasan konsep ATAU contoh kalimat Anda!", "error");
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-review-ai');
+            const btnText = document.getElementById('btn-submit-review-ai-text');
+            const feedbackBox = document.getElementById('review-ai-feedback-box');
+
+            if (btn) {
+                btn.disabled = true;
+                if (btnText) btnText.innerText = "Examiner Menilai...";
+            }
+            if (feedbackBox) {
+                feedbackBox.classList.remove('hidden');
+                feedbackBox.innerHTML = `
+                    <div class="py-4 text-center text-indigo-400 font-mono text-xs space-y-2">
+                        <i class="fa-solid fa-spinner animate-spin text-2xl"></i>
+                        <div>AI Examiner sedang mengevaluasi ketepatan makna & struktur kalimat...</div>
+                    </div>
+                `;
+            }
+
+            const systemPrompt = `You are a strict, pedagogical Cambridge IELTS Senior Examiner evaluating a student's review drill for the word "${vocab.word}" (${vocab.pos}, CEFR ${vocab.cefr}).
+Target Definition: ${vocab.meaningEn} (${vocab.meaningId})
+Target Register: ${vocab.registerLabel || vocab.registerLevel || 'formal'}
+
+Student Explanation: "${explanation || '(None)'}"
+Student Sentence: "${sentence || '(None)'}"
+
+Provide a concise evaluation in Indonesian with high-scoring IELTS tips.
+1. Meaning Critique: If provided, is it semantically accurate?
+2. Sentence Critique: Is grammar, collocation, and IELTS context accurate?
+3. Grammar Errors: Array of specific correction notes (empty if flawless).
+4. Syntax Formulas: 1-2 Band 8.0+ syntax formula patterns using "${vocab.word}".
+5. Upgraded Sentence: 1 perfect Band 8.5+ IELTS sentence.
+6. Score: 0-100.
+
+Return JSON ONLY:
+{
+  "score": 85,
+  "level": "mastery | partial | unlearned",
+  "statusLabel": "Paham Sempurna | Cukup Paham | Perlu Perbaikan",
+  "meaningCritique": "...",
+  "sentenceCritique": "...",
+  "grammarErrors": ["..."],
+  "syntaxFormulas": ["..."],
+  "upgradedSentence": "..."
+}`;
+
+            try {
+                const response = await callGeminiAPI(`Evaluate review drill for "${vocab.word}"`, systemPrompt);
+                const parsed = extractJsonFromLLM(response);
+                if (!parsed) throw new Error("Respon AI tidak dapat diuraikan.");
+
+                vocab.feynmanFeedback = parsed;
+                vocab.feynmanLastExplanation = explanation;
+                vocab.feynmanLastSentence = sentence;
+
+                const now = Date.now();
+                if (parsed.level === 'mastery' || parsed.score >= 80) {
+                    vocab.consecutiveMasteryCount = (vocab.consecutiveMasteryCount || 0) + 1;
+                    vocab.feynmanLevel = Math.min(4, (vocab.feynmanLevel || 0) + 1);
+                    vocab.feynmanStatus = 'mastered';
+
+                    let srsDays = 4;
+                    if (vocab.consecutiveMasteryCount === 2) srsDays = 10;
+                    else if (vocab.consecutiveMasteryCount === 3) srsDays = 25;
+                    else if (vocab.consecutiveMasteryCount >= 4) {
+                        vocab.status = 'mastered';
+                        vocab.feynmanLevel = 5;
+                        srsDays = 999;
+                    }
+
+                    vocab.srInterval = srsDays;
+                    vocab.srNextReview = now + (srsDays * 86400000);
+                    vocab.srReviewCount = (vocab.srReviewCount || 0) + 1;
+
+                    addXP(25);
+                    SoundFX.play('levelup');
+                    triggerConfetti();
+                    showToast(`🎉 Uji Selesai! Skor: ${parsed.score}%. Review berikutnya: ${srsDays >= 999 ? 'Bebas Review' : srsDays + ' hari lagi'}.`, "success");
+                } else if (parsed.level === 'partial' || parsed.score >= 50) {
+                    vocab.consecutiveMasteryCount = 0;
+                    vocab.feynmanLevel = Math.max(1, vocab.feynmanLevel || 1);
+                    vocab.feynmanStatus = 'learning';
+                    vocab.srInterval = 1;
+                    vocab.srNextReview = now + (1 * 86400000);
+
+                    addXP(10);
+                    SoundFX.play('correct');
+                    showToast(`Cukup Paham (${parsed.score}%). Simak evaluasi & formula perbaikan!`, "info");
+                } else {
+                    vocab.consecutiveMasteryCount = 0;
+                    vocab.feynmanLevel = 0;
+                    vocab.feynmanStatus = 'unlearned';
+                    vocab.srInterval = 1;
+                    vocab.srNextReview = now + (1 * 86400000);
+
+                    SoundFX.play('error');
+                    showToast(`Perlu Perbaikan (${parsed.score}%). Simak panduan AI!`, "error");
+                }
+
+                saveVocabBank();
+
+                // Render Feedback Box in Modal
+                if (feedbackBox) {
+                    feedbackBox.innerHTML = `
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <span class="text-[11px] font-mono font-bold ${parsed.score >= 80 ? 'text-emerald-400' : (parsed.score >= 50 ? 'text-amber-400' : 'text-rose-400')}">
+                                    ${parsed.statusLabel || 'Evaluasi AI Examiner'} (Skor: ${parsed.score}%)
+                                </span>
+                                <span class="text-[10px] font-mono text-slate-400">Bonus: +${parsed.score >= 80 ? 25 : 10} XP</span>
+                            </div>
+
+                            ${parsed.grammarErrors && parsed.grammarErrors.length > 0 ? `
+                                <div class="p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/40 space-y-1">
+                                    <div class="text-[10px] font-mono font-bold text-rose-400 uppercase">Koreksi Gramatika:</div>
+                                    ${parsed.grammarErrors.map(e => `<div class="text-xs text-rose-200">• ${e}</div>`).join('')}
+                                </div>
+                            ` : ''}
+
+                            ${parsed.syntaxFormulas && parsed.syntaxFormulas.length > 0 ? `
+                                <div class="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/40 space-y-1">
+                                    <div class="text-[10px] font-mono font-bold text-indigo-400 uppercase">Formula Sintaks Band 8.0+:</div>
+                                    ${parsed.syntaxFormulas.map(f => `<div class="text-xs text-indigo-200 font-mono">• ${f}</div>`).join('')}
+                                </div>
+                            ` : ''}
+
+                            ${parsed.upgradedSentence ? `
+                                <div class="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 space-y-1">
+                                    <div class="text-[10px] font-mono font-bold text-emerald-400 uppercase flex items-center justify-between">
+                                        <span>Model Kalimat Upgrade (Band 8.5+):</span>
+                                        <button onclick="speakWord('${parsed.upgradedSentence.replace(/'/g, "\\'")}', 'en-GB')" class="text-[10px] text-emerald-300 hover:text-white">
+                                            <i class="fa-solid fa-volume-high"></i> Dengar
+                                        </button>
+                                    </div>
+                                    <div class="text-xs text-emerald-100 italic">"${parsed.upgradedSentence}"</div>
+                                </div>
+                            ` : ''}
+
+                            <div class="pt-2 flex justify-end">
+                                <button onclick="nextReviewCard()" class="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-95 text-white font-mono font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5 active:scale-95">
+                                    <span>Lanjut ke Kata Berikutnya</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+            } catch (err) {
+                showToast("Gagal menilai review: " + err.message, "error");
+                if (feedbackBox) feedbackBox.classList.add('hidden');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    if (btnText) btnText.innerText = "Uji & Nilai AI Examiner (+25 XP)";
+                }
+            }
+        }
+
+        function nextReviewCard() {
+            reviewCurrentIndex++;
+            renderReviewCard();
+        }
+
+        function skipReviewWord() {
+            SoundFX.play('click');
             reviewCurrentIndex++;
             renderReviewCard();
         }
