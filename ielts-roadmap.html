@@ -11070,7 +11070,7 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                 // Extract Indonesian Transliteration
                 const indoMatch = cmSection.match(/\*\*Versi Lidah Indonesia\*\*[\s\S]*?:\s*\n*([\s\S]*?)(?=\n\n|\n###|$)/i);
                 if (indoMatch && indoMatch[1]) {
-                    indonesianGuideText = indoMatch[1].trim().replace(/\*\*/g, '');
+                    indonesianGuideText = indoMatch[1].trim();
                 }
 
                 // Extract Anchor Words list
@@ -11078,19 +11078,28 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                 if (anchorMatch && anchorMatch[1]) {
                     const rawAnchorLines = anchorMatch[1].trim().split('\n').map(l => l.trim()).filter(Boolean);
                     const parsedAnchorPills = rawAnchorLines.map(line => {
-                        const cleanLine = line.replace(/^[\-\*\o\•\d\.]+\s*/, '');
-                        if (!cleanLine) return '';
-                        // Highlight familiar English words in chip buttons
-                        const chipFormatted = cleanLine.replace(/['"]([a-zA-Z]+)['"]/g, (m, wordToken) => {
-                            return `<button onclick="speakWord('${wordToken}', '${accentLang}')" class="px-2 py-0.5 rounded bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/40 text-[11px] font-mono font-bold inline-flex items-center gap-1 transition-transform active:scale-95 shadow-sm" title="Dengarkan kata: ${wordToken}"><i class="fa-solid fa-volume-high text-[9px] text-indigo-300"></i> ${wordToken}</button>`;
-                        }).replace(/\*\*([a-zA-Z]+)\*\*/g, (m, wordToken) => {
-                            return `<button onclick="speakWord('${wordToken}', '${accentLang}')" class="px-2 py-0.5 rounded bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/40 text-[11px] font-mono font-bold inline-flex items-center gap-1 transition-transform active:scale-95 shadow-sm" title="Dengarkan kata: ${wordToken}"><i class="fa-solid fa-volume-high text-[9px] text-indigo-300"></i> ${wordToken}</button>`;
+                        let cleanLine = line.replace(/^[\-\*\o\•\d\.]+\s*/, '').trim();
+                        if (!cleanLine || cleanLine.includes('HANYA pakai') || cleanLine.includes('Ini prioritaskan')) return '';
+
+                        // Step 1: Replace anchor words in **word** with temporary chip tokens
+                        cleanLine = cleanLine.replace(/\*\*([a-zA-Z]{2,})\*\*/g, (m, word) => `###CHIP_${word}###`);
+                        
+                        // Step 2: Also identify english words after 'kata' in quotes e.g. kata 'it' or kata "fast"
+                        cleanLine = cleanLine.replace(/(kata\s+['"])([a-zA-Z]{2,})(['"])/gi, (m, p1, word, p3) => `kata ###CHIP_${word}###`);
+
+                        // Step 3: Render remaining markdown bold & italics cleanly
+                        cleanLine = cleanLine.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-100 font-bold">$1</strong>');
+                        cleanLine = cleanLine.replace(/\*(.*?)\*/g, '<em class="text-slate-300">$1</em>');
+
+                        // Step 4: Replace tokens with styled inline button chips
+                        cleanLine = cleanLine.replace(/###CHIP_([a-zA-Z]{2,})###/g, (m, word) => {
+                            return `<button onclick="speakWord('${word}', '${accentLang}')" class="px-2 py-0.5 mx-0.5 rounded-md bg-indigo-900 hover:bg-indigo-700 text-indigo-100 border border-indigo-400/50 text-[11px] font-mono font-bold inline-flex items-center gap-1 align-middle transition-transform active:scale-95 shadow-sm" title="Dengarkan kata '${word}'"><i class="fa-solid fa-volume-high text-[9px] text-indigo-300"></i><span>${word}</span></button>`;
                         });
 
                         return `
-                            <div class="flex items-start gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 text-xs text-slate-300 leading-relaxed font-sans">
+                            <div class="flex items-start gap-2 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 text-xs text-slate-200 leading-relaxed font-sans">
                                 <i class="fa-solid fa-circle-check text-cyan-400 mt-1 text-[10px]"></i>
-                                <div class="flex-1">${chipFormatted}</div>
+                                <div class="flex-1">${cleanLine}</div>
                             </div>
                         `;
                     }).filter(Boolean).join('');
@@ -11108,6 +11117,17 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                         `;
                     }
                 }
+            }
+
+            // Parse Indonesian Guide main word vs notes
+            let mainIndoSpelling = indonesianGuideText;
+            let mainIndoNote = '';
+            const noteMatch = indonesianGuideText.match(/[\*\s]*\((?:Catatan:\s*)?(.*?)\)[\*\s]*/i);
+            if (noteMatch) {
+                mainIndoNote = noteMatch[1].replace(/[\*\[\]]/g, '').trim();
+                mainIndoSpelling = indonesianGuideText.replace(noteMatch[0], '').replace(/[\*\[\]]/g, '').trim();
+            } else {
+                mainIndoSpelling = indonesianGuideText.replace(/[\*\[\]]/g, '').trim();
             }
 
             // 5. Interactive 3x Drill Tracker & Action Bar
@@ -11160,13 +11180,19 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                         </div>
 
                         <!-- Hero Indonesian Tongue Transliteration Box -->
-                        <div class="p-3 rounded-xl bg-amber-950/30 border border-amber-500/40 space-y-1">
-                            <div class="text-[10px] font-mono text-amber-400 uppercase font-bold flex items-center gap-1">
+                        <div class="p-3.5 rounded-xl bg-amber-950/60 border border-amber-500/50 space-y-1.5 shadow-sm">
+                            <div class="text-[10px] font-mono text-amber-400 uppercase font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-bullhorn text-[9px]"></i> Ejaan Lidah Indonesia (Huruf KAPITAL = Ditekan Kuat / Stress):
                             </div>
-                            <div class="text-xs text-amber-200 font-mono font-black leading-relaxed pl-1">
-                                ${indonesianGuideText || targetWordClean.toUpperCase()}
+                            <div class="text-sm text-amber-200 font-mono font-black tracking-wide pl-0.5">
+                                ${mainIndoSpelling || targetWordClean.toUpperCase()}
                             </div>
+                            ${mainIndoNote ? `
+                                <div class="text-[11px] text-amber-300/90 font-sans flex items-start gap-1.5 pt-1.5 border-t border-amber-500/20 leading-relaxed">
+                                    <i class="fa-solid fa-lightbulb text-amber-400 mt-0.5 text-[10px]"></i>
+                                    <span>${mainIndoNote}</span>
+                                </div>
+                            ` : ''}
                         </div>
 
                         <!-- Clickable Anchor Words -->
