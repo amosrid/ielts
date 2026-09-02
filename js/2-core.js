@@ -698,4 +698,321 @@
 
         // =========================================================================
         // DUAL MANDATORY STAGE QUEST SYSTEM (Step 1: MCQ → Step 2: Essay Writing)
-        // =========================================================================
+        // =========================================================================
+
+// IeltsGo v6.3 — SIDEBAR BURGER MENU + LIGHT/DARK MODE
+        // =========================================================================
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('main-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const burger = document.getElementById('btn-burger');
+            if (!sidebar) return;
+
+            const isHidden = sidebar.classList.contains('hidden');
+            if (isHidden) {
+                // Open
+                sidebar.classList.remove('hidden');
+                if (overlay) overlay.classList.remove('hidden');
+                if (burger) burger.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            } else {
+                // Close
+                sidebar.classList.add('hidden');
+                if (overlay) overlay.classList.add('hidden');
+                if (burger) burger.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            }
+        }
+
+        // Close sidebar when user taps a nav item on mobile
+        function closeSidebarOnMobile() {
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('main-sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                const burger = document.getElementById('btn-burger');
+                if (sidebar) sidebar.classList.add('hidden');
+                if (overlay) overlay.classList.add('hidden');
+                if (burger) burger.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            }
+        }
+
+        function toggleColorMode() {
+            const html = document.documentElement;
+            const isLight = html.classList.contains('light-mode');
+            if (isLight) {
+                // Switch to dark
+                html.classList.remove('light-mode');
+                html.classList.add('dark');
+                localStorage.setItem('ielts_color_mode', 'dark');
+                _updateColorModeIcons('dark');
+                showToast("Beralih ke Mode Malam (Deep Slate)", "info");
+            } else {
+                // Switch to light
+                html.classList.add('light-mode');
+                html.classList.remove('dark');
+                localStorage.setItem('ielts_color_mode', 'light');
+                _updateColorModeIcons('light');
+                showToast("Beralih ke Mode Siang (Clean Academy)", "info");
+            }
+            if (typeof updateSettingsModalUI === 'function') updateSettingsModalUI();
+        }
+
+        function _updateColorModeIcons(mode) {
+            const icon = mode === 'light' ? 'fa-moon' : 'fa-sun';
+            const title = mode === 'light' ? 'Beralih ke Mode Gelap' : 'Beralih ke Mode Terang';
+            ['btn-color-mode-desktop', 'btn-color-mode-mobile'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+                    btn.title = title;
+                }
+            });
+        }
+
+        function initColorMode() {
+            const saved = localStorage.getItem('ielts_color_mode');
+            if (saved === 'dark') {
+                document.documentElement.classList.remove('light-mode');
+                document.documentElement.classList.add('dark');
+                _updateColorModeIcons('dark');
+            } else {
+                document.documentElement.classList.add('light-mode');
+                document.documentElement.classList.remove('dark');
+                _updateColorModeIcons('light');
+            }
+        }
+
+        // =========================================================================
+        // IeltsGo v6.0 — STREAK & STUDY HABIT TRACKER ENGINE
+        // =========================================================================
+        function calculateStreak() {
+            try {
+                const streakDataRaw = localStorage.getItem('ielts_study_streak_v1');
+                const now = new Date();
+                const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                
+                let streakData = { count: 1, lastDate: todayStr };
+                if (streakDataRaw) {
+                    streakData = JSON.parse(streakDataRaw);
+                }
+
+                if (streakData.lastDate) {
+                    const last = new Date(streakData.lastDate);
+                    const today = new Date(todayStr);
+                    const diffTime = today - last;
+                    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays === 1) {
+                        streakData.count += 1;
+                        streakData.lastDate = todayStr;
+                    } else if (diffDays > 1) {
+                        streakData.count = 1;
+                        streakData.lastDate = todayStr;
+                    }
+                } else {
+                    streakData.lastDate = todayStr;
+                }
+
+                localStorage.setItem('ielts_study_streak_v1', JSON.stringify(streakData));
+                
+                // Update HUD badges
+                const streakSidebar = document.getElementById('badge-streak-sidebar');
+                if (streakSidebar) streakSidebar.innerText = `🔥 ${streakData.count}d`;
+                const dashStreak = document.getElementById('dash-streak-count');
+                if (dashStreak) dashStreak.innerText = `${streakData.count} Hari`;
+
+                return streakData.count;
+            } catch (e) {
+                console.error("Streak calculation error:", e);
+                return 1;
+            }
+        }
+
+        // =========================================================================
+        // IeltsGo v6.0 — DASHBOARD ENGINE
+        // =========================================================================
+        function renderDashboard() {
+            // 1. Greeting based on local time
+            const hour = new Date().getHours();
+            let greeting = 'Selamat Malam!';
+            if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi!';
+            else if (hour >= 11 && hour < 15) greeting = 'Selamat Siang!';
+            else if (hour >= 15 && hour < 19) greeting = 'Selamat Sore!';
+            const greetEl = document.getElementById('dash-greeting-badge');
+            if (greetEl) greetEl.innerText = `${greeting} 🎯 Siap Latihan IELTS?`;
+
+            // 2. Level & XP Progression
+            const levelEl = document.getElementById('dash-level-text');
+            if (levelEl) levelEl.innerText = `Level ${playerState.level}`;
+
+            const nextXP = playerState.level * LEVEL_XP;
+            const currentLevelBaseXP = (playerState.level - 1) * LEVEL_XP;
+            const xpInLevel = playerState.xp - currentLevelBaseXP;
+            const levelProgressPercent = Math.min(100, Math.max(0, (xpInLevel / LEVEL_XP) * 100));
+
+            const xpFraction = document.getElementById('dash-xp-fraction');
+            if (xpFraction) xpFraction.innerText = `${playerState.xp} / ${nextXP} XP`;
+            const xpBar = document.getElementById('dash-xp-bar-inner');
+            if (xpBar) xpBar.style.width = `${levelProgressPercent}%`;
+
+            // 3. Next Incomplete Stage CTA
+            const nextStage = getNextIncompleteStage();
+            const btnHeroContinue = document.getElementById('dash-hero-continue-text');
+            if (btnHeroContinue) {
+                if (nextStage) {
+                    btnHeroContinue.innerText = `Lanjut ${nextStage.title.split(':')[0]}`;
+                } else {
+                    btnHeroContinue.innerText = "Tantang 60-Min Boss Arena";
+                }
+            }
+
+            // 4. Phase Progress Breakdown
+            const phaseCounts = { phase1: 0, phase2: 0, phase3: 0, phase4: 0, phase5: 0 };
+            const phaseTotals = { phase1: 0, phase2: 0, phase3: 0, phase4: 0, phase5: 0 };
+            let totalDone = 0;
+            Object.keys(STAGE_DATA).forEach(sId => {
+                const pKey = 'phase' + (STAGE_DATA[sId].phase || sId.charAt(5));
+                if (phaseTotals[pKey] !== undefined) phaseTotals[pKey]++;
+                if (playerState.completedStages && playerState.completedStages[sId]) {
+                    totalDone++;
+                    if (phaseCounts[pKey] !== undefined) phaseCounts[pKey]++;
+                }
+            });
+
+            const totalAllStages = Object.keys(STAGE_DATA).length || 14;
+            const overallPercent = Math.round((totalDone / totalAllStages) * 100);
+            const overallEl = document.getElementById('dash-overall-percent');
+            if (overallEl) overallEl.innerText = `${overallPercent}% Selesai`;
+
+            // Update Phase Bars
+            const updatePhaseRow = (pKey, count, total) => {
+                const bar = document.getElementById(`dash-${pKey}-bar`);
+                const label = document.getElementById(`dash-${pKey}-label`);
+                const pct = Math.round((count / (total || 1)) * 100);
+                if (bar) bar.style.width = `${pct}%`;
+                if (label) label.innerText = `${count}/${total || 1}`;
+            };
+            updatePhaseRow('p1', phaseCounts.phase1, phaseTotals.phase1 || 3);
+            updatePhaseRow('p2', phaseCounts.phase2, phaseTotals.phase2 || 4);
+            updatePhaseRow('p3', phaseCounts.phase3, phaseTotals.phase3 || 3);
+            updatePhaseRow('p4', phaseCounts.phase4, phaseTotals.phase4 || 2);
+            updatePhaseRow('p5', phaseCounts.phase5, phaseTotals.phase5 || 2);
+
+            // Boss Badge
+            const bossBadge = document.getElementById('dash-boss-badge');
+            if (bossBadge) {
+                if (totalDone >= totalAllStages) {
+                    bossBadge.className = "text-[10px] bg-red-900/60 text-red-300 px-2.5 py-1 rounded-md border border-red-500/50 font-bold animate-pulse";
+                    bossBadge.innerText = "Terbuka! Siap Dikerjakan";
+                } else {
+                    bossBadge.className = "text-[10px] bg-slate-950 text-slate-500 px-2.5 py-1 rounded-md border border-slate-800";
+                    bossBadge.innerText = `Terkunci (${totalDone}/${totalAllStages} Selesai)`;
+                }
+            }
+
+            // 5. Vocab Bank Snapshot & CEFR Breakdown
+            const totalVocabs = vocabBank.length;
+            const dueVocabs = getVocabsDueToday().length;
+            const totalVocabBadge = document.getElementById('dash-vocab-total-badge');
+            if (totalVocabBadge) totalVocabBadge.innerText = `${totalVocabs} Kata`;
+            const dueCountEl = document.getElementById('dash-vocab-due-count');
+            if (dueCountEl) dueCountEl.innerText = `${dueVocabs} Kata`;
+
+            const cefrCounts = { C2: 0, C1: 0, B2: 0, B1: 0, A2: 0, A1: 0 };
+            vocabBank.forEach(v => {
+                if (cefrCounts[v.cefr] !== undefined) cefrCounts[v.cefr]++;
+            });
+            ['C2', 'C1', 'B2', 'B1', 'A2', 'A1'].forEach(lvl => {
+                const el = document.getElementById(`dash-cefr-${lvl.toLowerCase()}-count`);
+                if (el) el.innerText = cefrCounts[lvl] || 0;
+            });
+
+            // 6. Speaking Lab Snapshot
+            const targetAccent = localStorage.getItem('ielts_target_accent') || 'british_rp';
+            const accentLabelMap = {
+                'british_rp': '🇬🇧 British RP',
+                'general_american': '🇺🇸 General US',
+                'australian': '🇦🇺 Australian',
+                'neutral_academic': '🌍 Neutral Academic'
+            };
+            const spkAccentTag = document.getElementById('dash-speaking-accent-tag');
+            if (spkAccentTag) spkAccentTag.innerText = accentLabelMap[targetAccent] || '🇬🇧 British RP';
+
+            const spkHistory = playerState.speakingHistory || {};
+            const updateSpkStatus = (mode, elId) => {
+                const el = document.getElementById(elId);
+                if (el) {
+                    if (spkHistory[mode]) {
+                        el.className = "text-emerald-400 font-bold text-xs";
+                        el.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Selesai`;
+                    } else {
+                        el.className = "text-slate-500 font-bold text-xs";
+                        el.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Belum`;
+                    }
+                }
+            };
+            updateSpkStatus('part1', 'dash-spk-part1-status');
+            updateSpkStatus('part2', 'dash-spk-part2-status');
+            updateSpkStatus('part3', 'dash-spk-part3-status');
+
+            // 7. Achievements Preview
+            const unlockedList = Object.keys(playerState.unlockedAchievements || {}).filter(k => !!playerState.unlockedAchievements[k]);
+            const badgeCountEl = document.getElementById('dash-badges-unlocked-count');
+            if (badgeCountEl) badgeCountEl.innerText = `${unlockedList.length} / ${ACHIEVEMENTS_DATA.length}`;
+
+            const badgePreviewContainer = document.getElementById('dash-badges-preview-list');
+            if (badgePreviewContainer) {
+                if (unlockedList.length === 0) {
+                    badgePreviewContainer.innerHTML = `<div class="col-span-3 text-center py-4 text-slate-500 font-mono text-[11px]">Belum ada trophy yang terbuka. Selesaikan stage untuk membuka medali!</div>`;
+                } else {
+                    const recentBadges = unlockedList.slice(-3).reverse();
+                    badgePreviewContainer.innerHTML = recentBadges.map(id => {
+                        const ach = ACHIEVEMENTS_DATA.find(a => a.id === id) || { title: id, icon: 'fa-medal', xp: 50 };
+                        return `
+                            <div class="bg-slate-950 p-2.5 rounded-xl border border-amber-500/30 flex items-center space-x-2">
+                                <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs">
+                                    <i class="fa-solid ${ach.icon}"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="font-bold text-[11px] text-slate-200 truncate">${ach.title}</div>
+                                    <div class="text-[9px] text-amber-400 font-mono">+${ach.xp} XP</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // Render Daily Affirmation Ritual Card (v6.4)
+            renderDailyAffirmationUI();
+        }
+
+        function getNextIncompleteStage() {
+            const allStageIds = Object.keys(STAGE_DATA);
+            for (let id of allStageIds) {
+                if (!playerState.completedStages || !playerState.completedStages[id] || !playerState.completedStages[id].completed) {
+                    return { id, ...STAGE_DATA[id] };
+                }
+            }
+            return null;
+        }
+
+        function continueNextIncompleteStage() {
+            SoundFX.play('click');
+            const nextStage = getNextIncompleteStage();
+            if (nextStage) {
+                const phaseKey = 'phase' + (nextStage.phase || (nextStage.id ? nextStage.id.charAt(5) : '1'));
+                switchTab(phaseKey);
+                setTimeout(() => {
+                    const card = document.getElementById(`card-${nextStage.id}`);
+                    if (card) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        card.classList.add('ring-2', 'ring-emerald-400');
+                        setTimeout(() => card.classList.remove('ring-2', 'ring-emerald-400'), 2500);
+                    }
+                }, 200);
+            } else {
+                switchTab('boss');
+            }
+        }
+
+        // =========================================================================

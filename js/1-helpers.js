@@ -5,11 +5,14 @@
         // Procedural Audio Synthesizer via Web Audio API
         const SoundFX = {
             ctx: null,
-            isMuted: false,
+            isMuted: (typeof localStorage !== 'undefined' && localStorage.getItem('ielts_audio_muted') === 'true'),
             init() {
                 if (!this.ctx) {
                     const AudioCtx = window.AudioContext || window.webkitAudioContext;
                     if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume().catch(() => {});
                 }
             },
             play(type) {
@@ -17,56 +20,92 @@
                 try {
                     this.init();
                     if (!this.ctx) return;
-                    if (this.ctx.state === 'suspended') {
-                        this.ctx.resume().catch(() => {});
-                    }
-                    const now = this.ctx.currentTime;
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
+                    
+                    const playNotes = () => {
+                        const now = this.ctx.currentTime || 0;
+                        if (type === 'click') {
+                            const osc = this.ctx.createOscillator();
+                            const gain = this.ctx.createGain();
+                            osc.connect(gain);
+                            gain.connect(this.ctx.destination);
+                            osc.frequency.setValueAtTime(600, now);
+                            gain.gain.setValueAtTime(0.05, now);
+                            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+                            osc.start(now);
+                            osc.stop(now + 0.06);
+                        } else if (type === 'correct') {
+                            [523.25, 659.25, 783.99].forEach((freq, idx) => {
+                                const osc = this.ctx.createOscillator();
+                                const gain = this.ctx.createGain();
+                                osc.type = 'triangle';
+                                osc.connect(gain);
+                                gain.connect(this.ctx.destination);
+                                const t = now + (idx * 0.09);
+                                osc.frequency.setValueAtTime(freq, t);
+                                gain.gain.setValueAtTime(0.1, t);
+                                gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+                                osc.start(t);
+                                osc.stop(t + 0.25);
+                            });
+                        } else if (type === 'levelup' || type === 'stage_clear') {
+                            // Jubilant 4-tone ascending fanfare (C5 -> E5 -> G5 -> C6)
+                            [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                                const osc = this.ctx.createOscillator();
+                                const gain = this.ctx.createGain();
+                                osc.type = 'sine';
+                                osc.connect(gain);
+                                gain.connect(this.ctx.destination);
+                                const t = now + (idx * 0.1);
+                                osc.frequency.setValueAtTime(freq, t);
+                                gain.gain.setValueAtTime(0.12, t);
+                                gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+                                osc.start(t);
+                                osc.stop(t + 0.4);
+                            });
+                        } else if (type === 'error') {
+                            const osc = this.ctx.createOscillator();
+                            const gain = this.ctx.createGain();
+                            osc.type = 'sawtooth';
+                            osc.connect(gain);
+                            gain.connect(this.ctx.destination);
+                            osc.frequency.setValueAtTime(180, now);
+                            osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+                            gain.gain.setValueAtTime(0.09, now);
+                            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+                            osc.start(now);
+                            osc.stop(now + 0.22);
+                        }
+                    };
 
-                    if (type === 'click') {
-                        osc.frequency.setValueAtTime(600, now);
-                        gain.gain.setValueAtTime(0.04, now);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-                        osc.start(now);
-                        osc.stop(now + 0.05);
-                    } else if (type === 'correct') {
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(523.25, now);
-                        osc.frequency.setValueAtTime(659.25, now + 0.1);
-                        osc.frequency.setValueAtTime(783.99, now + 0.2);
-                        gain.gain.setValueAtTime(0.08, now);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-                        osc.start(now);
-                        osc.stop(now + 0.35);
-                    } else if (type === 'levelup') {
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(440, now);
-                        osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
-                        gain.gain.setValueAtTime(0.12, now);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-                        osc.start(now);
-                        osc.stop(now + 0.5);
-                    } else if (type === 'error') {
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(160, now);
-                        osc.frequency.setValueAtTime(120, now + 0.1);
-                        gain.gain.setValueAtTime(0.08, now);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-                        osc.start(now);
-                        osc.stop(now + 0.25);
+                    if (this.ctx.state === 'suspended') {
+                        this.ctx.resume().then(() => playNotes()).catch(() => {});
+                    } else {
+                        playNotes();
                     }
-                } catch(e){}
+                } catch(e) {
+                    console.warn('SoundFX playback warning:', e);
+                }
             }
         };
+
+        // Auto unlock AudioContext on first user interaction
+        if (typeof window !== 'undefined') {
+            const unlockAudio = () => {
+                SoundFX.init();
+                window.removeEventListener('click', unlockAudio);
+                window.removeEventListener('touchstart', unlockAudio);
+                window.removeEventListener('keydown', unlockAudio);
+            };
+            window.addEventListener('click', unlockAudio, { passive: true });
+            window.addEventListener('touchstart', unlockAudio, { passive: true });
+            window.addEventListener('keydown', unlockAudio, { passive: true });
+        }
 
         function toggleAudioMute() {
             SoundFX.isMuted = !SoundFX.isMuted;
             localStorage.setItem('ielts_audio_muted', SoundFX.isMuted ? 'true' : 'false');
             updateAudioIcons();
-            showToast(SoundFX.isMuted ? "Sound muted." : "Sound unmuted.", "info");
+            showToast(SoundFX.isMuted ? 'Sound muted.' : 'Sound unmuted.', 'info');
         }
 
         function updateAudioIcons() {

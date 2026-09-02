@@ -2,7 +2,18 @@
    IELTS GO — Vocab Logger Pro · SRS Review Session · Feynman Drill
    ============================================================ */
 
-        function loadVocabBank() {
+// IeltsGo v6.0 — VOCABULARY LOGGER & CEFR CLASSIFIER ENGINE
+        // =========================================================================
+        let vocabBank = [];
+        let currentVocabFilter = 'all';
+        let currentActiveVocabId = null;
+        let vocabPronRec = null;
+        let vocabAudioChunks = [];
+        let vocabAudioBlob = null;
+        let vocabRecMediaRecorder = null;
+        let vocabLiveTeachingHistory = [];
+
+function loadVocabBank() {
             try {
                 const saved = localStorage.getItem('ielts_vocab_bank_v1');
                 if (saved) {
@@ -2727,4 +2738,3 @@ Return JSON ONLY:
         let affirmationMediaRecorder = null;
         let affirmationRecTimerInterval = null;
         let affirmationRecDuration = 0;
-

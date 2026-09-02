@@ -1428,27 +1428,4 @@ Structure your comprehensive diagnostic report in Markdown using EXACTLY these h
             }
         }
 
-        // =========================================================================
-        // IeltsGo SPEAKING LAB JAVASCRIPT ENGINE (v5.0)
-        // Audio Recorder + Waveform Visualizer + Web Speech Recognition + AI Scaffolding
-        // =========================================================================
-        const speakingState = {
-            activeMode: 'part1',
-            mediaRecorders: {},
-            audioChunks: {},
-            audioBlobs: {},
-            audioURLs: {},
-            streams: {},
-            audioContexts: {},
-            analysers: {},
-            animFrames: {},
-            recTimerIntervals: {},
-            recSeconds: { part1: 0, part2: 0, part3: 0 },
-            prepTimerInterval: null,
-            prepTimeSeconds: 60,
-            speakingTimerInterval: null,
-            speakingTimeSeconds: 120,
-            generatedPrompts: {},
-            remediationPrompts: {}
-        };
-
+        // =========================================================================
