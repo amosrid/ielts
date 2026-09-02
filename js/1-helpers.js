@@ -146,14 +146,35 @@
         const STAGE_XP = 100;
         const LEVEL_XP = 400;
 
-        const RANK_TITLES = [
-            'Novice Slayer',
-            'SVO Apprentice',
-            'Tense Veteran',
-            'Clause Knight',
-            'Precision Master',
-            'IELTS Grandmaster'
+        // Realistic & Challenging CEFR / IELTS Band Progression
+        const RANK_TIERS = [
+            { minLevel: 1,  title: 'Band 4.0 • Grammar Rookie' },
+            { minLevel: 3,  title: 'Band 4.5 • SVO Builder' },
+            { minLevel: 5,  title: 'Band 5.0 • Tense Explorer' },
+            { minLevel: 8,  title: 'Band 5.5 • Clause Drafter' },
+            { minLevel: 12, title: 'Band 6.0 • Competent Writer' },
+            { minLevel: 16, title: 'Band 6.5 • Academic Practitioner' },
+            { minLevel: 21, title: 'Band 7.0 • Precision Scholar' },
+            { minLevel: 28, title: 'Band 7.5 • Fluent Synthesizer' },
+            { minLevel: 36, title: 'Band 8.0 • Senior Stylist' },
+            { minLevel: 45, title: 'Band 8.5 • Master of Rhetoric' },
+            { minLevel: 55, title: 'Band 9.0 • Grand Laureate' },
+            { minLevel: 70, title: 'Band 9.0+ • IELTS Grandmaster' }
         ];
+
+        function getPlayerRankTitle(level) {
+            let currentTitle = RANK_TIERS[0].title;
+            for (let i = 0; i < RANK_TIERS.length; i++) {
+                if (level >= RANK_TIERS[i].minLevel) {
+                    currentTitle = RANK_TIERS[i].title;
+                } else {
+                    break;
+                }
+            }
+            return currentTitle;
+        }
+
+        const RANK_TITLES = RANK_TIERS.map(t => t.title);
 
         // Robust Markdown Formatter
         function renderMarkdown(mdText) {
@@ -161,10 +182,10 @@
             let html = mdText;
 
             // Code blocks
-            html = html.replace(/```([\s\S]*?)```/g, '<pre class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 font-mono text-emerald-400 text-xs my-2.5 overflow-x-auto leading-relaxed">$1</pre>');
+            html = html.replace(/\`\`\`([\s\S]*?)\`\`\`/g, '<pre class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 font-mono text-emerald-400 text-xs my-2.5 overflow-x-auto leading-relaxed">$1</pre>');
             
             // Inline code
-            html = html.replace(/`([^`]+)`/g, '<code class="bg-slate-950 px-1.5 py-0.5 rounded font-mono text-cyan-400 text-xs border border-slate-800">$1</code>');
+            html = html.replace(/\`([^\`]+)\`/g, '<code class="bg-slate-950 px-1.5 py-0.5 rounded font-mono text-cyan-400 text-xs border border-slate-800">$1</code>');
 
             // Headings
             html = html.replace(/^### (.*$)/gim, '<h3 class="text-xs font-mono font-bold text-amber-300 mt-4 mb-2 flex items-center gap-2 uppercase tracking-wide"><i class="fa-solid fa-chevron-right text-[10px] text-amber-400"></i> $1</h3>');

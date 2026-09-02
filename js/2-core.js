@@ -480,8 +480,11 @@
             document.getElementById('hud-level-text').innerText = playerState.level;
             document.getElementById('hud-xp-text').innerText = playerState.xp;
             
-            const rankIndex = Math.min(RANK_TITLES.length - 1, playerState.level - 1);
-            document.getElementById('hud-level-title').innerText = RANK_TITLES[rankIndex];
+            const rankTitle = typeof getPlayerRankTitle === 'function'
+                ? getPlayerRankTitle(playerState.level)
+                : (RANK_TITLES[Math.min(RANK_TITLES.length - 1, playerState.level - 1)] || 'Band 4.0 • Grammar Rookie');
+            const hudTitleEl = document.getElementById('hud-level-title');
+            if (hudTitleEl) hudTitleEl.innerText = rankTitle;
 
             const nextXP = playerState.level * LEVEL_XP;
             document.getElementById('hud-next-xp').innerText = nextXP;
@@ -616,9 +619,10 @@
                 }
             });
 
-            // Overall % calculations
+            // Overall % calculations (Safeguarded)
             const overallPercent = Math.round((totalCompleted / totalStages) * 100);
-            document.getElementById('hud-progress-percent').innerText = `${overallPercent}%`;
+            const hudProg = document.getElementById('hud-progress-percent');
+            if (hudProg) hudProg.innerText = `${overallPercent}%`;
 
             // Unlock Boss Room condition (At least 8 stages or Level 3)
             if (totalCompleted >= 8 || playerState.level >= 3) {
