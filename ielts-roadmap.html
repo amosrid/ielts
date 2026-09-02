@@ -242,7 +242,7 @@
             color: #0f172a !important;
         }
 
-        /* Sidebar Navigation */
+        /* Sidebar Navigation - Unified Modern Clean Academy */
         html.light-mode #main-sidebar {
             background-color: #ffffff !important;
         }
@@ -251,102 +251,97 @@
             border-color: #e2e8f0 !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
         }
-        html.light-mode #nav-dashboard {
+        
+        /* Unified Inactive Button */
+        .nav-btn {
+            background-color: transparent !important;
+            border-color: transparent !important;
+            color: #64748b !important;
+            font-weight: 600 !important;
+            transition: all 0.15s ease !important;
+        }
+        .nav-btn span:first-child,
+        .nav-btn i {
+            color: #64748b !important;
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            transition: all 0.15s ease !important;
+        }
+        .nav-btn:hover {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+        .nav-btn:hover span:first-child,
+        .nav-btn:hover i {
+            color: #0f172a !important;
+        }
+
+        /* Unified Active Button (Single Highlight) */
+        .nav-btn.nav-btn-active,
+        .nav-btn.active {
             background-color: #ecfdf5 !important;
             border-color: #a7f3d0 !important;
             color: #065f46 !important;
             font-weight: 700 !important;
+            box-shadow: 0 1px 3px rgba(5, 150, 105, 0.08) !important;
         }
-        html.light-mode #nav-dashboard span:first-child {
+        .nav-btn.nav-btn-active span:first-child,
+        .nav-btn.nav-btn-active i,
+        .nav-btn.active span:first-child,
+        .nav-btn.active i {
             background-color: #d1fae5 !important;
-            color: #047857 !important;
+            color: #059669 !important;
             border-color: #a7f3d0 !important;
         }
-        html.light-mode #badge-streak-sidebar {
-            background-color: #fffbeb !important;
-            color: #92400e !important;
-            border-color: #fde68a !important;
-        }
-        html.light-mode #nav-roadmap-main {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            color: #334155 !important;
-        }
-        html.light-mode #nav-roadmap-main:hover {
-            background-color: #f8fafc !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #nav-roadmap-main span:first-child {
-            background-color: #f0fdfa !important;
-            color: #0f766e !important;
-            border-color: #99f6e4 !important;
-        }
-        html.light-mode #badge-roadmap-total {
-            background-color: #f0fdfa !important;
-            color: #0f766e !important;
-            border-color: #99f6e4 !important;
-        }
+
+        /* Roadmap Accordion Submenu */
         html.light-mode #roadmap-subnav-list {
             border-color: #e2e8f0 !important;
         }
         html.light-mode .nav-sub-btn {
-            color: #475569 !important;
+            color: #64748b !important;
         }
         html.light-mode .nav-sub-btn:hover {
             background-color: #f1f5f9 !important;
             color: #0f172a !important;
         }
+        html.light-mode .nav-sub-btn.active,
+        html.light-mode .nav-sub-btn.nav-sub-btn-active {
+            background-color: #ecfdf5 !important;
+            color: #065f46 !important;
+            font-weight: 700 !important;
+        }
         html.light-mode .nav-sub-btn span[id^="badge-phase"] {
             background-color: #f1f5f9 !important;
-            color: #475569 !important;
+            color: #64748b !important;
             border: 1px solid #e2e8f0 !important;
         }
-        html.light-mode #nav-boss {
-            color: #be123c !important;
-            border-color: #fecdd3 !important;
-            background-color: #fff1f2 !important;
+
+        /* Sidebar Badges */
+        html.light-mode #badge-streak-sidebar {
+            background-color: #fffbeb !important;
+            color: #92400e !important;
+            border-color: #fde68a !important;
         }
-        html.light-mode #nav-boss:hover {
-            background-color: #ffe4e6 !important;
-        }
-        html.light-mode #nav-vocab-logger {
-            background-color: #ecfdf5 !important;
-            border-color: #a7f3d0 !important;
-            color: #065f46 !important;
-        }
-        html.light-mode #nav-vocab-logger:hover {
-            background-color: #d1fae5 !important;
+        html.light-mode #badge-roadmap-total {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border-color: #e2e8f0 !important;
         }
         html.light-mode #vocab-review-badge {
-            background-color: #d1fae5 !important;
-            color: #065f46 !important;
-            border-color: #a7f3d0 !important;
-        }
-        html.light-mode #nav-speaking-lab {
-            background-color: #f0f9ff !important;
-            border-color: #bae6fd !important;
-            color: #0369a1 !important;
-        }
-        html.light-mode #nav-speaking-lab:hover {
-            background-color: #e0f2fe !important;
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border-color: #e2e8f0 !important;
         }
         html.light-mode #speaking-lab-new-badge {
-            background-color: #e0f2fe !important;
-            color: #0369a1 !important;
+            background-color: #f0f9ff !important;
+            color: #0284c7 !important;
             border-color: #bae6fd !important;
         }
-        html.light-mode #nav-ai-lab {
-            background-color: #faf5ff !important;
-            border-color: #e9d5ff !important;
-            color: #6b21a8 !important;
-        }
-        html.light-mode #nav-ai-lab:hover {
-            background-color: #f3e8ff !important;
-        }
         html.light-mode #sidebar-model-badge {
-            background-color: #f3e8ff !important;
-            color: #6b21a8 !important;
-            border-color: #e9d5ff !important;
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border-color: #e2e8f0 !important;
         }
 
         /* Hero Banners Across Tabs */
@@ -548,9 +543,17 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
         }
         html.light-mode #daily-affirmation-card {
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #eff6ff 100%) !important;
-            border-color: #fde68a !important;
-            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.06) !important;
+            background: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        }
+        html.light-mode #daily-affirmation-card h3 {
+            color: #0f172a !important;
+        }
+        html.light-mode #daily-affirmation-card button[onclick*="openAffirmationsManager"] {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #d97706 !important;
         }
         html.light-mode #modal-vocab-card .bg-slate-950\/90,
         html.light-mode #modal-vocab-card .bg-slate-900,
@@ -762,112 +765,120 @@
         <aside id="main-sidebar" class="hidden lg:block lg:col-span-3 space-y-4 fixed lg:static inset-y-0 left-0 z-40 w-72 lg:w-auto pt-16 lg:pt-0 px-4 lg:px-0 bg-slate-950 lg:bg-transparent overflow-y-auto lg:overflow-visible">
             <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 space-y-2 sticky top-20 shadow-xl">
                 <!-- 1. Dashboard Nav Button -->
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full text-left p-2.5 rounded-xl border border-indigo-500/40 bg-indigo-950/30 text-indigo-300 font-semibold text-xs flex items-center justify-between transition-all shadow-sm">
-                    <div class="flex items-center space-x-2">
-                        <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[11px] border border-indigo-500/30">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn nav-btn-active active w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition-all">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-[11px] border">
                             <i class="fa-solid fa-gauge-high"></i>
                         </span>
                         <span>Dashboard</span>
                     </div>
-                    <span id="badge-streak-sidebar" class="text-[10px] font-mono bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded-md border border-amber-500/30 font-bold">🔥 1d</span>
+                    <span id="badge-streak-sidebar" class="text-[10px] font-mono px-1.5 py-0.5 rounded-md border font-bold">🔥 1d</span>
                 </button>
 
                 <!-- 2. Roadmap Quests Accordion Group -->
                 <div class="space-y-1 pt-1">
-                    <button onclick="toggleRoadmapNav(event)" id="nav-roadmap-main" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 hover:bg-slate-800/50 text-slate-300 font-semibold text-xs flex items-center justify-between transition-all">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-[11px] border border-cyan-500/30">
+                    <button onclick="toggleRoadmapNav(event)" id="nav-roadmap-main" class="nav-btn w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition-all">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-[11px] border">
                                 <i class="fa-solid fa-map-location-dot"></i>
                             </span>
                             <span>Roadmap Quests</span>
                         </div>
                         <div class="flex items-center space-x-1.5">
-                            <span id="badge-roadmap-total" class="text-[10px] font-mono bg-cyan-950/80 text-cyan-300 px-1.5 py-0.5 rounded-md border border-cyan-500/30 font-bold">0/14</span>
+                            <span id="badge-roadmap-total" class="text-[10px] font-mono px-1.5 py-0.5 rounded-md border font-bold">0/14</span>
                             <i id="icon-roadmap-chevron" class="fa-solid fa-chevron-right text-[10px] text-slate-400 transition-transform"></i>
                         </div>
                     </button>
 
                     <!-- Collapsible Sub-phases -->
-                    <div id="roadmap-subnav-list" class="hidden space-y-1 pl-2 pt-1 border-l-2 border-slate-800 ml-3">
-                        <button onclick="switchTab('phase1')" id="nav-phase1" class="nav-sub-btn w-full text-left p-2 rounded-lg text-slate-400 hover:text-emerald-300 hover:bg-slate-800/40 text-[11px] font-mono flex items-center justify-between transition-all">
+                    <div id="roadmap-subnav-list" class="hidden space-y-1 pl-2 pt-1 border-l-2 ml-3">
+                        <button onclick="switchTab('phase1')" id="nav-phase1" class="nav-sub-btn w-full text-left p-2 rounded-lg text-[11px] font-mono flex items-center justify-between transition-all">
                             <span class="flex items-center gap-1.5">
-                                <span class="w-4 h-4 rounded bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[9px] font-bold">I</span>
+                                <span class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-bold">I</span>
                                 <span>Fase 1: Base Engine</span>
                             </span>
-                            <span id="badge-phase1" class="text-[9px] bg-slate-950 px-1.5 py-0.5 rounded text-slate-400">0/3</span>
+                            <span id="badge-phase1" class="text-[9px] px-1.5 py-0.5 rounded">0/3</span>
                         </button>
-                        <button onclick="switchTab('phase2')" id="nav-phase2" class="nav-sub-btn w-full text-left p-2 rounded-lg text-slate-400 hover:text-blue-300 hover:bg-slate-800/40 text-[11px] font-mono flex items-center justify-between transition-all">
+                        <button onclick="switchTab('phase2')" id="nav-phase2" class="nav-sub-btn w-full text-left p-2 rounded-lg text-[11px] font-mono flex items-center justify-between transition-all">
                             <span class="flex items-center gap-1.5">
-                                <span class="w-4 h-4 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center text-[9px] font-bold">II</span>
+                                <span class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-bold">II</span>
                                 <span>Fase 2: Modifiers</span>
                             </span>
-                            <span id="badge-phase2" class="text-[9px] bg-slate-950 px-1.5 py-0.5 rounded text-slate-400">0/4</span>
+                            <span id="badge-phase2" class="text-[9px] px-1.5 py-0.5 rounded">0/4</span>
                         </button>
-                        <button onclick="switchTab('phase3')" id="nav-phase3" class="nav-sub-btn w-full text-left p-2 rounded-lg text-slate-400 hover:text-purple-300 hover:bg-slate-800/40 text-[11px] font-mono flex items-center justify-between transition-all">
+                        <button onclick="switchTab('phase3')" id="nav-phase3" class="nav-sub-btn w-full text-left p-2 rounded-lg text-[11px] font-mono flex items-center justify-between transition-all">
                             <span class="flex items-center gap-1.5">
-                                <span class="w-4 h-4 rounded bg-purple-500/20 text-purple-400 flex items-center justify-center text-[9px] font-bold">III</span>
+                                <span class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-bold">III</span>
                                 <span>Fase 3: Clauses</span>
                             </span>
-                            <span id="badge-phase3" class="text-[9px] bg-slate-950 px-1.5 py-0.5 rounded text-slate-400">0/3</span>
+                            <span id="badge-phase3" class="text-[9px] px-1.5 py-0.5 rounded">0/3</span>
                         </button>
-                        <button onclick="switchTab('phase4')" id="nav-phase4" class="nav-sub-btn w-full text-left p-2 rounded-lg text-slate-400 hover:text-amber-300 hover:bg-slate-800/40 text-[11px] font-mono flex items-center justify-between transition-all">
+                        <button onclick="switchTab('phase4')" id="nav-phase4" class="nav-sub-btn w-full text-left p-2 rounded-lg text-[11px] font-mono flex items-center justify-between transition-all">
                             <span class="flex items-center gap-1.5">
-                                <span class="w-4 h-4 rounded bg-amber-500/20 text-amber-400 flex items-center justify-center text-[9px] font-bold">IV</span>
+                                <span class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-bold">IV</span>
                                 <span>Fase 4: Precision</span>
                             </span>
-                            <span id="badge-phase4" class="text-[9px] bg-slate-950 px-1.5 py-0.5 rounded text-slate-400">0/2</span>
+                            <span id="badge-phase4" class="text-[9px] px-1.5 py-0.5 rounded">0/2</span>
                         </button>
-                        <button onclick="switchTab('phase5')" id="nav-phase5" class="nav-sub-btn w-full text-left p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800/40 text-[11px] font-mono flex items-center justify-between transition-all">
+                        <button onclick="switchTab('phase5')" id="nav-phase5" class="nav-sub-btn w-full text-left p-2 rounded-lg text-[11px] font-mono flex items-center justify-between transition-all">
                             <span class="flex items-center gap-1.5">
-                                <span class="w-4 h-4 rounded bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-[9px] font-bold">V</span>
+                                <span class="w-4 h-4 rounded flex items-center justify-center text-[9px] font-bold">V</span>
                                 <span>Fase 5: Automation</span>
                             </span>
-                            <span id="badge-phase5" class="text-[9px] bg-slate-950 px-1.5 py-0.5 rounded text-slate-400">0/2</span>
+                            <span id="badge-phase5" class="text-[9px] px-1.5 py-0.5 rounded">0/2</span>
                         </button>
-                        <button onclick="switchTab('boss')" id="nav-boss" class="nav-sub-btn w-full text-left p-2 rounded-lg text-red-400 hover:bg-red-950/30 text-[11px] font-mono flex items-center justify-between transition-all border border-red-500/20">
+                        <button onclick="switchTab('boss')" id="nav-boss" class="nav-sub-btn w-full text-left p-2 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-[11px] font-mono flex items-center justify-between transition-all border border-rose-500/20">
                             <span class="flex items-center gap-1.5 font-bold">
                                 <i class="fa-solid fa-dragon text-[10px]"></i>
                                 <span>Boss Arena</span>
                             </span>
-                            <i class="fa-solid fa-lock text-[9px] text-red-400/60" id="boss-lock-icon"></i>
+                            <i class="fa-solid fa-lock text-[9px] text-rose-400/60" id="boss-lock-icon"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- 3. Vocab Logger Nav -->
-                <button onclick="switchTab('vocab-logger')" id="nav-vocab-logger" class="nav-btn w-full text-left p-2.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 hover:bg-emerald-900/30 text-emerald-300 font-bold text-xs flex items-center justify-between transition-all">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-book-bookmark text-emerald-400"></i>
+                <button onclick="switchTab('vocab-logger')" id="nav-vocab-logger" class="nav-btn w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition-all">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-[11px] border">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                        </span>
                         <span>Vocab Logger</span>
                     </div>
-                    <span id="vocab-review-badge" class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded-md font-mono border border-emerald-500/30">0</span>
+                    <span id="vocab-review-badge" class="text-[9px] px-1.5 py-0.5 rounded-md font-mono border">0</span>
                 </button>
 
                 <!-- 4. Speaking Lab Nav -->
-                <button onclick="switchTab('speaking-lab')" id="nav-speaking-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-rose-500/30 bg-rose-950/20 hover:bg-rose-900/30 text-rose-300 font-bold text-xs flex items-center justify-between transition-all">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-microphone text-rose-400"></i>
+                <button onclick="switchTab('speaking-lab')" id="nav-speaking-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition-all">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-[11px] border">
+                            <i class="fa-solid fa-microphone"></i>
+                        </span>
                         <span>Speaking Lab</span>
                     </div>
-                    <span id="speaking-lab-new-badge" class="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded-md font-mono border border-rose-500/30 badge-blink">NEW</span>
+                    <span id="speaking-lab-new-badge" class="text-[9px] px-1.5 py-0.5 rounded-md font-mono border badge-blink">NEW</span>
                 </button>
 
                 <!-- 5. Synthesis Lab Nav (4-Skill Integrated English & IELTS) -->
-                <button onclick="switchTab('synthesis-lab')" id="nav-synthesis-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-teal-500/30 bg-teal-950/20 hover:bg-teal-900/30 text-teal-300 font-bold text-xs flex items-center justify-between transition-all">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-layer-group text-teal-400"></i>
+                <button onclick="switchTab('synthesis-lab')" id="nav-synthesis-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition-all">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-[11px] border">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </span>
                         <span>Synthesis Lab</span>
                     </div>
-                    <span class="text-[9px] bg-teal-500/20 text-teal-300 px-1.5 py-0.5 rounded-md font-mono border border-teal-500/30">4-IN-1</span>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded-md font-mono border">4-IN-1</span>
                 </button>
 
                 <!-- 6. AI Glitch Lab Nav -->
-                <button onclick="switchTab('ai-lab')" id="nav-ai-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-indigo-500/30 bg-indigo-950/20 hover:bg-indigo-900/30 text-indigo-300 font-bold text-xs flex items-center justify-between transition-all">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i>
+                <button onclick="switchTab('ai-lab')" id="nav-ai-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition-all">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-[11px] border">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </span>
                         <span>AI Glitch Lab</span>
                     </div>
-                    <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded-md font-mono border border-indigo-500/30" id="sidebar-model-badge">3.7 FLASH</span>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded-md font-mono border" id="sidebar-model-badge">3.7 FLASH</span>
                 </button>
             </div>
         </aside>
@@ -6205,10 +6216,10 @@
 
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-slate-800/80', 'border-indigo-500/30', 'border-emerald-500/30', 'border-rose-500/30', 'border-cyan-500/40', 'text-white', 'text-indigo-300', 'bg-indigo-950/30', 'bg-cyan-950/30', 'border-indigo-500/40');
+                el.classList.remove('nav-btn-active', 'active', 'bg-slate-800/80', 'border-indigo-500/30', 'border-emerald-500/30', 'border-rose-500/30', 'border-cyan-500/40', 'text-white', 'text-indigo-300', 'bg-indigo-950/30', 'bg-cyan-950/30', 'border-indigo-500/40');
             });
             document.querySelectorAll('.nav-sub-btn').forEach(el => {
-                el.classList.remove('bg-slate-800', 'text-white', 'font-bold');
+                el.classList.remove('nav-sub-btn-active', 'active', 'bg-slate-800', 'text-white', 'font-bold');
             });
 
             const isPhaseOrBoss = tabId.startsWith('phase') || tabId === 'boss';
@@ -6218,25 +6229,13 @@
 
             const activeNav = document.getElementById(`nav-${tabId}`);
             if (activeNav) {
-                if (tabId === 'dashboard') {
-                    activeNav.classList.add('bg-indigo-950/40', 'border-indigo-500/40', 'text-white');
-                } else if (tabId === 'vocab-logger') {
-                    activeNav.classList.add('bg-emerald-950/40', 'border-emerald-500/40', 'text-white');
-                } else if (tabId === 'speaking-lab') {
-                    activeNav.classList.add('bg-rose-950/40', 'border-rose-500/40', 'text-white');
-                } else if (tabId === 'synthesis-lab') {
-                    activeNav.classList.add('bg-teal-950/40', 'border-teal-500/40', 'text-white');
-                } else if (tabId === 'ai-lab') {
-                    activeNav.classList.add('bg-indigo-950/40', 'border-indigo-500/40', 'text-white');
-                } else if (isPhaseOrBoss) {
-                    activeNav.classList.add('bg-slate-800', 'text-white', 'font-bold');
-                }
+                activeNav.classList.add('nav-btn-active', 'active');
             }
 
             // If navigating to a phase or boss, highlight roadmap parent & show submenu
             if (isPhaseOrBoss) {
                 const navRoadmap = document.getElementById('nav-roadmap-main');
-                if (navRoadmap) navRoadmap.classList.add('bg-cyan-950/30', 'border-cyan-500/40', 'text-white');
+                if (navRoadmap) navRoadmap.classList.add('nav-btn-active', 'active');
                 
                 const submenu = document.getElementById('roadmap-subnav-list');
                 if (submenu && submenu.classList.contains('hidden')) {
@@ -12298,36 +12297,36 @@ Return JSON ONLY:
                 const res = state.todayResult;
                 bodyEl.innerHTML = `
                     <div class="space-y-3.5">
-                        <div class="p-4 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-amber-950/60 border border-emerald-500/40 space-y-2.5">
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 space-y-2.5">
                             <div class="flex flex-wrap justify-between items-center gap-2">
-                                <span class="text-xs font-mono font-bold text-emerald-400 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-circle-check text-emerald-400"></i> Ritual Afirmasi Hari Ini Selesai!
+                                <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Ritual Afirmasi Hari Ini Selesai!
                                 </span>
-                                <span class="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">+30 XP Diperoleh</span>
+                                <span class="text-[10px] font-mono bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-500/30 font-bold">+30 XP Diperoleh</span>
                             </div>
-                            <div class="text-sm sm:text-base font-serif italic text-amber-200 font-bold border-l-2 border-amber-500/80 pl-3">
+                            <div class="text-sm sm:text-base font-serif italic text-slate-800 dark:text-slate-100 font-bold border-l-4 border-amber-500 pl-3 leading-relaxed">
                                 "${res.en || currentAff.en}"
                             </div>
-                            <div class="text-[11px] text-slate-300 font-sans pl-3">
-                                ${res.id_trans || currentAff.id_trans || ''}
+                            <div class="text-xs text-slate-600 dark:text-slate-400 font-sans pl-3">
+                                💡 ${res.id_trans || currentAff.id_trans || ''}
                             </div>
                         </div>
 
                         <!-- AI Evaluation Summary -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
-                            <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
-                                <span class="text-slate-400 text-[11px]">🔊 Level Energi Vokal:</span>
-                                <span class="text-amber-300 font-bold">${res.energyLevel || 'Sangat Lantang'}</span>
+                            <div class="bg-slate-50 dark:bg-slate-950/90 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                                <span class="text-slate-500 dark:text-slate-400 text-[11px]">🔊 Level Energi Vokal:</span>
+                                <span class="text-amber-700 dark:text-amber-300 font-bold">${res.energyLevel || 'Sangat Lantang'}</span>
                             </div>
-                            <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
-                                <span class="text-slate-400 text-[11px]">🎯 IELTS Speaking Delivery:</span>
-                                <span class="text-cyan-300 font-bold">${res.deliveryBand || 'Band 8.0+'}</span>
+                            <div class="bg-slate-50 dark:bg-slate-950/90 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                                <span class="text-slate-500 dark:text-slate-400 text-[11px]">🎯 IELTS Speaking Delivery:</span>
+                                <span class="text-sky-700 dark:text-cyan-300 font-bold">${res.deliveryBand || 'Band 8.0+'}</span>
                             </div>
                         </div>
 
                         ${res.feedback ? `
-                        <div class="p-3.5 rounded-xl bg-slate-950/80 border border-indigo-500/30 text-xs font-sans text-slate-200 leading-relaxed space-y-1">
-                            <div class="text-[10px] font-mono font-bold text-indigo-400 uppercase flex items-center gap-1">
+                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-indigo-500/30 text-xs font-sans text-slate-700 dark:text-slate-200 leading-relaxed space-y-1">
+                            <div class="text-[10px] font-mono font-bold text-indigo-600 dark:text-indigo-400 uppercase flex items-center gap-1">
                                 <i class="fa-solid fa-sparkles"></i> Catatan Motivasi AI Coach:
                             </div>
                             <div>${renderMiniChatMarkdown(res.feedback)}</div>
@@ -12335,7 +12334,7 @@ Return JSON ONLY:
 
                         <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-1">
                             <span>⏳ Tersedia kembali besok pukul 00:00.</span>
-                            <span class="text-amber-400/90 font-bold"><i class="fa-solid fa-bolt mr-1"></i> Mindset Terkunci!</span>
+                            <span class="text-amber-600 dark:text-amber-400/90 font-bold"><i class="fa-solid fa-bolt mr-1"></i> Mindset Terkunci!</span>
                         </div>
                     </div>
                 `;
@@ -12345,27 +12344,27 @@ Return JSON ONLY:
                     <div class="space-y-4">
                         <!-- Step Navigation Indicator -->
                         <div class="flex items-center space-x-2 text-xs font-mono">
-                            <span id="badge-step-1" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-1.5">
+                            <span id="badge-step-1" class="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/40 font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-keyboard"></i> Step 1: Ketik Afirmasi
                             </span>
-                            <i class="fa-solid fa-arrow-right text-slate-600 text-[10px]"></i>
-                            <span id="badge-step-2" class="px-2.5 py-1 rounded-lg bg-slate-900 text-slate-500 border border-slate-800 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrow-right text-slate-400 text-[10px]"></i>
+                            <span id="badge-step-2" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-500 border border-slate-200 dark:border-slate-800 font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-microphone-lines"></i> Step 2: Ucapkan Lantang
                             </span>
                         </div>
 
                         <!-- Target Affirmation Box -->
-                        <div class="p-4 rounded-xl bg-slate-950 border border-amber-500/30 space-y-2">
-                            <div class="text-[10px] font-mono font-bold text-amber-400 uppercase flex items-center justify-between">
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
+                            <div class="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400 uppercase flex items-center justify-between">
                                 <span><i class="fa-solid fa-quote-left mr-1.5"></i> Target Afirmasi Hari Ini:</span>
-                                <button onclick="speakWord('${currentAff.en.replace(/'/g, "\\'")}', 'en-GB')" class="text-xs text-indigo-300 hover:text-white flex items-center gap-1" title="Dengarkan pelafalan">
+                                <button onclick="speakWord('${currentAff.en.replace(/'/g, "\\'")}', 'en-GB')" class="text-xs text-sky-600 dark:text-indigo-300 hover:underline flex items-center gap-1 font-bold" title="Dengarkan pelafalan">
                                     <i class="fa-solid fa-volume-high"></i> Dengarkan
                                 </button>
                             </div>
-                            <div class="text-base sm:text-lg font-serif italic text-white font-bold leading-snug" id="target-affirmation-text">
+                            <div class="text-base sm:text-lg font-serif italic text-slate-800 dark:text-slate-100 font-bold leading-snug border-l-4 border-amber-500 pl-3" id="target-affirmation-text">
                                 "${currentAff.en}"
                             </div>
-                            <div class="text-xs text-slate-400 font-sans">
+                            <div class="text-xs text-slate-600 dark:text-slate-400 font-sans pl-3">
                                 💡 ${currentAff.id_trans || ''}
                             </div>
                         </div>
@@ -12373,10 +12372,10 @@ Return JSON ONLY:
                         <!-- Step 1: Typing Input -->
                         <div class="space-y-1.5" id="affirmation-step1-container">
                             <div class="flex justify-between text-xs font-mono">
-                                <label for="input-affirmation-type" class="text-slate-300 font-bold">Ketik ulang kalimat di atas:</label>
-                                <span id="affirmation-type-status" class="text-slate-400 text-[11px]">0% Cocok</span>
+                                <label for="input-affirmation-type" class="text-slate-700 dark:text-slate-300 font-bold">Ketik ulang kalimat di atas:</label>
+                                <span id="affirmation-type-status" class="text-slate-500 dark:text-slate-400 text-[11px]">0% Cocok</span>
                             </div>
-                            <textarea id="input-affirmation-type" oninput="onAffirmationTypingInput(event)" rows="2" placeholder="Mulai ketik kalimat afirmasi di sini..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-100 font-sans focus:outline-none focus:border-amber-500 transition-all leading-relaxed resize-none"></textarea>
+                            <textarea id="input-affirmation-type" oninput="onAffirmationTypingInput(event)" rows="2" placeholder="Mulai ketik kalimat afirmasi di sini..." class="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 dark:text-slate-100 font-sans focus:outline-none focus:border-amber-500 transition-all leading-relaxed resize-none"></textarea>
                         </div>
 
                         <!-- Step 2: Voice Audio Recorder Section (Hidden until typed) -->
