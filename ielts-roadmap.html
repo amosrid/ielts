@@ -140,7 +140,116 @@
         /* Pronunciation recording */
         .vocab-rec-active { border-color: #f43f5e !important; }
 
-        /* ===== IeltsGo v6.3.2 — COMPREHENSIVE MULTI-TAB LIGHT MODE THEME ===== */
+        /* =========================================================================
+           CAMBRIDGE ACADEMIC PRO (PROPOSAL 1) — UNIFIED DESIGN SYSTEM
+           Harmonized Dark Mode (Deep Obsidian Navy) & Light Mode (Warm Pearl Crisp)
+           ========================================================================= */
+
+        /* ----- 1. DARK MODE BASE CANONICAL TOKENS ----- */
+        body {
+            background-color: #0a0e17 !important;
+            color: #f8fafc !important;
+        }
+        header {
+            background: rgba(10, 14, 23, 0.95) !important;
+            border-bottom: 1px solid #1e293b !important;
+        }
+        #main-sidebar > div {
+            background-color: #0d121f !important;
+            border-color: #1e293b !important;
+        }
+
+        /* Dark Mode General Surfaces */
+        .bg-slate-900,
+        .bg-slate-900\/90,
+        .bg-slate-900\/80,
+        .bg-slate-900\/70 {
+            background-color: #111827 !important;
+            border-color: #1e293b !important;
+        }
+        .bg-slate-950,
+        .bg-slate-950\/90,
+        .bg-slate-950\/85,
+        .bg-slate-950\/80 {
+            background-color: #0b0f19 !important;
+            border-color: #1e293b !important;
+        }
+        .border-slate-800,
+        .border-slate-800\/80,
+        .border-slate-800\/50,
+        .border-slate-800\/40,
+        .border-slate-900,
+        .border-slate-700 {
+            border-color: #1e293b !important;
+        }
+
+        /* Dark Mode Typography Hierarchy */
+        .text-slate-100, .text-slate-200 { color: #f8fafc !important; }
+        .text-slate-300 { color: #cbd5e1 !important; }
+        .text-slate-400 { color: #94a3b8 !important; }
+        .text-slate-500 { color: #64748b !important; }
+
+        /* Dark Mode Inputs & Controls */
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select {
+            background-color: #070a10 !important;
+            border-color: #1e293b !important;
+            color: #f8fafc !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #64748b !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+        }
+
+        /* Dark Mode Filter Buttons & Inactive Pills */
+        button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]) {
+            background-color: #0d121f !important;
+            border-color: #1e293b !important;
+            color: #cbd5e1 !important;
+        }
+        button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]):hover {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+        }
+
+        /* Dark Mode CEFR Badges */
+        .cefr-c2 { background: rgba(126, 34, 206, 0.25) !important; color: #d8b4fe !important; border-color: rgba(168, 85, 247, 0.4) !important; }
+        .cefr-c1 { background: rgba(30, 64, 175, 0.25) !important; color: #93c5fd !important; border-color: rgba(59, 130, 246, 0.4) !important; }
+        .cefr-b2 { background: rgba(6, 95, 70, 0.25) !important; color: #6ee7b7 !important; border-color: rgba(16, 185, 129, 0.4) !important; }
+        .cefr-b1 { background: rgba(180, 83, 9, 0.25) !important; color: #fde68a !important; border-color: rgba(245, 158, 11, 0.4) !important; }
+        .cefr-a2 { background: rgba(14, 116, 144, 0.25) !important; color: #a5f3fc !important; border-color: rgba(6, 182, 212, 0.4) !important; }
+        .cefr-a1 { background: rgba(51, 65, 85, 0.3) !important; color: #cbd5e1 !important; border-color: rgba(100, 116, 139, 0.4) !important; }
+
+        /* Dark Mode Vocab Item Cards */
+        .vocab-item {
+            background: #111827 !important;
+            border-color: #1e293b !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+        .vocab-item:hover {
+            background: #151e30 !important;
+            border-color: #334155 !important;
+            transform: translateY(-1px);
+        }
+        .vocab-item.vocab-item-mastered {
+            background: linear-gradient(135deg, #111827 0%, #1c1917 100%) !important;
+            border-color: rgba(245, 158, 11, 0.35) !important;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.08) !important;
+        }
+        .vocab-item.vocab-item-unlearned {
+            border-color: rgba(244, 63, 94, 0.3) !important;
+        }
+        .vocab-item.vocab-item-due {
+            border-color: rgba(245, 158, 11, 0.4) !important;
+        }
+
+
+        /* ----- 2. LIGHT MODE (WARM PEARL CRISP) CANONICAL TOKENS ----- */
         html.light-mode body {
             background-color: #f8fafc !important;
             color: #0f172a !important;
@@ -148,82 +257,16 @@
         html.light-mode header {
             background: rgba(255, 255, 255, 0.95) !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06) !important;
         }
         html.light-mode main { background: transparent !important; }
 
-        /* General Card & Panel Surfaces across ALL tabs */
-        html.light-mode .bg-slate-950,
-        html.light-mode .bg-slate-950\/90,
-        html.light-mode .bg-slate-950\/85,
-        html.light-mode .bg-slate-950\/80,
-        html.light-mode .bg-slate-900,
-        html.light-mode .bg-slate-900\/90,
-        html.light-mode .bg-slate-900\/80,
-        html.light-mode .bg-slate-900\/70 {
-            background-color: #ffffff !important;
-        }
-        html.light-mode .bg-slate-800,
-        html.light-mode .bg-slate-800\/90,
-        html.light-mode .bg-slate-800\/80,
-        html.light-mode .bg-slate-800\/50,
-        html.light-mode .bg-slate-800\/40 {
-            background-color: #f8fafc !important;
-        }
-
-        /* General Borders across ALL tabs */
-        html.light-mode .border-slate-900,
-        html.light-mode .border-slate-800,
-        html.light-mode .border-slate-800\/90,
-        html.light-mode .border-slate-800\/80,
-        html.light-mode .border-slate-800\/50,
-        html.light-mode .border-slate-800\/40,
-        html.light-mode .border-slate-700,
-        html.light-mode .border-slate-700\/50 {
-            border-color: #e2e8f0 !important;
-        }
-
-        /* General Typography */
-        html.light-mode .text-slate-100,
-        html.light-mode .text-slate-200 {
-            color: #0f172a !important;
-        }
-        html.light-mode .text-slate-300 {
-            color: #334155 !important;
-        }
-        html.light-mode .text-slate-400 {
-            color: #64748b !important;
-        }
-        html.light-mode .text-slate-500 {
-            color: #94a3b8 !important;
-        }
-
-        /* Top Header HUD in Light Mode */
-        html.light-mode #hud-level-title { color: #d97706 !important; }
-        html.light-mode #hud-xp-text,
-        html.light-mode #hud-next-xp { color: #4338ca !important; }
-        html.light-mode #hud-progress-percent { color: #0f172a !important; }
-        html.light-mode #btn-hud-api-key,
-        html.light-mode #btn-color-mode-desktop,
-        html.light-mode #btn-color-mode-mobile,
-        html.light-mode header button:not([class*="bg-emerald"]):not([class*="bg-indigo"]) {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-            color: #475569 !important;
-        }
-        html.light-mode header button:hover {
-            background-color: #f1f5f9 !important;
-            color: #0f172a !important;
-        }
-
-        /* Sidebar Navigation */
-        html.light-mode #main-sidebar {
-            background-color: #ffffff !important;
-        }
+        /* Light Mode Sidebar */
+        html.light-mode #main-sidebar { background-color: #ffffff !important; }
         html.light-mode #main-sidebar > div {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+            box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05) !important;
         }
         html.light-mode #nav-dashboard {
             background-color: #eef2ff !important;
@@ -279,17 +322,13 @@
             border-color: #fecaca !important;
             background-color: #fef2f2 !important;
         }
-        html.light-mode #nav-boss:hover {
-            background-color: #fee2e2 !important;
-        }
+        html.light-mode #nav-boss:hover { background-color: #fee2e2 !important; }
         html.light-mode #nav-vocab-logger {
             background-color: #ecfdf5 !important;
             border-color: #a7f3d0 !important;
             color: #065f46 !important;
         }
-        html.light-mode #nav-vocab-logger:hover {
-            background-color: #d1fae5 !important;
-        }
+        html.light-mode #nav-vocab-logger:hover { background-color: #d1fae5 !important; }
         html.light-mode #vocab-review-badge {
             background-color: #d1fae5 !important;
             color: #065f46 !important;
@@ -300,9 +339,7 @@
             border-color: #fecdd3 !important;
             color: #9f1239 !important;
         }
-        html.light-mode #nav-speaking-lab:hover {
-            background-color: #ffe4e6 !important;
-        }
+        html.light-mode #nav-speaking-lab:hover { background-color: #ffe4e6 !important; }
         html.light-mode #speaking-lab-new-badge {
             background-color: #ffe4e6 !important;
             color: #9f1239 !important;
@@ -313,154 +350,55 @@
             border-color: #c7d2fe !important;
             color: #3730a3 !important;
         }
-        html.light-mode #nav-ai-lab:hover {
-            background-color: #e0e7ff !important;
-        }
+        html.light-mode #nav-ai-lab:hover { background-color: #e0e7ff !important; }
         html.light-mode #sidebar-model-badge {
             background-color: #e0e7ff !important;
             color: #3730a3 !important;
             border-color: #c7d2fe !important;
         }
 
-        /* ===== ALL HERO BANNERS (Dashboard, Phases 1-5, Boss Arena, Speaking Lab, AI Lab, Vocab Logger) ===== */
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-indigo-950"],
-        html.light-mode #tab-dashboard .from-indigo-950\/90,
-        html.light-mode #tab-ai-lab .from-indigo-950 {
-            background: linear-gradient(135deg, #eef2ff 0%, #ffffff 45%, #ecfeff 100%) !important;
-            border-color: #c7d2fe !important;
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-emerald-950"],
-        html.light-mode #tab-phase1 .from-emerald-950\/80,
-        html.light-mode #tab-vocab-logger .from-emerald-950\/90 {
-            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 45%, #f0fdf4 100%) !important;
-            border-color: #a7f3d0 !important;
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-blue-950"],
-        html.light-mode #tab-phase2 .from-blue-950\/80 {
-            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 45%, #f0f9ff 100%) !important;
-            border-color: #bfdbfe !important;
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-purple-950"],
-        html.light-mode #tab-phase3 .from-purple-950\/80 {
-            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 45%, #fdf4ff 100%) !important;
-            border-color: #e9d5ff !important;
-            box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-amber-950"],
-        html.light-mode #tab-phase4 .from-amber-950\/80 {
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 45%, #fefce8 100%) !important;
-            border-color: #fde68a !important;
-            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-cyan-950"],
-        html.light-mode #tab-phase5 .from-cyan-950\/80 {
-            background: linear-gradient(135deg, #ecfeff 0%, #ffffff 45%, #f0fdfa 100%) !important;
-            border-color: #a5f3fc !important;
-            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-rose-950"],
-        html.light-mode #tab-speaking-lab .from-rose-950\/80 {
-            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 45%, #fdf2f8 100%) !important;
-            border-color: #fecdd3 !important;
-            box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.08) !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-red-950"],
-        html.light-mode #tab-boss .from-red-950 {
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 45%, #fff1f2 100%) !important;
-            border-color: #fecaca !important;
-            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.08) !important;
-        }
-
-        /* Banner Headings & Typography */
-        html.light-mode .tab-content h2,
-        html.light-mode .tab-content h3 {
-            color: #0f172a !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"] h2,
-        html.light-mode [class*="bg-gradient-to-r"] h3 {
-            color: #0f172a !important;
-        }
-        html.light-mode [class*="bg-gradient-to-r"] p {
-            color: #475569 !important;
-        }
-
-        /* Hero Badges & Status in Banners */
-        html.light-mode #dash-greeting-badge { color: #64748b !important; }
-        html.light-mode #dash-streak-count { color: #d97706 !important; }
-        html.light-mode #dash-level-text { color: #4f46e5 !important; }
-        html.light-mode #tab-dashboard .from-indigo-950\/90 .border-amber-500\/30,
-        html.light-mode #tab-dashboard .from-indigo-950\/90 .border-indigo-500\/30 {
-            background-color: #ffffff !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04) !important;
-        }
-
-        /* Mini-Boss Challenge Cards at bottom of phases */
-        html.light-mode [class*="from-emerald-950\/60"],
-        html.light-mode [class*="from-blue-950\/60"],
-        html.light-mode [class*="from-purple-950\/60"],
-        html.light-mode [class*="from-amber-950\/60"],
-        html.light-mode [class*="from-cyan-950\/60"] {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
-        }
-
-        /* Phase Navigation Pills Bar */
-        html.light-mode .phase-pill-btn:not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-cyan"]):not([class*="bg-red"]) {
-            color: #475569 !important;
-            background: transparent !important;
-        }
-        html.light-mode .phase-pill-btn:not([class*="bg-"]):hover {
-            background-color: #f1f5f9 !important;
-            color: #0f172a !important;
-        }
-
-        /* Stage Cards (Phases 1-5 & Boss Arena) */
-        html.light-mode .stage-card {
+        /* Light Mode General Card & Panel Surfaces */
+        html.light-mode .bg-slate-900,
+        html.light-mode .bg-slate-900\/90,
+        html.light-mode .bg-slate-900\/80,
+        html.light-mode .bg-slate-900\/70,
+        html.light-mode .bg-slate-950,
+        html.light-mode .bg-slate-950\/90,
+        html.light-mode .bg-slate-950\/85,
+        html.light-mode .bg-slate-950\/80 {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+            box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
         }
-        html.light-mode .stage-card .text-cyan-400,
-        html.light-mode .stage-card .text-blue-400 {
-            color: #0284c7 !important;
-        }
-        html.light-mode .stage-card pre,
-        html.light-mode .stage-card .bg-slate-950\/80,
-        html.light-mode .stage-card .bg-slate-950 {
+        html.light-mode .bg-slate-800,
+        html.light-mode .bg-slate-800\/90,
+        html.light-mode .bg-slate-800\/80,
+        html.light-mode .bg-slate-800\/50,
+        html.light-mode .bg-slate-800\/40 {
             background-color: #f8fafc !important;
-            border: 1px solid #e2e8f0 !important;
-            color: #0f172a !important;
+            border-color: #e2e8f0 !important;
         }
 
-        /* Speaking Lab Part 1/2/3 navigation & cards */
-        html.light-mode #tab-speaking-lab button[id^="tab-btn-speaking-"]:not(.bg-rose-600) {
+        /* Light Mode High-Contrast Typography (Crisp & Readable) */
+        html.light-mode .text-slate-100,
+        html.light-mode .text-slate-200 {
+            color: #0f172a !important;
+        }
+        html.light-mode .text-slate-300 {
+            color: #334155 !important;
+        }
+        html.light-mode .text-slate-400 {
             color: #475569 !important;
-            background: transparent !important;
+            font-weight: 500 !important;
         }
-        html.light-mode #tab-speaking-lab button[id^="tab-btn-speaking-"]:hover {
-            background-color: #f1f5f9 !important;
+        html.light-mode .text-slate-500 {
+            color: #64748b !important;
+        }
+        html.light-mode .text-white:not(button):not(button *):not([class*="bg-emerald-600"]):not([class*="bg-rose-600"]):not([class*="bg-blue-600"]):not([class*="bg-indigo-600"]):not([class*="bg-amber-600"]):not([class*="bg-cyan-600"]):not([class*="bg-red-600"]):not([class*="bg-purple-600"]) {
             color: #0f172a !important;
         }
 
-        /* CEFR Distribution Badges in Dashboard */
-        html.light-mode #tab-dashboard .bg-rose-950 { background-color: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fca5a5 !important; }
-        html.light-mode #tab-dashboard .bg-rose-950 span { color: #991b1b !important; }
-        html.light-mode #tab-dashboard .bg-orange-950 { background-color: #ffedd5 !important; color: #9a3412 !important; border: 1px solid #fdba74 !important; }
-        html.light-mode #tab-dashboard .bg-orange-950 span { color: #9a3412 !important; }
-        html.light-mode #tab-dashboard .bg-purple-950 { background-color: #f3e8ff !important; color: #6b21a8 !important; border: 1px solid #d8b4fe !important; }
-        html.light-mode #tab-dashboard .bg-purple-950 span { color: #6b21a8 !important; }
-        html.light-mode #tab-dashboard .bg-blue-950 { background-color: #dbeafe !important; color: #1e40af !important; border: 1px solid #93c5fd !important; }
-        html.light-mode #tab-dashboard .bg-blue-950 span { color: #1e40af !important; }
-        html.light-mode #tab-dashboard .bg-teal-950 { background-color: #ccfbf1 !important; color: #115e59 !important; border: 1px solid #5eead4 !important; }
-        html.light-mode #tab-dashboard .bg-teal-950 span { color: #115e59 !important; }
-        html.light-mode #tab-dashboard .bg-emerald-950 { background-color: #dcfce7 !important; color: #166534 !important; border: 1px solid #86efac !important; }
-        html.light-mode #tab-dashboard .bg-emerald-950 span { color: #166534 !important; }
-
-        /* Form Inputs & Textareas */
+        /* Light Mode Form Inputs & Selects */
         html.light-mode input[type="text"],
         html.light-mode input[type="password"],
         html.light-mode textarea,
@@ -473,70 +411,37 @@
         html.light-mode textarea::placeholder {
             color: #94a3b8 !important;
         }
-
-        /* Modals in Light Mode */
-        html.light-mode .modal-backdrop {
-            background-color: rgba(15, 23, 42, 0.6) !important;
-            backdrop-filter: blur(8px) !important;
-        }
-        html.light-mode #modal-vocab-card > div,
-        html.light-mode #modal-flashcard-review > div,
-        html.light-mode #modal-api-key > div,
-        html.light-mode #modal-affirmations-manager > div,
-        html.light-mode #quest-modal > div,
-        html.light-mode #mini-boss-modal > div,
-        html.light-mode #modal-quest > div,
-        html.light-mode #modal-achievements > div,
-        html.light-mode #modal-prompt > div,
-        html.light-mode #modal-reset > div {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
-        }
-        html.light-mode #daily-affirmation-card {
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #eff6ff 100%) !important;
-            border-color: #fde68a !important;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.08) !important;
-        }
-        html.light-mode #modal-vocab-card h2,
-        html.light-mode #modal-vocab-card h3,
-        html.light-mode #modal-vocab-card h4,
-        html.light-mode #quest-modal h2,
-        html.light-mode #quest-modal h3,
-        html.light-mode #mini-boss-modal h2,
-        html.light-mode #mini-boss-modal h3 {
-            color: #0f172a !important;
-        }
-        html.light-mode #modal-vocab-card .bg-slate-950\/90,
-        html.light-mode #modal-vocab-card .bg-slate-900,
-        html.light-mode #quest-modal .bg-slate-950,
-        html.light-mode #mini-boss-modal .bg-slate-950 {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #vocab-indonesian-guide {
-            color: #b45309 !important;
-        }
-        html.light-mode #vocab-live-teaching-chat {
-            background-color: #f1f5f9 !important;
-            border-color: #e2e8f0 !important;
+        html.light-mode input:focus,
+        html.light-mode select:focus,
+        html.light-mode textarea:focus {
+            border-color: #059669 !important;
+            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.15) !important;
         }
 
-        /* General non-button text-white contrast override */
-        html.light-mode .text-white:not(button):not(button *):not([class*="bg-emerald-600"]):not([class*="bg-rose-600"]):not([class*="bg-blue-600"]):not([class*="bg-indigo-600"]):not([class*="bg-amber-600"]):not([class*="bg-cyan-600"]):not([class*="bg-red-600"]):not([class*="bg-purple-600"]) {
-            color: #0f172a !important;
-        }
+        /* Light Mode CEFR Badges */
+        html.light-mode .cefr-c2 { background: #faf5ff !important; color: #7e22ce !important; border-color: #d8b4fe !important; }
+        html.light-mode .cefr-c1 { background: #eff6ff !important; color: #1d4ed8 !important; border-color: #93c5fd !important; }
+        html.light-mode .cefr-b2 { background: #ecfdf5 !important; color: #047857 !important; border-color: #a7f3d0 !important; }
+        html.light-mode .cefr-b1 { background: #fffbeb !important; color: #b45309 !important; border-color: #fde68a !important; }
+        html.light-mode .cefr-a2 { background: #ecfeff !important; color: #0e7490 !important; border-color: #a5f3fc !important; }
+        html.light-mode .cefr-a1 { background: #f1f5f9 !important; color: #334155 !important; border-color: #cbd5e1 !important; }
 
-        /* Vocab Logger Card & Item Styling in Light Mode */
+        /* Light Mode Vocab Item Cards */
         html.light-mode .vocab-item {
             background: #ffffff !important;
             border-color: #e2e8f0 !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+            box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+        }
+        html.light-mode .vocab-item:hover {
+            background: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 10px 25px -3px rgba(15, 23, 42, 0.08) !important;
+            transform: translateY(-1px);
         }
         html.light-mode .vocab-item.vocab-item-mastered {
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #fefce8 100%) !important;
+            background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%) !important;
             border-color: #fde68a !important;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08) !important;
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.08) !important;
         }
         html.light-mode .vocab-item.vocab-item-unlearned {
             background: #ffffff !important;
@@ -546,22 +451,11 @@
             background: #fffbeb !important;
             border-color: #fde68a !important;
         }
-        html.light-mode .vocab-item span.text-white,
         html.light-mode .vocab-item .vocab-word-title {
             color: #0f172a !important;
         }
-        html.light-mode .vocab-item span.text-white:hover,
         html.light-mode .vocab-item .vocab-word-title:hover {
             color: #059669 !important;
-        }
-        html.light-mode .vocab-item .text-slate-300 {
-            color: #334155 !important;
-        }
-        html.light-mode .vocab-item .text-slate-400 {
-            color: #64748b !important;
-        }
-        html.light-mode .vocab-item .text-amber-300\/90 {
-            color: #b45309 !important;
         }
         html.light-mode .vocab-item button[onclick*="openVocabCard"] {
             background-color: #ecfdf5 !important;
@@ -581,176 +475,14 @@
         html.light-mode .vocab-item button[onclick*="speakWord"]:hover {
             background-color: #ffe4e6 !important;
         }
-        html.light-mode .badge-feynman-mastered,
-        html.light-mode .vocab-item span.bg-amber-950,
-        html.light-mode .vocab-item span.bg-amber-950\/80 {
-            background-color: #fef3c7 !important;
-            color: #92400e !important;
-            border-color: #fde68a !important;
-        }
-        html.light-mode .badge-feynman-unlearned,
-        html.light-mode .vocab-item span.bg-rose-950,
-        html.light-mode .vocab-item span.bg-rose-950\/80 {
-            background-color: #ffe4e6 !important;
-            color: #9f1239 !important;
-            border-color: #fecdd3 !important;
-        }
-        html.light-mode .badge-feynman-learning,
-        html.light-mode .vocab-item span.bg-emerald-950,
-        html.light-mode .vocab-item span.bg-emerald-950\/60 {
-            background-color: #d1fae5 !important;
-            color: #065f46 !important;
-            border-color: #a7f3d0 !important;
-        }
-        html.light-mode .badge-feynman-due {
-            background-color: #fef3c7 !important;
-            color: #92400e !important;
-            border-color: #fde68a !important;
-        }
-        html.light-mode #vocab-card-child-explanation {
-            background-color: #fffbeb !important;
-            border-color: #fde68a !important;
-            color: #78350f !important;
-        }
-        html.light-mode #vocab-card-daily-examples div {
-            background-color: #f0fdfa !important;
-            border-color: #ccfbf1 !important;
-        }
-        html.light-mode #vocab-card-daily-examples span.text-teal-100 {
-            color: #115e59 !important;
-        }
-        html.light-mode #vocab-feynman-container {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #input-feynman-explanation,
-        html.light-mode #input-feynman-sentence,
-        html.light-mode #input-fasttrack-answer {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #vocab-card-high-yield-box {
-            background: #fffbeb !important;
-            border-color: #fde68a !important;
-            color: #92400e !important;
-        }
-        html.light-mode #vocab-card-trap-box {
-            background: #fff1f2 !important;
-            border-color: #fecdd3 !important;
-            color: #9f1239 !important;
-        }
-        html.light-mode #vocab-card-indonesian-guide {
-            background-color: #fffbeb !important;
-            border-color: #fde68a !important;
-            color: #78350f !important;
-        }
-        html.light-mode #vocab-deep-eval-result .bg-amber-950\/60,
-        html.light-mode #vocab-deep-eval-result .bg-amber-950\/30 {
-            background-color: #fffbeb !important;
-            border-color: #fde68a !important;
-            color: #78350f !important;
-        }
-        html.light-mode #vocab-deep-eval-result .text-amber-200,
-        html.light-mode #vocab-deep-eval-result .text-amber-300 {
-            color: #78350f !important;
-        }
-        html.light-mode #vocab-deep-eval-result .bg-slate-950,
-        html.light-mode #vocab-deep-eval-result .bg-slate-900\/90 {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #vocab-deep-eval-result button[onclick*="speakWord"] {
-            background-color: #e0e7ff !important;
-            border-color: #c7d2fe !important;
-            color: #3730a3 !important;
-        }
-        html.light-mode #vocab-deep-eval-result #drill-buttons-container button:not([class*="bg-emerald"]) {
-            background-color: #f8fafc !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #vocab-feynman-feedback-box {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #vocab-feynman-feedback-box .bg-slate-950\/80 {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #vocab-feynman-feedback-box .bg-rose-950\/40 {
-            background-color: #fff1f2 !important;
-            border-color: #fecdd3 !important;
-            color: #9f1239 !important;
-        }
-        html.light-mode #vocab-feynman-feedback-box .bg-rose-950\/40 .text-rose-200 {
-            color: #881337 !important;
-        }
-        html.light-mode #vocab-feynman-feedback-box .bg-indigo-950\/40 {
-            background-color: #eef2ff !important;
-            border-color: #c7d2fe !important;
-            color: #3730a3 !important;
-        }
-        html.light-mode #vocab-feynman-feedback-box .bg-indigo-950\/40 .bg-slate-950\/90 {
-            background-color: #ffffff !important;
-            border-color: #c7d2fe !important;
-            color: #312e81 !important;
-        }
-        html.light-mode #vocab-feynman-feedback-box .bg-emerald-950\/30 {
-            background-color: #ecfdf5 !important;
-            border-color: #a7f3d0 !important;
-            color: #065f46 !important;
-        }
-        html.light-mode #vocab-feynman-feedback-box .bg-emerald-950\/30 .text-emerald-100 {
-            color: #064e3b !important;
-        }
-        html.light-mode #input-vocab-word,
-        html.light-mode #input-vocab-search,
-        html.light-mode #select-vocab-cefr,
-        html.light-mode #select-vocab-register,
-        html.light-mode #select-vocab-sort,
-        html.light-mode #input-review-feynman-expl,
-        html.light-mode #input-review-feynman-sentence {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #tab-vocab-logger .text-slate-500 {
-            color: #64748b !important;
-        }
-        html.light-mode #tab-vocab-logger label {
-            color: #475569 !important;
-        }
-        html.light-mode #tab-vocab-logger .vocab-item {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #tab-vocab-logger .vocab-item.vocab-item-mastered {
-            background: linear-gradient(to right, #ffffff, #fffbeb) !important;
-            border-color: #fde68a !important;
-        }
-        html.light-mode #tab-vocab-logger .vocab-item .vocab-word-title {
-            color: #0f172a !important;
-        }
-        html.light-mode #tab-vocab-logger .vocab-item p {
-            color: #475569 !important;
-        }
-        html.light-mode #modal-vocab-review .bg-slate-950 {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #modal-vocab-review #review-card-word {
-            color: #0f172a !important;
-        }
+
+        /* Light Mode Filter Pills & Badges */
         html.light-mode button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]) {
             background-color: #f1f5f9 !important;
             border-color: #e2e8f0 !important;
-            color: #475569 !important;
+            color: #334155 !important;
         }
-        html.light-mode button[onclick*="setVocabFilter"]:hover {
+        html.light-mode button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]):hover {
             background-color: #e2e8f0 !important;
             color: #0f172a !important;
         }
@@ -773,174 +505,96 @@
             color: #475569 !important;
         }
 
-        /* Speaking Lab in Light Mode */
-        html.light-mode #tab-speaking-lab .bg-slate-900,
-        html.light-mode #tab-speaking-lab .bg-slate-900\/90,
-        html.light-mode #tab-speaking-lab .bg-slate-950 {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            color: #0f172a !important;
+        /* ----- 3. HARMONIZED HERO BANNERS (BOTH MODES) ----- */
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-indigo-950"],
+        html.light-mode #tab-dashboard .from-indigo-950\/90,
+        html.light-mode #tab-ai-lab .from-indigo-950 {
+            background: linear-gradient(135deg, #eef2ff 0%, #ffffff 50%, #ecfeff 100%) !important;
+            border-color: #c7d2fe !important;
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.08) !important;
         }
-        html.light-mode #speaking-generated-card-part1,
-        html.light-mode #speaking-generated-card-part2,
-        html.light-mode #speaking-generated-card-part3 {
-            background-color: #f8fafc !important;
-            border-color: #cbd5e1 !important;
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-emerald-950"],
+        html.light-mode #tab-phase1 .from-emerald-950\/80,
+        html.light-mode #tab-vocab-logger .from-emerald-950\/90 {
+            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 50%, #f0fdf4 100%) !important;
+            border-color: #a7f3d0 !important;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.08) !important;
         }
-        html.light-mode #tab-speaking-lab .bg-slate-900\/90.p-2\.5 {
-            background-color: #f1f5f9 !important;
-            border-color: #e2e8f0 !important;
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-blue-950"],
+        html.light-mode #tab-phase2 .from-blue-950\/80 {
+            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f0f9ff 100%) !important;
+            border-color: #bfdbfe !important;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.08) !important;
         }
-        html.light-mode #speaking-text-part1,
-        html.light-mode #speaking-text-part2,
-        html.light-mode #speaking-text-part3 {
-            color: #1e293b !important;
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-purple-950"],
+        html.light-mode #tab-phase3 .from-purple-950\/80 {
+            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 50%, #fdf4ff 100%) !important;
+            border-color: #e9d5ff !important;
+            box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.08) !important;
         }
-        html.light-mode #speaking-eval-result-part1,
-        html.light-mode #speaking-eval-result-part2,
-        html.light-mode #speaking-eval-result-part3 {
-            background-color: #ffffff !important;
-            border-color: #fecdd3 !important;
-            box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.08) !important;
-        }
-        html.light-mode .speaking-audit-band-card {
-            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 50%, #f8fafc 100%) !important;
-            border-color: #fecdd3 !important;
-            box-shadow: 0 4px 15px rgba(244, 63, 94, 0.06) !important;
-        }
-        html.light-mode .speaking-audit-band-card h1,
-        html.light-mode .speaking-audit-band-card h2,
-        html.light-mode .speaking-audit-band-card h3 {
-            color: #9f1239 !important;
-        }
-        html.light-mode .speaking-audit-band-card p,
-        html.light-mode .speaking-audit-band-card li,
-        html.light-mode .speaking-audit-band-card span {
-            color: #1e293b !important;
-        }
-        html.light-mode .speaking-audit-band-card strong {
-            color: #0f172a !important;
-        }
-        html.light-mode details.speaking-audit-detail {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
-        }
-        html.light-mode details.speaking-audit-detail summary {
-            background-color: #f8fafc !important;
-            color: #0f172a !important;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        html.light-mode details.speaking-audit-detail summary:hover {
-            background-color: #f1f5f9 !important;
-        }
-        html.light-mode details.speaking-audit-detail > div {
-            background-color: #ffffff !important;
-            color: #1e293b !important;
-        }
-        html.light-mode details.speaking-audit-detail .text-slate-200,
-        html.light-mode details.speaking-audit-detail .text-slate-300,
-        html.light-mode details.speaking-audit-detail .text-slate-400 {
-            color: #334155 !important;
-        }
-        html.light-mode details.speaking-audit-detail strong {
-            color: #0f172a !important;
-        }
-        html.light-mode details.speaking-audit-detail li {
-            color: #1e293b !important;
-        }
-        html.light-mode details.speaking-audit-detail h1,
-        html.light-mode details.speaking-audit-detail h2,
-        html.light-mode details.speaking-audit-detail h3,
-        html.light-mode details.speaking-audit-detail h4 {
-            color: #0f172a !important;
-        }
-        html.light-mode details.speaking-audit-detail blockquote {
-            background-color: #f8fafc !important;
-            border-left-color: #f43f5e !important;
-            color: #1e293b !important;
-        }
-        html.light-mode #tab-speaking-lab select {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #tab-speaking-lab pre {
-            background-color: #0f172a !important;
-            color: #34d399 !important;
-            border-color: #334155 !important;
-        }
-        html.light-mode #tab-speaking-lab .bg-slate-900.border-rose-500\/30 {
-            background-color: #f8fafc !important;
-            border-color: #fecdd3 !important;
-        }
-        html.light-mode #tab-speaking-lab .text-rose-400 {
-            color: #e11d48 !important;
-        }
-        html.light-mode #tab-speaking-lab .text-rose-300 {
-            color: #be123c !important;
-        }
-
-        /* Synthesis Lab in Light Mode */
-        html.light-mode #nav-synthesis-lab {
-            background-color: #f0fdfa !important;
-            border-color: #99f6e4 !important;
-            color: #0f766e !important;
-        }
-        html.light-mode #nav-synthesis-lab:hover {
-            background-color: #ccfbf1 !important;
-        }
-        html.light-mode #tab-synthesis-lab .from-teal-950\/90 {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #eef2ff 100%) !important;
-            border-color: #99f6e4 !important;
-            box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.08) !important;
-        }
-        html.light-mode #tab-synthesis-lab .bg-slate-900,
-        html.light-mode #tab-synthesis-lab .bg-slate-900\/90,
-        html.light-mode #tab-synthesis-lab .bg-slate-950 {
-            background-color: #ffffff !important;
-            border-color: #e2e8f0 !important;
-            color: #0f172a !important;
-        }
-        html.light-mode #modal-synthesis-logbook > div {
-            background-color: #ffffff !important;
-            border-color: #99f6e4 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
-        }
-        html.light-mode #modal-synthesis-logbook h3 {
-            color: #0f172a !important;
-        }
-        html.light-mode #synthesis-logbook-list .bg-slate-950 {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #synthesis-logbook-empty {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-        html.light-mode #synthesis-tier1-text {
-            color: #334155 !important;
-        }
-        html.light-mode #synthesis-tier2-text {
-            color: #1e40af !important;
-        }
-        html.light-mode #synthesis-tier3-text {
-            color: #065f46 !important;
-        }
-        html.light-mode #synthesis-speak1-transcript {
-            color: #334155 !important;
-        }
-        html.light-mode #synthesis-upgraded-speaking-script {
-            color: #0f766e !important;
-        }
-        html.light-mode #synthesis-step-report .from-slate-900 {
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #f0fdfa 100%) !important;
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-amber-950"],
+        html.light-mode #tab-phase4 .from-amber-950\/80 {
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #fefce8 100%) !important;
             border-color: #fde68a !important;
             box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.08) !important;
         }
-        html.light-mode #synthesis-step-report .bg-slate-950 {
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-cyan-950"],
+        html.light-mode #tab-phase5 .from-cyan-950\/80 {
+            background: linear-gradient(135deg, #ecfeff 0%, #ffffff 50%, #f0fdfa 100%) !important;
+            border-color: #a5f3fc !important;
+            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.08) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-rose-950"],
+        html.light-mode #tab-speaking-lab .from-rose-950\/80 {
+            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 50%, #fdf2f8 100%) !important;
+            border-color: #fecdd3 !important;
+            box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.08) !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"][class*="from-red-950"],
+        html.light-mode #tab-boss .from-red-950 {
+            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fff1f2 100%) !important;
+            border-color: #fecaca !important;
+            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.08) !important;
+        }
+
+        /* Banner Headings & Typography */
+        html.light-mode .tab-content h2,
+        html.light-mode .tab-content h3,
+        html.light-mode [class*="bg-gradient-to-r"] h2,
+        html.light-mode [class*="bg-gradient-to-r"] h3 {
+            color: #0f172a !important;
+        }
+        html.light-mode [class*="bg-gradient-to-r"] p {
+            color: #475569 !important;
+        }
+
+        /* Modals in Light Mode */
+        html.light-mode .modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            backdrop-filter: blur(8px) !important;
+        }
+        html.light-mode #modal-vocab-card > div,
+        html.light-mode #modal-vocab-review > div,
+        html.light-mode #modal-flashcard-review > div,
+        html.light-mode #modal-api-key > div,
+        html.light-mode #modal-affirmations-manager > div,
+        html.light-mode #quest-modal > div,
+        html.light-mode #mini-boss-modal > div,
+        html.light-mode #modal-quest > div,
+        html.light-mode #modal-achievements > div,
+        html.light-mode #modal-prompt > div,
+        html.light-mode #modal-reset > div {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2) !important;
+        }
+        html.light-mode #modal-vocab-review .bg-slate-950 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #modal-vocab-review #review-card-word {
+            color: #0f172a !important;
         }
 
         /* Solid & Gradient Action Buttons text keep white */
@@ -970,7 +624,7 @@
             color: #ffffff !important;
         }
 
-        /* Smooth Transition */
+        /* Smooth Theme Transition */
         body, header, aside, main, div, section, button, p, span {
             transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         }
