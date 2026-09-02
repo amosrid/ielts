@@ -10071,6 +10071,7 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                     feynmanLevel: 0,
                     feynmanStatus: 'unlearned',
                     feynmanLastExplanation: '',
+                    feynmanLastSentence: '',
                     feynmanFeedback: null,
                     consecutiveMasteryCount: 0,
                     status: 'learning'
@@ -10638,18 +10639,28 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             const vocab = vocabBank.find(v => v.id === currentActiveVocabId);
             if (!vocab) return;
 
-            if (vocab.status === 'mastered') {
+            if (vocab.status === 'mastered' || (vocab.feynmanLevel && vocab.feynmanLevel >= 5)) {
                 vocab.status = 'learning';
+                vocab.feynmanStatus = 'learning';
+                if (vocab.feynmanLevel && vocab.feynmanLevel >= 5) vocab.feynmanLevel = 3;
+                vocab.consecutiveMasteryCount = 0;
+                vocab.srInterval = 1;
                 vocab.srNextReview = Date.now();
                 showToast(`Kata "${vocab.word}" dikembalikan ke daftar belajar.`, "info");
             } else {
                 vocab.status = 'mastered';
+                vocab.feynmanStatus = 'mastered';
+                vocab.feynmanLevel = 5;
+                vocab.srInterval = 999;
+                vocab.srNextReview = Date.now() + (999 * 86400000);
                 addXP(25);
                 SoundFX.play('levelup');
-                showToast(`Hebat! Kata "${vocab.word}" ditandai Sudah Hafal (+25 XP)!`, "success");
+                triggerConfetti();
+                showToast(`Hebat! Kata "${vocab.word}" ditandai Bebas Review Selamanya (+25 XP)!`, "success");
             }
             saveVocabBank();
             openVocabCard(vocab.id);
+            renderVocabBank();
         }
 
         function deleteCurrentVocabWord() {
@@ -10660,6 +10671,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 vocabBank.splice(idx, 1);
                 saveVocabBank();
                 closeVocabCard();
+                renderVocabBank();
                 SoundFX.play('error');
                 showToast(`Kata "${word}" telah dihapus.`, "info");
             }
@@ -11381,6 +11393,8 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
 Kata: "${vocab.word}"
 Kelas kata: ${vocab.pos || 'kata'}
 Level CEFR: ${vocab.cefr || 'B2'}
+Register / Keformalan: ${vocab.registerLabel || vocab.registerLevel || 'Formal Akademik'}
+Kesesuaian IELTS: ${vocab.ieltsSuitability ? vocab.ieltsSuitability.badgeText : 'Writing & Speaking OK'}
 Arti (Indonesia): ${vocab.meaningId || '-'}
 Arti (Inggris): ${vocab.meaningEn || '-'}
 Pengucapan IPA: ${vocab.ipa || vocab.word}
