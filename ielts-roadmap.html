@@ -723,8 +723,8 @@
         <!-- Left Sidebar Navigation (mobile: drawer, desktop: always visible) -->
         <aside id="main-sidebar" class="hidden lg:block lg:col-span-3 space-y-4 fixed lg:static inset-y-0 left-0 z-40 w-72 lg:w-auto pt-16 lg:pt-0 px-4 lg:px-0 bg-slate-950 lg:bg-transparent overflow-y-auto lg:overflow-visible">
             <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 space-y-2 sticky top-20 shadow-xl">
-                <!-- 1. Dashboard Nav Button -->
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full text-left p-2.5 rounded-xl border border-indigo-500/40 bg-indigo-950/30 text-indigo-300 font-semibold text-xs flex items-center justify-between transition-all shadow-sm">
+                <!-- 1. Dashboard Nav -->
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
                         <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[11px] border border-indigo-500/30">
                             <i class="fa-solid fa-gauge-high"></i>
@@ -736,7 +736,7 @@
 
                 <!-- 2. Roadmap Quests Accordion Group -->
                 <div class="space-y-1 pt-1">
-                    <button onclick="toggleRoadmapNav(event)" id="nav-roadmap-main" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 hover:bg-slate-800/50 text-slate-300 font-semibold text-xs flex items-center justify-between transition-all">
+                    <button onclick="toggleRoadmapNav(event)" id="nav-roadmap-main" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
                         <div class="flex items-center space-x-2">
                             <span class="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-[11px] border border-cyan-500/30">
                                 <i class="fa-solid fa-map-location-dot"></i>
@@ -797,36 +797,44 @@
                 </div>
 
                 <!-- 3. Vocab Logger Nav -->
-                <button onclick="switchTab('vocab-logger')" id="nav-vocab-logger" class="nav-btn w-full text-left p-2.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 hover:bg-emerald-900/30 text-emerald-300 font-bold text-xs flex items-center justify-between transition-all">
+                <button onclick="switchTab('vocab-logger')" id="nav-vocab-logger" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-book-bookmark text-emerald-400"></i>
+                        <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[11px] border border-emerald-500/30">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                        </span>
                         <span>Vocab Logger</span>
                     </div>
                     <span id="vocab-review-badge" class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded-md font-mono border border-emerald-500/30">0</span>
                 </button>
 
                 <!-- 4. Speaking Lab Nav -->
-                <button onclick="switchTab('speaking-lab')" id="nav-speaking-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-rose-500/30 bg-rose-950/20 hover:bg-rose-900/30 text-rose-300 font-bold text-xs flex items-center justify-between transition-all">
+                <button onclick="switchTab('speaking-lab')" id="nav-speaking-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-microphone text-rose-400"></i>
+                        <span class="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-[11px] border border-rose-500/30">
+                            <i class="fa-solid fa-microphone"></i>
+                        </span>
                         <span>Speaking Lab</span>
                     </div>
                     <span id="speaking-lab-new-badge" class="text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded-md font-mono border border-rose-500/30 badge-blink">NEW</span>
                 </button>
 
                 <!-- 5. Synthesis Lab Nav (4-Skill Integrated English & IELTS) -->
-                <button onclick="switchTab('synthesis-lab')" id="nav-synthesis-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-teal-500/30 bg-teal-950/20 hover:bg-teal-900/30 text-teal-300 font-bold text-xs flex items-center justify-between transition-all">
+                <button onclick="switchTab('synthesis-lab')" id="nav-synthesis-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-layer-group text-teal-400"></i>
+                        <span class="w-6 h-6 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-[11px] border border-teal-500/30">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </span>
                         <span>Synthesis Lab</span>
                     </div>
                     <span class="text-[9px] bg-teal-500/20 text-teal-300 px-1.5 py-0.5 rounded-md font-mono border border-teal-500/30">4-IN-1</span>
                 </button>
 
                 <!-- 6. AI Glitch Lab Nav -->
-                <button onclick="switchTab('ai-lab')" id="nav-ai-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-indigo-500/30 bg-indigo-950/20 hover:bg-indigo-900/30 text-indigo-300 font-bold text-xs flex items-center justify-between transition-all">
+                <button onclick="switchTab('ai-lab')" id="nav-ai-lab" class="nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 font-bold text-xs flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i>
+                        <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[11px] border border-indigo-500/30">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </span>
                         <span>AI Glitch Lab</span>
                     </div>
                     <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded-md font-mono border border-indigo-500/30" id="sidebar-model-badge">3.7 FLASH</span>
