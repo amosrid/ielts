@@ -624,10 +624,87 @@
             border-color: #e2e8f0 !important;
         }
         html.light-mode #input-feynman-explanation,
+        html.light-mode #input-feynman-sentence,
         html.light-mode #input-fasttrack-answer {
             background-color: #ffffff !important;
             border-color: #cbd5e1 !important;
             color: #0f172a !important;
+        }
+        html.light-mode #vocab-card-high-yield-box {
+            background: #fffbeb !important;
+            border-color: #fde68a !important;
+            color: #92400e !important;
+        }
+        html.light-mode #vocab-card-trap-box {
+            background: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #9f1239 !important;
+        }
+        html.light-mode #vocab-card-indonesian-guide {
+            background-color: #fffbeb !important;
+            border-color: #fde68a !important;
+            color: #78350f !important;
+        }
+        html.light-mode #vocab-deep-eval-result .bg-amber-950\/60,
+        html.light-mode #vocab-deep-eval-result .bg-amber-950\/30 {
+            background-color: #fffbeb !important;
+            border-color: #fde68a !important;
+            color: #78350f !important;
+        }
+        html.light-mode #vocab-deep-eval-result .text-amber-200,
+        html.light-mode #vocab-deep-eval-result .text-amber-300 {
+            color: #78350f !important;
+        }
+        html.light-mode #vocab-deep-eval-result .bg-slate-950,
+        html.light-mode #vocab-deep-eval-result .bg-slate-900\/90 {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #vocab-deep-eval-result button[onclick*="speakWord"] {
+            background-color: #e0e7ff !important;
+            border-color: #c7d2fe !important;
+            color: #3730a3 !important;
+        }
+        html.light-mode #vocab-deep-eval-result #drill-buttons-container button:not([class*="bg-emerald"]) {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #vocab-feynman-feedback-box {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
+        html.light-mode #vocab-feynman-feedback-box .bg-slate-950\/80 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #vocab-feynman-feedback-box .bg-rose-950\/40 {
+            background-color: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #9f1239 !important;
+        }
+        html.light-mode #vocab-feynman-feedback-box .bg-rose-950\/40 .text-rose-200 {
+            color: #881337 !important;
+        }
+        html.light-mode #vocab-feynman-feedback-box .bg-indigo-950\/40 {
+            background-color: #eef2ff !important;
+            border-color: #c7d2fe !important;
+            color: #3730a3 !important;
+        }
+        html.light-mode #vocab-feynman-feedback-box .bg-indigo-950\/40 .bg-slate-950\/90 {
+            background-color: #ffffff !important;
+            border-color: #c7d2fe !important;
+            color: #312e81 !important;
+        }
+        html.light-mode #vocab-feynman-feedback-box .bg-emerald-950\/30 {
+            background-color: #ecfdf5 !important;
+            border-color: #a7f3d0 !important;
+            color: #065f46 !important;
+        }
+        html.light-mode #vocab-feynman-feedback-box .bg-emerald-950\/30 .text-emerald-100 {
+            color: #064e3b !important;
         }
         html.light-mode #input-vocab-search,
         html.light-mode #select-vocab-sort {
@@ -4292,12 +4369,12 @@
                         <textarea id="input-feynman-sentence" rows="2" placeholder="Contoh: 'The student made an impertinent remark to the examiner.' (AI akan membedah struktur, part of speech & kolokasi)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 resize-none leading-relaxed shadow-inner"></textarea>
                     </div>
                     
-                    <div class="flex flex-wrap justify-between items-center gap-2 pt-1">
-                        <button onclick="startFastTrackMasteryChallenge()" id="btn-challenge-feynman" class="px-3.5 py-2 bg-gradient-to-r from-amber-600/30 to-amber-500/20 hover:from-amber-600/40 hover:to-amber-500/30 text-amber-300 font-mono font-bold text-xs rounded-xl transition-all border border-amber-500/40 flex items-center gap-1.5 shadow-sm">
+                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 pt-1">
+                        <button onclick="startFastTrackMasteryChallenge()" id="btn-challenge-feynman" class="w-full sm:w-auto px-3.5 py-2 bg-gradient-to-r from-amber-600/30 to-amber-500/20 hover:from-amber-600/40 hover:to-amber-500/30 text-amber-300 font-mono font-bold text-xs rounded-xl transition-all border border-amber-500/40 flex items-center justify-center gap-1.5 shadow-sm">
                             <i class="fa-solid fa-crown text-amber-400"></i>
                             <span>🏆 Uji Bebas Review (Instant Mastery)</span>
                         </button>
-                        <button onclick="submitFeynmanExplanation()" id="btn-submit-feynman" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-emerald-600 hover:opacity-95 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5 border border-indigo-400/30">
+                        <button onclick="submitFeynmanExplanation()" id="btn-submit-feynman" class="w-full sm:w-auto px-5 py-2 bg-gradient-to-r from-indigo-600 to-emerald-600 hover:opacity-95 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 border border-indigo-400/30">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
                             <span id="btn-submit-feynman-text">Uji Pemahaman & Tata Bahasa (+25 XP)</span>
                         </button>
@@ -11217,18 +11294,18 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                         </p>
 
                         <!-- 3 Interactive Repetition Buttons -->
-                        <div class="grid grid-cols-3 gap-2 font-mono text-xs" id="drill-buttons-container">
-                            <button onclick="toggleVocabDrillStep(1, '${targetWordClean}')" id="btn-drill-step-1" class="py-2.5 px-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
-                                <i class="fa-regular fa-circle text-slate-500 text-[10px]"></i>
-                                <span>1. ${targetWordClean}</span>
+                        <div class="grid grid-cols-3 gap-2 font-mono text-[11px] sm:text-xs" id="drill-buttons-container">
+                            <button onclick="toggleVocabDrillStep(1, '${targetWordClean}')" id="btn-drill-step-1" class="py-2.5 px-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 overflow-hidden">
+                                <i class="fa-regular fa-circle text-slate-500 text-[10px] shrink-0"></i>
+                                <span class="truncate">1. ${targetWordClean}</span>
                             </button>
-                            <button onclick="toggleVocabDrillStep(2, '${targetWordClean}')" id="btn-drill-step-2" class="py-2.5 px-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
-                                <i class="fa-regular fa-circle text-slate-500 text-[10px]"></i>
-                                <span>2. ${targetWordClean}</span>
+                            <button onclick="toggleVocabDrillStep(2, '${targetWordClean}')" id="btn-drill-step-2" class="py-2.5 px-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 overflow-hidden">
+                                <i class="fa-regular fa-circle text-slate-500 text-[10px] shrink-0"></i>
+                                <span class="truncate">2. ${targetWordClean}</span>
                             </button>
-                            <button onclick="toggleVocabDrillStep(3, '${targetWordClean}')" id="btn-drill-step-3" class="py-2.5 px-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
-                                <i class="fa-regular fa-circle text-slate-500 text-[10px]"></i>
-                                <span>3. ${targetWordClean}</span>
+                            <button onclick="toggleVocabDrillStep(3, '${targetWordClean}')" id="btn-drill-step-3" class="py-2.5 px-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 overflow-hidden">
+                                <i class="fa-regular fa-circle text-slate-500 text-[10px] shrink-0"></i>
+                                <span class="truncate">3. ${targetWordClean}</span>
                             </button>
                         </div>
 
@@ -11253,12 +11330,12 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
             const btn = document.getElementById(`btn-drill-step-${stepNum}`);
             if (btn) {
                 if (vocabDrillState[stepNum]) {
-                    btn.className = "py-2.5 px-2 rounded-xl bg-emerald-950/80 border border-emerald-500 text-emerald-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95";
-                    btn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i> <span>✓ ${word}</span>`;
+                    btn.className = "py-2.5 px-2 rounded-xl bg-emerald-950/80 border border-emerald-500 text-emerald-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95 overflow-hidden";
+                    btn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-xs shrink-0"></i> <span class="truncate">✓ ${word}</span>`;
                     SoundFX.play('correct');
                 } else {
-                    btn.className = "py-2.5 px-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95";
-                    btn.innerHTML = `<i class="fa-regular fa-circle text-slate-500 text-[10px]"></i> <span>${stepNum}. ${word}</span>`;
+                    btn.className = "py-2.5 px-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-slate-300 font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 overflow-hidden";
+                    btn.innerHTML = `<i class="fa-regular fa-circle text-slate-500 text-[10px] shrink-0"></i> <span class="truncate">${stepNum}. ${word}</span>`;
                     SoundFX.play('click');
                 }
             }
