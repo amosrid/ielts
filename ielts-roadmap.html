@@ -205,7 +205,7 @@
             border-color: #e2e8f0 !important;
         }
 
-        /* General Typography */
+        /* General Typography & Text Contrast Hierarchy */
         html.light-mode h1,
         html.light-mode h2,
         html.light-mode h3,
@@ -223,6 +223,145 @@
         html.light-mode .text-slate-500 {
             color: #94a3b8 !important;
         }
+
+        /* High-Contrast Saturated Color Accents in Light Mode */
+        html.light-mode .text-emerald-300,
+        html.light-mode .text-emerald-400 { color: #059669 !important; }
+        html.light-mode .text-cyan-300,
+        html.light-mode .text-cyan-400 { color: #0891b2 !important; }
+        html.light-mode .text-blue-300,
+        html.light-mode .text-blue-400 { color: #0284c7 !important; }
+        html.light-mode .text-amber-300,
+        html.light-mode .text-amber-400 { color: #d97706 !important; }
+        html.light-mode .text-purple-300,
+        html.light-mode .text-purple-400 { color: #7c3aed !important; }
+        html.light-mode .text-rose-300,
+        html.light-mode .text-rose-400 { color: #e11d48 !important; }
+        html.light-mode .text-red-300,
+        html.light-mode .text-red-400 { color: #dc2626 !important; }
+        html.light-mode .text-indigo-300,
+        html.light-mode .text-indigo-400 { color: #4f46e5 !important; }
+        html.light-mode .text-teal-300,
+        html.light-mode .text-teal-400 { color: #0f766e !important; }
+
+        /* Saturated Hover States in Light Mode */
+        html.light-mode .hover\:text-white:hover { color: #0f172a !important; }
+        html.light-mode .hover\:bg-slate-900:hover,
+        html.light-mode .hover\:bg-slate-800:hover,
+        html.light-mode .hover\:bg-slate-700:hover {
+            background-color: #f1f5f9 !important;
+        }
+
+        /* Soft Pastel Chip & Box Backgrounds in Light Mode */
+        html.light-mode .bg-emerald-950,
+        html.light-mode .bg-emerald-950\/80,
+        html.light-mode .bg-emerald-950\/60,
+        html.light-mode .bg-emerald-950\/40,
+        html.light-mode .bg-emerald-950\/30,
+        html.light-mode .bg-emerald-950\/20 {
+            background-color: #ecfdf5 !important;
+            border-color: #a7f3d0 !important;
+        }
+        html.light-mode .bg-amber-950,
+        html.light-mode .bg-amber-950\/80,
+        html.light-mode .bg-amber-950\/60,
+        html.light-mode .bg-amber-950\/40,
+        html.light-mode .bg-amber-950\/30,
+        html.light-mode .bg-amber-950\/20 {
+            background-color: #fffbeb !important;
+            border-color: #fde68a !important;
+        }
+        html.light-mode .bg-blue-950,
+        html.light-mode .bg-blue-950\/80,
+        html.light-mode .bg-blue-950\/60,
+        html.light-mode .bg-blue-950\/40,
+        html.light-mode .bg-blue-950\/30,
+        html.light-mode .bg-blue-950\/20 {
+            background-color: #f0f9ff !important;
+            border-color: #bae6fd !important;
+        }
+        html.light-mode .bg-cyan-950,
+        html.light-mode .bg-cyan-950\/80,
+        html.light-mode .bg-cyan-950\/60,
+        html.light-mode .bg-cyan-950\/40,
+        html.light-mode .bg-cyan-950\/30,
+        html.light-mode .bg-cyan-950\/20 {
+            background-color: #ecfeff !important;
+            border-color: #a5f3fc !important;
+        }
+        html.light-mode .bg-purple-950,
+        html.light-mode .bg-purple-950\/80,
+        html.light-mode .bg-purple-950\/60,
+        html.light-mode .bg-purple-950\/40,
+        html.light-mode .bg-purple-950\/30,
+        html.light-mode .bg-purple-950\/20 {
+            background-color: #faf5ff !important;
+            border-color: #e9d5ff !important;
+        }
+        html.light-mode .bg-rose-950,
+        html.light-mode .bg-rose-950\/80,
+        html.light-mode .bg-rose-950\/60,
+        html.light-mode .bg-rose-950\/40,
+        html.light-mode .bg-rose-950\/30,
+        html.light-mode .bg-rose-950\/20 {
+            background-color: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+        }
+        html.light-mode .bg-indigo-950,
+        html.light-mode .bg-indigo-950\/80,
+        html.light-mode .bg-indigo-950\/60,
+        html.light-mode .bg-indigo-950\/40,
+        html.light-mode .bg-indigo-950\/30,
+        html.light-mode .bg-indigo-950\/20 {
+            background-color: #eef2ff !important;
+            border-color: #c7d2fe !important;
+        }
+        html.light-mode .bg-teal-950,
+        html.light-mode .bg-teal-950\/80,
+        html.light-mode .bg-teal-950\/60,
+        html.light-mode .bg-teal-950\/40,
+        html.light-mode .bg-teal-950\/30,
+        html.light-mode .bg-teal-950\/20 {
+            background-color: #f0fdfa !important;
+            border-color: #99f6e4 !important;
+        }
+        html.light-mode .bg-red-950,
+        html.light-mode .bg-red-950\/80,
+        html.light-mode .bg-red-950\/60,
+        html.light-mode .bg-red-950\/40,
+        html.light-mode .bg-red-950\/30 {
+            background-color: #fef2f2 !important;
+            border-color: #fecaca !important;
+        }
+
+        /* Border Accent Overrides in Light Mode */
+        html.light-mode .border-emerald-500\/40,
+        html.light-mode .border-emerald-500\/30,
+        html.light-mode .border-emerald-500\/20 { border-color: #a7f3d0 !important; }
+        html.light-mode .border-amber-500\/40,
+        html.light-mode .border-amber-500\/30,
+        html.light-mode .border-amber-500\/20 { border-color: #fde68a !important; }
+        html.light-mode .border-blue-500\/40,
+        html.light-mode .border-blue-500\/30,
+        html.light-mode .border-blue-500\/20 { border-color: #bae6fd !important; }
+        html.light-mode .border-cyan-500\/40,
+        html.light-mode .border-cyan-500\/30,
+        html.light-mode .border-cyan-500\/20 { border-color: #a5f3fc !important; }
+        html.light-mode .border-purple-500\/40,
+        html.light-mode .border-purple-500\/30,
+        html.light-mode .border-purple-500\/20 { border-color: #e9d5ff !important; }
+        html.light-mode .border-rose-500\/40,
+        html.light-mode .border-rose-500\/30,
+        html.light-mode .border-rose-500\/20 { border-color: #fecdd3 !important; }
+        html.light-mode .border-indigo-500\/40,
+        html.light-mode .border-indigo-500\/30,
+        html.light-mode .border-indigo-500\/20 { border-color: #c7d2fe !important; }
+        html.light-mode .border-teal-500\/40,
+        html.light-mode .border-teal-500\/30,
+        html.light-mode .border-teal-500\/20 { border-color: #99f6e4 !important; }
+        html.light-mode .border-red-500\/40,
+        html.light-mode .border-red-500\/30,
+        html.light-mode .border-red-500\/20 { border-color: #fecaca !important; }
 
         /* Top Header HUD in Light Mode */
         html.light-mode #hud-level-title { color: #d97706 !important; font-weight: 700 !important; }
