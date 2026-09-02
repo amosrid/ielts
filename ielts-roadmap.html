@@ -745,7 +745,7 @@
         html.light-mode #modal-vocab-review #review-card-word {
             color: #0f172a !important;
         }
-        html.light-mode button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]) {
+        html.light-mode button[onclick*="setVocabFilter"]:not([class*="bg-emerald-600"]):not([class*="bg-indigo-600"]) {
             background-color: #f1f5f9 !important;
             border-color: #e2e8f0 !important;
             color: #475569 !important;
@@ -753,6 +753,24 @@
         html.light-mode button[onclick*="setVocabFilter"]:hover {
             background-color: #e2e8f0 !important;
             color: #0f172a !important;
+        }
+        html.light-mode #btn-toggle-filter-panel:not([class*="bg-indigo-600"]) {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            color: #334155 !important;
+        }
+        html.light-mode #vocab-filter-detail-panel {
+            border-color: #e2e8f0 !important;
+        }
+        html.light-mode #vocab-filter-detail-panel .bg-slate-950\/80 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+        html.light-mode #cefr-filter-chips button:not([class*="bg-emerald-600"]),
+        html.light-mode #register-filter-chips button:not([class*="bg-indigo-600"]) {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #475569 !important;
         }
 
         /* Speaking Lab in Light Mode */
@@ -3038,82 +3056,114 @@
                     </div>
                 </div>
 
-                <!-- 2. Unified Multi-Filter & Search Command Bar -->
-                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
-                    <!-- Status Filter Segmented Pills -->
-                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin text-xs font-mono">
-                        <button onclick="setVocabFilterStatus('all')" id="filter-btn-status-all" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm">
+                <!-- 2. Search-First Floating Filter Command Center (Proposal 3: Spotify / Apple Music Style) -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
+                    <!-- Row 1: Search-First Hero Input & Quick Actions -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                        <!-- Search Box (Full-width on Mobile, Flex on Desktop) -->
+                        <div class="relative flex-1">
+                            <input type="text" id="input-vocab-search" placeholder="Ketik untuk mencari kata, arti, atau sinonim..." oninput="onVocabSearchInput(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-8 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 shadow-inner">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-500"></i>
+                            <button id="btn-clear-vocab-search" onclick="clearVocabSearch()" class="hidden absolute right-2.5 top-2.5 text-slate-500 hover:text-slate-300 text-xs p-0.5 rounded">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <!-- Right Actions: Detail Filter Popover Button + Sort Select + Reset -->
+                        <div class="flex items-center space-x-2 shrink-0">
+                            <!-- Toggle Filter Popover Button -->
+                            <button onclick="toggleVocabFilterPanel()" id="btn-toggle-filter-panel" class="px-3.5 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-mono text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+                                <i class="fa-solid fa-sliders text-indigo-400"></i>
+                                <span>Filter Detail</span>
+                                <span id="badge-active-filter-count" class="hidden text-[10px] bg-indigo-600 text-white px-1.5 py-0.2 rounded-full font-bold">0</span>
+                            </button>
+
+                            <!-- Minimalist Sort Selector -->
+                            <div class="relative">
+                                <select id="select-vocab-sort" onchange="renderVocabBank()" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl py-2.5 px-3 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm">
+                                    <option value="recent">🔃 Terbaru</option>
+                                    <option value="feynman_asc">🔴 Pemahaman: Rendah</option>
+                                    <option value="feynman_desc">🟢 Pemahaman: Tinggi</option>
+                                    <option value="due_first">🟡 Jatuh Tempo Review</option>
+                                    <option value="cefr_desc">Level CEFR (C2 &rarr; A1)</option>
+                                    <option value="cefr_asc">Level CEFR (A1 &rarr; C2)</option>
+                                    <option value="alpha">Alfabet (A-Z)</option>
+                                </select>
+                            </div>
+
+                            <!-- Reset Button -->
+                            <button onclick="resetVocabFilters()" title="Reset Semua Filter" class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all shadow-sm active:scale-95">
+                                <i class="fa-solid fa-rotate-left text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Floating Quick Filter Carousel Pills (Spotify Style) -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs font-mono">
+                        <button onclick="setVocabFilterStatus('all')" id="filter-btn-status-all" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-md active:scale-95 shrink-0">
                             <i class="fa-solid fa-layer-group"></i>
-                            <span>Semua Kata (<span id="filter-count-all">0</span>)</span>
+                            <span>Semua (<span id="filter-count-all">0</span>)</span>
                         </button>
-                        <button onclick="setVocabFilterStatus('due')" id="filter-btn-status-due" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-amber-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
-                            <i class="fa-solid fa-clock-rotate-left"></i>
-                            <span>Perlu Review (<span id="filter-count-due">0</span>)</span>
+                        <button onclick="setVocabFilterStatus('due')" id="filter-btn-status-due" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-amber-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
+                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                            <span>Review Hari Ini (<span id="filter-count-due">0</span>)</span>
                         </button>
-                        <button onclick="setVocabFilterStatus('writing_ready')" id="filter-btn-status-writing_ready" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
-                            <i class="fa-solid fa-pen-nib"></i>
+                        <button onclick="setVocabFilterStatus('writing_ready')" id="filter-btn-status-writing_ready" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
+                            <i class="fa-solid fa-pen-nib text-emerald-400"></i>
                             <span>Writing Ready (<span id="filter-count-writing_ready">0</span>)</span>
                         </button>
-                        <button onclick="setVocabFilterStatus('speaking_only')" id="filter-btn-status-speaking_only" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-sky-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
-                            <i class="fa-solid fa-microphone"></i>
+                        <button onclick="setVocabFilterStatus('speaking_only')" id="filter-btn-status-speaking_only" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-sky-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
+                            <i class="fa-solid fa-microphone text-sky-400"></i>
                             <span>Speaking Only (<span id="filter-count-speaking_only">0</span>)</span>
                         </button>
-                        <button onclick="setVocabFilterStatus('mastered')" id="filter-btn-status-mastered" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-yellow-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
-                            <i class="fa-solid fa-crown"></i>
+                        <button onclick="setVocabFilterStatus('c1_c2')" id="filter-btn-status-c1_c2" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-purple-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
+                            <i class="fa-solid fa-crown text-purple-400"></i>
+                            <span>👑 C1/C2 Academic (<span id="filter-count-c1_c2">0</span>)</span>
+                        </button>
+                        <button onclick="setVocabFilterStatus('mastered')" id="filter-btn-status-mastered" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-yellow-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
+                            <i class="fa-solid fa-trophy text-amber-400"></i>
                             <span>Bebas Review (<span id="filter-count-mastered">0</span>)</span>
                         </button>
-                        <button onclick="setVocabFilterStatus('unlearned')" id="filter-btn-status-unlearned" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-rose-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                            <span>Belum Dipelajari (<span id="filter-count-unlearned">0</span>)</span>
+                        <button onclick="setVocabFilterStatus('unlearned')" id="filter-btn-status-unlearned" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-rose-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+                            <span>Belum Belajar (<span id="filter-count-unlearned">0</span>)</span>
                         </button>
                     </div>
 
-                    <!-- Multi-Filter Dropdown Controls & Search Row -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 pt-2 border-t border-slate-800/80 items-center font-mono text-xs">
-                        <!-- Search Box (Col 4) -->
-                        <div class="lg:col-span-4 relative">
-                            <input type="text" id="input-vocab-search" placeholder="Cari kata, arti, atau sinonim..." oninput="renderVocabBank()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 pl-8 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 shadow-inner">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-500"></i>
-                        </div>
+                    <!-- Row 3: Collapsible Sleek Filter Detail Panel (Opens via ⚡ Filter Detail) -->
+                    <div id="vocab-filter-detail-panel" class="hidden pt-3 border-t border-slate-800/80 space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+                            <!-- CEFR Level Chips -->
+                            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 shadow-inner">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-between">
+                                    <span>Tingkat CEFR:</span>
+                                    <span id="active-cefr-label" class="text-emerald-400 font-bold">Semua Level</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5" id="cefr-filter-chips">
+                                    <button onclick="setVocabFilterCefr('all')" id="chip-cefr-all" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm">Semua</button>
+                                    <button onclick="setVocabFilterCefr('C2')" id="chip-cefr-C2" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-purple-300 border border-purple-500/30 font-bold text-[11px] transition-all">C2</button>
+                                    <button onclick="setVocabFilterCefr('C1')" id="chip-cefr-C1" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-blue-300 border border-blue-500/30 font-bold text-[11px] transition-all">C1</button>
+                                    <button onclick="setVocabFilterCefr('B2')" id="chip-cefr-B2" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 font-bold text-[11px] transition-all">B2</button>
+                                    <button onclick="setVocabFilterCefr('B1')" id="chip-cefr-B1" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold text-[11px] transition-all">B1</button>
+                                    <button onclick="setVocabFilterCefr('A2')" id="chip-cefr-A2" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 font-bold text-[11px] transition-all">A2</button>
+                                    <button onclick="setVocabFilterCefr('A1')" id="chip-cefr-A1" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 font-bold text-[11px] transition-all">A1</button>
+                                </div>
+                            </div>
 
-                        <!-- CEFR Dropdown (Col 2) -->
-                        <div class="lg:col-span-2">
-                            <select id="select-vocab-cefr" onchange="setVocabFilterCefr(this.value)" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl p-2.5 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer">
-                                <option value="all">Level: Semua CEFR</option>
-                                <option value="C2">Level C2 (Mastery)</option>
-                                <option value="C1">Level C1 (Effective)</option>
-                                <option value="B2">Level B2 (Vantage)</option>
-                                <option value="B1">Level B1 (Threshold)</option>
-                                <option value="A2">Level A2 (Waystage)</option>
-                                <option value="A1">Level A1 (Breakthrough)</option>
-                            </select>
-                        </div>
-
-                        <!-- Register Dropdown (Col 3) -->
-                        <div class="lg:col-span-3">
-                            <select id="select-vocab-register" onchange="setVocabFilterRegister(this.value)" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl p-2.5 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer">
-                                <option value="all">Register: Semua Keformalan</option>
-                                <option value="formal">🟢 Formal Akademik</option>
-                                <option value="semi_formal">🟡 Agak Formal / Netral</option>
-                                <option value="casual">🔴 Casual / Santai</option>
-                                <option value="written_academic">🟣 Tulisan Resmi (Written)</option>
-                            </select>
-                        </div>
-
-                        <!-- Sort By Dropdown (Col 3) -->
-                        <div class="lg:col-span-3 flex items-center gap-1.5">
-                            <select id="select-vocab-sort" onchange="renderVocabBank()" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl p-2.5 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer">
-                                <option value="recent">Terbaru Ditambahkan</option>
-                                <option value="feynman_asc">🔴 Pemahaman: Terendah &rarr; Tertinggi</option>
-                                <option value="feynman_desc">🟢 Pemahaman: Tertinggi &rarr; Terendah</option>
-                                <option value="due_first">🟡 Jatuh Tempo Review Hari Ini</option>
-                                <option value="cefr_desc">Level CEFR (C2 &rarr; A1)</option>
-                                <option value="cefr_asc">Level CEFR (A1 &rarr; C2)</option>
-                                <option value="alpha">Alfabet (A-Z)</option>
-                            </select>
-                            <button onclick="resetVocabFilters()" title="Reset Semua Filter" class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all shadow-sm">
-                                <i class="fa-solid fa-rotate-left text-xs"></i>
-                            </button>
+                            <!-- Register & Keformalan Chips -->
+                            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 shadow-inner">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-between">
+                                    <span>Register & Keformalan:</span>
+                                    <span id="active-register-label" class="text-indigo-400 font-bold">Semua Register</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5" id="register-filter-chips">
+                                    <button onclick="setVocabFilterRegister('all')" id="chip-reg-all" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold text-[11px] transition-all shadow-sm">Semua</button>
+                                    <button onclick="setVocabFilterRegister('formal')" id="chip-reg-formal" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 font-bold text-[11px] transition-all">🟢 Formal</button>
+                                    <button onclick="setVocabFilterRegister('semi_formal')" id="chip-reg-semi_formal" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-sky-300 border border-sky-500/30 font-bold text-[11px] transition-all">🟡 Agak Formal</button>
+                                    <button onclick="setVocabFilterRegister('casual')" id="chip-reg-casual" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold text-[11px] transition-all">🔴 Casual</button>
+                                    <button onclick="setVocabFilterRegister('written_academic')" id="chip-reg-written_academic" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-purple-300 border border-purple-500/30 font-bold text-[11px] transition-all">🟣 Written Only</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -9802,23 +9852,98 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
         }
 
         let vocabFilterState = {
-            status: 'all',    // 'all' | 'due' | 'writing_ready' | 'speaking_only' | 'mastered' | 'unlearned'
+            status: 'all',    // 'all' | 'due' | 'writing_ready' | 'speaking_only' | 'c1_c2' | 'mastered' | 'unlearned'
             cefr: 'all',      // 'all' | 'C2' | 'C1' | 'B2' | 'B1' | 'A2' | 'A1'
             register: 'all'   // 'all' | 'formal' | 'semi_formal' | 'casual' | 'written_academic'
         };
+
+        function onVocabSearchInput(val) {
+            const clearBtn = document.getElementById('btn-clear-vocab-search');
+            if (clearBtn) {
+                if (val && val.trim().length > 0) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+            }
+            renderVocabBank();
+        }
+
+        function clearVocabSearch() {
+            SoundFX.play('click');
+            const input = document.getElementById('input-vocab-search');
+            if (input) input.value = '';
+            const clearBtn = document.getElementById('btn-clear-vocab-search');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            renderVocabBank();
+        }
+
+        function toggleVocabFilterPanel() {
+            SoundFX.play('click');
+            const panel = document.getElementById('vocab-filter-detail-panel');
+            const btn = document.getElementById('btn-toggle-filter-panel');
+            if (!panel) return;
+            const isHidden = panel.classList.contains('hidden');
+            if (isHidden) {
+                panel.classList.remove('hidden');
+                if (btn) {
+                    btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-500');
+                    btn.classList.remove('bg-slate-950', 'text-slate-300');
+                }
+            } else {
+                panel.classList.add('hidden');
+                if (btn) {
+                    btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-500');
+                    btn.classList.add('bg-slate-950', 'text-slate-300');
+                }
+            }
+        }
+
+        function updateActiveFilterBadge() {
+            let activeCount = 0;
+            if (vocabFilterState.cefr !== 'all') activeCount++;
+            if (vocabFilterState.register !== 'all') activeCount++;
+
+            const badge = document.getElementById('badge-active-filter-count');
+            if (badge) {
+                if (activeCount > 0) {
+                    badge.innerText = activeCount;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            const cefrLabel = document.getElementById('active-cefr-label');
+            if (cefrLabel) {
+                cefrLabel.innerText = vocabFilterState.cefr === 'all' ? 'Semua Level' : `Level ${vocabFilterState.cefr}`;
+            }
+
+            const regLabels = {
+                all: 'Semua Register',
+                formal: '🟢 Formal Akademik',
+                semi_formal: '🟡 Agak Formal',
+                casual: '🔴 Casual',
+                written_academic: '🟣 Written Only'
+            };
+            const regLabel = document.getElementById('active-register-label');
+            if (regLabel) {
+                regLabel.innerText = regLabels[vocabFilterState.register] || 'Semua Register';
+            }
+        }
 
         function setVocabFilterStatus(status) {
             SoundFX.play('click');
             vocabFilterState.status = status;
             
-            // Update status pill styling
-            ['all', 'due', 'writing_ready', 'speaking_only', 'mastered', 'unlearned'].forEach(s => {
+            // Update status pill styling with sleek modern active states
+            ['all', 'due', 'writing_ready', 'speaking_only', 'c1_c2', 'mastered', 'unlearned'].forEach(s => {
                 const btn = document.getElementById(`filter-btn-status-${s}`);
                 if (btn) {
                     if (s === status) {
-                        btn.className = "px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm";
+                        btn.className = "px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-md active:scale-95 shrink-0";
                     } else {
-                        btn.className = "px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5";
+                        btn.className = "px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0";
                     }
                 }
             });
@@ -9828,28 +9953,55 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
         function setVocabFilterCefr(cefr) {
             SoundFX.play('click');
             vocabFilterState.cefr = cefr;
+            
+            // Update CEFR chips
+            ['all', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'].forEach(c => {
+                const chip = document.getElementById(`chip-cefr-${c}`);
+                if (chip) {
+                    if (c === cefr) {
+                        chip.className = "px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm";
+                    } else {
+                        chip.className = "px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold text-[11px] transition-all";
+                    }
+                }
+            });
+            updateActiveFilterBadge();
             renderVocabBank();
         }
 
         function setVocabFilterRegister(reg) {
             SoundFX.play('click');
             vocabFilterState.register = reg;
+
+            // Update Register chips
+            ['all', 'formal', 'semi_formal', 'casual', 'written_academic'].forEach(r => {
+                const chip = document.getElementById(`chip-reg-${r}`);
+                if (chip) {
+                    if (r === reg) {
+                        chip.className = "px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold text-[11px] transition-all shadow-sm";
+                    } else {
+                        chip.className = "px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold text-[11px] transition-all";
+                    }
+                }
+            });
+            updateActiveFilterBadge();
             renderVocabBank();
         }
 
         function resetVocabFilters() {
             SoundFX.play('click');
             vocabFilterState = { status: 'all', cefr: 'all', register: 'all' };
-            const selectCefr = document.getElementById('select-vocab-cefr');
-            if (selectCefr) selectCefr.value = 'all';
-            const selectReg = document.getElementById('select-vocab-register');
-            if (selectReg) selectReg.value = 'all';
+            
             const searchInput = document.getElementById('input-vocab-search');
             if (searchInput) searchInput.value = '';
+            const clearBtn = document.getElementById('btn-clear-vocab-search');
+            if (clearBtn) clearBtn.classList.add('hidden');
             const selectSort = document.getElementById('select-vocab-sort');
             if (selectSort) selectSort.value = 'recent';
             
             setVocabFilterStatus('all');
+            setVocabFilterCefr('all');
+            setVocabFilterRegister('all');
             showToast("Filter kosakata telah di-reset.", "info");
         }
 
@@ -9861,6 +10013,8 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                 setVocabFilterStatus('writing_ready');
             } else if (filter === 'reg_speaking') {
                 setVocabFilterStatus('speaking_only');
+            } else if (filter === 'c1_c2') {
+                setVocabFilterStatus('c1_c2');
             } else if (filter === 'reg_formal') {
                 setVocabFilterRegister('formal');
             } else if (filter === 'reg_casual') {
@@ -9887,6 +10041,7 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
             const masteredCount = vocabBank.filter(v => v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5)).length;
             const writingReadyCount = vocabBank.filter(v => (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic')).length;
             const speakingOnlyCount = vocabBank.filter(v => v.ieltsSuitability?.status === 'speaking_only').length;
+            const c1c2Count = vocabBank.filter(v => v.cefr === 'C1' || v.cefr === 'C2').length;
             const unlearnedCount = vocabBank.filter(v => (!v.feynmanLevel || v.feynmanLevel === 0) && v.status !== 'mastered').length;
 
             const filterCountAll = document.getElementById('filter-count-all');
@@ -9899,6 +10054,8 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
             if (filterCountWriting) filterCountWriting.innerText = writingReadyCount;
             const filterCountSpeaking = document.getElementById('filter-count-speaking_only');
             if (filterCountSpeaking) filterCountSpeaking.innerText = speakingOnlyCount;
+            const filterCountC1C2 = document.getElementById('filter-count-c1_c2');
+            if (filterCountC1C2) filterCountC1C2.innerText = c1c2Count;
             const filterCountUnlearned = document.getElementById('filter-count-unlearned');
             if (filterCountUnlearned) filterCountUnlearned.innerText = unlearnedCount;
 
@@ -9908,6 +10065,7 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                 const isDue = !isMastered && (v.srNextReview || 0) <= now + 3600000;
                 const isWritingReady = (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic');
                 const isSpeakingOnly = v.ieltsSuitability?.status === 'speaking_only';
+                const isC1C2 = (v.cefr === 'C1' || v.cefr === 'C2');
                 const isUnlearned = !isMastered && (!v.feynmanLevel || v.feynmanLevel === 0);
 
                 // A. Status Filter
@@ -9915,6 +10073,7 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
                 if (vocabFilterState.status === 'mastered' && !isMastered) return false;
                 if (vocabFilterState.status === 'writing_ready' && !isWritingReady) return false;
                 if (vocabFilterState.status === 'speaking_only' && !isSpeakingOnly) return false;
+                if (vocabFilterState.status === 'c1_c2' && !isC1C2) return false;
                 if (vocabFilterState.status === 'unlearned' && !isUnlearned) return false;
 
                 // B. CEFR Filter
