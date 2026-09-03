@@ -788,3 +788,13 @@ html.light-mode #sidebar-model-badge {
         body, header, aside, main, div, section, button, p, span {
             transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         }
+
+/* Light Mode Mobile Drawer */
+html.light-mode #main-sidebar {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+html.light-mode #main-sidebar > div:first-child {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}

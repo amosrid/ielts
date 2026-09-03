@@ -131,14 +131,27 @@
     </header>
 
     <!-- Sidebar Mobile Overlay -->
-    <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden"></div>
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"></div>
 
     <!-- Main Content Area -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Left Sidebar Navigation (mobile: drawer, desktop: always visible) -->
-        <aside id="main-sidebar" class="hidden lg:block lg:col-span-3 space-y-4 fixed lg:static inset-y-0 left-0 z-40 w-72 lg:w-auto pt-16 lg:pt-0 px-4 lg:px-0 bg-slate-950 lg:bg-transparent overflow-y-auto lg:overflow-visible">
-            <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 space-y-2 sticky top-20 shadow-xl">
+        <aside id="main-sidebar" class="hidden lg:block lg:col-span-3 fixed lg:static inset-y-0 left-0 z-50 w-[84vw] max-w-xs lg:w-auto h-full lg:h-auto bg-white dark:bg-slate-950 lg:bg-transparent overflow-y-auto lg:overflow-visible shadow-2xl lg:shadow-none border-r border-slate-200 dark:border-slate-800 lg:border-r-0 flex flex-col">
+            <!-- Dedicated Mobile Drawer Header (Visible on Mobile only) -->
+            <div class="lg:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 sticky top-0 z-10">
+                <div class="flex items-center space-x-2.5">
+                    <img src="img/logo.jpg" alt="Logo" class="w-8 h-8 rounded-full border border-indigo-500/30 object-cover">
+                    <div>
+                        <div class="font-black text-sm tracking-tight text-slate-900 dark:text-white">IeltsGo</div>
+                        <div class="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 font-bold">Menu Navigasi</div>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs hover:bg-slate-300 dark:hover:bg-slate-700 transition-all" title="Tutup Menu">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-3 lg:p-4 space-y-2 flex-1 lg:flex-initial lg:bg-slate-900/90 lg:border lg:border-slate-800/90 lg:rounded-2xl lg:sticky lg:top-20 lg:shadow-xl">
                 <!-- 1. Dashboard Nav Button -->
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn nav-btn-active active w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2.5">
@@ -1684,18 +1697,18 @@
                 </div>
 
                 <!-- 3 Speaking Mode Switcher Tabs -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 font-mono text-xs font-bold">
-                    <button onclick="switchSpeakingMode('part1')" id="tab-btn-speaking-part1" class="py-2.5 px-3 rounded-xl bg-rose-600 text-white flex items-center justify-center gap-2 transition-all shadow-md">
-                        <i class="fa-solid fa-book-open-reader"></i>
-                        <span>Part 1: Shadowing & Read-Aloud</span>
+                <div class="grid grid-cols-3 gap-1 sm:gap-2 bg-slate-950 p-1 sm:p-1.5 rounded-2xl border border-slate-800 font-mono text-xs font-bold">
+                    <button onclick="switchSpeakingMode('part1')" id="tab-btn-speaking-part1" class="py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl bg-rose-600 text-white flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all shadow-md text-center">
+                        <i class="fa-solid fa-book-open-reader text-xs"></i>
+                        <span class="truncate text-[10px] sm:text-xs">Part 1<span class="hidden sm:inline">: Shadowing</span></span>
                     </button>
-                    <button onclick="switchSpeakingMode('part2')" id="tab-btn-speaking-part2" class="py-2.5 px-3 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-900 flex items-center justify-center gap-2 transition-all">
-                        <i class="fa-solid fa-id-card-clip"></i>
-                        <span>Part 2: 2-Min Cue Card</span>
+                    <button onclick="switchSpeakingMode('part2')" id="tab-btn-speaking-part2" class="py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-900 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all text-center">
+                        <i class="fa-solid fa-id-card-clip text-xs"></i>
+                        <span class="truncate text-[10px] sm:text-xs">Part 2<span class="hidden sm:inline">: Cue Card</span></span>
                     </button>
-                    <button onclick="switchSpeakingMode('part3')" id="tab-btn-speaking-part3" class="py-2.5 px-3 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-900 flex items-center justify-center gap-2 transition-all">
-                        <i class="fa-solid fa-comments"></i>
-                        <span>Part 3: Spontaneous Q&A</span>
+                    <button onclick="switchSpeakingMode('part3')" id="tab-btn-speaking-part3" class="py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-900 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all text-center">
+                        <i class="fa-solid fa-comments text-xs"></i>
+                        <span class="truncate text-[10px] sm:text-xs">Part 3<span class="hidden sm:inline">: Q&A</span></span>
                     </button>
                 </div>
 
@@ -2115,29 +2128,29 @@
                         </div>
 
                         <!-- Right Actions: Detail Filter Popover Button + Sort Select + Reset -->
-                        <div class="flex items-center space-x-2 shrink-0">
+                        <div class="grid grid-cols-[auto_1fr_auto] sm:flex items-center gap-2 shrink-0 w-full sm:w-auto">
                             <!-- Toggle Filter Popover Button -->
-                            <button onclick="toggleVocabFilterPanel()" id="btn-toggle-filter-panel" class="px-3.5 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-mono text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+                            <button onclick="toggleVocabFilterPanel()" id="btn-toggle-filter-panel" class="px-3 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 whitespace-nowrap">
                                 <i class="fa-solid fa-sliders text-indigo-400"></i>
-                                <span>Filter Detail</span>
+                                <span>Filter</span>
                                 <span id="badge-active-filter-count" class="hidden text-[10px] bg-indigo-600 text-white px-1.5 py-0.2 rounded-full font-bold">0</span>
                             </button>
 
                             <!-- Minimalist Sort Selector -->
-                            <div class="relative">
-                                <select id="select-vocab-sort" onchange="renderVocabBank()" class="bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl py-2.5 px-3 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm">
+                            <div class="relative w-full">
+                                <select id="select-vocab-sort" onchange="renderVocabBank()" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl py-2.5 px-2 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm">
                                     <option value="recent">🔃 Terbaru</option>
-                                    <option value="feynman_asc">🔴 Pemahaman: Rendah</option>
-                                    <option value="feynman_desc">🟢 Pemahaman: Tinggi</option>
-                                    <option value="due_first">🟡 Jatuh Tempo Review</option>
-                                    <option value="cefr_desc">Level CEFR (C2 &rarr; A1)</option>
-                                    <option value="cefr_asc">Level CEFR (A1 &rarr; C2)</option>
-                                    <option value="alpha">Alfabet (A-Z)</option>
+                                    <option value="feynman_asc">🔴 Rendah</option>
+                                    <option value="feynman_desc">🟢 Tinggi</option>
+                                    <option value="due_first">🟡 Jatuh Tempo</option>
+                                    <option value="cefr_desc">CEFR (C2→A1)</option>
+                                    <option value="cefr_asc">CEFR (A1→C2)</option>
+                                    <option value="alpha">A-Z</option>
                                 </select>
                             </div>
 
                             <!-- Reset Button -->
-                            <button onclick="resetVocabFilters()" title="Reset Semua Filter" class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all shadow-sm active:scale-95">
+                            <button onclick="resetVocabFilters()" title="Reset Semua Filter" class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all shadow-sm active:scale-95 shrink-0 flex items-center justify-center">
                                 <i class="fa-solid fa-rotate-left text-xs"></i>
                             </button>
                         </div>
@@ -2475,8 +2488,8 @@
                             </div>
 
                             <div class="flex gap-2">
-                                <input type="text" id="input-synthesis-vocab-item" placeholder="Ketik kata/frasa baru (contoh: inevitable, double-edged sword)..." onkeydown="if(event.key==='Enter') addCapturedVocabItem()" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500">
-                                <button onclick="addCapturedVocabItem()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-teal-300 font-mono text-xs font-bold rounded-xl border border-teal-500/30 flex items-center gap-1.5 transition-all">
+                                <input type="text" id="input-synthesis-vocab-item" placeholder="Ketik kata/frasa baru (contoh: inevitable, double-edged sword)..." onkeydown="if(event.key==='Enter') addCapturedVocabItem()" class="flex-1 min-w-0 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500">
+                                <button onclick="addCapturedVocabItem()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-teal-300 font-mono text-xs font-bold rounded-xl border border-teal-500/30 flex items-center gap-1.5 transition-all shrink-0">
                                     <i class="fa-solid fa-plus"></i> <span>Tambah</span>
                                 </button>
                             </div>
@@ -2488,9 +2501,9 @@
                         </div>
 
                         <!-- Next Button -->
-                        <div class="flex justify-between items-center pt-2">
-                            <span class="text-[11px] text-slate-400 font-mono">*Bisa langsung lanjut kapan saja tanpa upload file/link.</span>
-                            <button onclick="goToSynthesisStep(2)" class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2">
+                        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-2">
+                            <span class="text-[11px] text-slate-400 font-mono text-center sm:text-left">*Bisa langsung lanjut kapan saja tanpa upload file/link.</span>
+                            <button onclick="goToSynthesisStep(2)" class="w-full sm:w-auto px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
                                 <span>Lanjut ke Step 2: Synthesis Writing</span>
                                 <i class="fa-solid fa-arrow-right text-[10px]"></i>
                             </button>
@@ -2576,11 +2589,11 @@
                         </div>
 
                         <!-- Buttons -->
-                        <div class="flex justify-between items-center pt-2">
-                            <button onclick="goToSynthesisStep(1)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl">
+                        <div class="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2.5 pt-2">
+                            <button onclick="goToSynthesisStep(1)" class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl text-center">
                                 ❮ Kembali ke Step 1
                             </button>
-                            <button onclick="evaluateSynthesisWriting()" id="btn-submit-synthesis-writing" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2">
+                            <button onclick="evaluateSynthesisWriting()" id="btn-submit-synthesis-writing" class="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                                 <span id="btn-submit-synthesis-writing-text">Analisis & Transformasi 3-Tier AI</span>
                             </button>
@@ -2675,11 +2688,11 @@
                         </div>
 
                         <!-- Next Navigation -->
-                        <div class="flex justify-between items-center pt-2">
-                            <button onclick="goToSynthesisStep(2)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl">
+                        <div class="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2.5 pt-2">
+                            <button onclick="goToSynthesisStep(2)" class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl text-center">
                                 ❮ Edit Tulisan
                             </button>
-                            <button onclick="goToSynthesisStep(4)" id="btn-synthesis-step3-next" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2">
+                            <button onclick="goToSynthesisStep(4)" id="btn-synthesis-step3-next" class="w-full sm:w-auto px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
                                 <span>Lanjut ke Step 4: Spontaneous Speaking Drill</span>
                                 <i class="fa-solid fa-microphone text-[10px]"></i>
                             </button>
@@ -2731,11 +2744,11 @@
                         </div>
 
                         <!-- Submit Initial Speaking Button -->
-                        <div class="flex justify-between items-center pt-2">
-                            <button onclick="goToSynthesisStep(3)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl">
+                        <div class="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2.5 pt-2">
+                            <button onclick="goToSynthesisStep(3)" class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl text-center">
                                 ❮ Lihat Breakdown Tulisan
                             </button>
-                            <button onclick="submitSynthesisSpontaneousSpeaking()" id="btn-submit-synthesis-speak1" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2">
+                            <button onclick="submitSynthesisSpontaneousSpeaking()" id="btn-submit-synthesis-speak1" class="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                                 <span id="btn-submit-synthesis-speak1-text">Kirim & Evaluasi Speaking Awal</span>
                             </button>
@@ -2779,11 +2792,11 @@
                         </div>
 
                         <!-- Next Navigation -->
-                        <div class="flex justify-between items-center pt-2">
-                            <button onclick="goToSynthesisStep(4)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl">
+                        <div class="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2.5 pt-2">
+                            <button onclick="goToSynthesisStep(4)" class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-xl text-center">
                                 ❮ Rekam Ulang Step 4
                             </button>
-                            <button onclick="goToSynthesisStep(6)" class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2">
+                            <button onclick="goToSynthesisStep(6)" class="w-full sm:w-auto px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
                                 <span>Lanjut ke Step 6: Targeted Respeak Drill</span>
                                 <i class="fa-solid fa-arrow-right text-[10px]"></i>
                             </button>

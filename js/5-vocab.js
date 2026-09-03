@@ -1647,24 +1647,22 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                         let cleanLine = line.replace(/^[\-\*\o\•\d\.]+\s*/, '').trim();
                         if (!cleanLine || cleanLine.includes('HANYA pakai') || cleanLine.includes('Ini prioritaskan')) return '';
 
-                        // Step 1: Replace anchor words in **word** with temporary chip tokens
-                        cleanLine = cleanLine.replace(/\*\*([a-zA-Z]{2,})\*\*/g, (m, word) => `###CHIP_${word}###`);
-                        
-                        // Step 2: Also identify english words after 'kata' in quotes e.g. kata 'it' or kata "fast"
-                        cleanLine = cleanLine.replace(/(kata\s+['"])([a-zA-Z]{2,})(['"])/gi, (m, p1, word, p3) => `kata ###CHIP_${word}###`);
+                        // Step 1: Replace all English comparison words in **"word"**, **word**, "word", or 'word' with chip tokens
+                        cleanLine = cleanLine.replace(/\*\*["']?([a-zA-Z]{2,})["']?\*\*/g, (m, word) => `###CHIP_${word}###`);
+                        cleanLine = cleanLine.replace(/["']([a-zA-Z]{2,})["']/g, (m, word) => `###CHIP_${word}###`);
 
-                        // Step 3: Render remaining markdown bold & italics cleanly
-                        cleanLine = cleanLine.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-100 font-bold">$1</strong>');
-                        cleanLine = cleanLine.replace(/\*(.*?)\*/g, '<em class="text-slate-300">$1</em>');
+                        // Step 2: Render remaining markdown bold & italics cleanly
+                        cleanLine = cleanLine.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-800 dark:text-slate-100 font-bold">$1</strong>');
+                        cleanLine = cleanLine.replace(/\*(.*?)\*/g, '<em class="text-slate-600 dark:text-slate-300">$1</em>');
 
-                        // Step 4: Replace tokens with styled inline button chips
+                        // Step 3: Replace tokens with interactive audio button chips
                         cleanLine = cleanLine.replace(/###CHIP_([a-zA-Z]{2,})###/g, (m, word) => {
-                            return `<button onclick="speakWord('${word}', '${accentLang}')" class="px-2 py-0.5 mx-0.5 rounded-md bg-indigo-900 hover:bg-indigo-700 text-indigo-100 border border-indigo-400/50 text-[11px] font-mono font-bold inline-flex items-center gap-1 align-middle transition-transform active:scale-95 shadow-sm" title="Dengarkan kata '${word}'"><i class="fa-solid fa-volume-high text-[9px] text-indigo-300"></i><span>${word}</span></button>`;
+                            return `<button type="button" onclick="event.stopPropagation(); speakWord('${word}', '${accentLang}')" class="px-2.5 py-0.5 mx-1 rounded-lg bg-sky-100 dark:bg-sky-950/80 hover:bg-sky-200 dark:hover:bg-sky-800 text-sky-900 dark:text-sky-200 border border-sky-300 dark:border-sky-500/50 text-xs font-mono font-bold inline-flex items-center gap-1.5 align-middle transition-transform active:scale-95 shadow-sm cursor-pointer" title="Dengarkan pelafalan kata '${word}'"><i class="fa-solid fa-volume-high text-[10px] text-sky-600 dark:text-sky-400"></i><span>"${word}"</span></button>`;
                         });
 
                         return `
-                            <div class="flex items-start gap-2 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 text-xs text-slate-200 leading-relaxed font-sans">
-                                <i class="fa-solid fa-circle-check text-cyan-400 mt-1 text-[10px]"></i>
+                            <div class="flex items-start gap-2 bg-slate-50 dark:bg-slate-900/90 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-sans">
+                                <i class="fa-solid fa-circle-check text-cyan-600 dark:text-cyan-400 mt-1 text-[10px]"></i>
                                 <div class="flex-1">${cleanLine}</div>
                             </div>
                         `;

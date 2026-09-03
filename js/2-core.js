@@ -287,7 +287,11 @@
             }
 
             const modelShort = model.replace('gemini-', '').toUpperCase();
-            if (sidebarBadge) sidebarBadge.innerText = modelShort;
+            const displayBadge = modelShort.replace('-FLASH-LITE', '-LITE').replace('-FLASH', '');
+            if (sidebarBadge) {
+                sidebarBadge.innerText = displayBadge;
+                sidebarBadge.classList.add('whitespace-nowrap', 'shrink-0');
+            }
             if (labDisplay) labDisplay.innerText = `Gemini ${modelShort}`;
         }
 
