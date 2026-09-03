@@ -379,7 +379,7 @@ html.light-mode #sidebar-model-badge {
 }
 
         /* Modern Clean Hero Banners (Light Mode) */
-        html.light-mode [class*="bg-gradient-to-r"][class*="from-"],
+        html.light-mode div[class*="bg-gradient-to-r"][class*="from-"]:not(button),
         html.light-mode #tab-dashboard > div:first-child,
         html.light-mode #daily-affirmation-card,
         html.light-mode #tab-phase1 > div:first-child,
@@ -648,8 +648,7 @@ html.light-mode #sidebar-model-badge {
         html:not(.light-mode) .border-slate-700 {
             border-color: #1f293d !important;
         }
-
-        html:not(.light-mode) [class*="bg-gradient-to-r"][class*="from-"],
+        html:not(.light-mode) div[class*="bg-gradient-to-r"][class*="from-"]:not(button),
         html:not(.light-mode) #tab-dashboard > div:first-child,
         html:not(.light-mode) #daily-affirmation-card,
         html:not(.light-mode) #tab-phase1 > div:first-child,

@@ -1,6 +1,39 @@
 /* ============================================================
    IELTS GO — Synthesis Lab · 6-Step Workflow · Logbook
    ============================================================ */
+        var synthesisState = window.synthesisState = window.synthesisState || {
+            currentStep: 1,
+            mode: 'ielts',
+            inputMode: 'ocr',
+            respeakMode: 'script',
+            readingSourceType: 'direct',
+            readingFullText: '',
+            readingTopic: 'General Academic',
+            readingTitle: '',
+            readingNotes: '',
+            extractedVocabs: [],
+            capturedVocabs: [],
+            rawWritingText: '',
+            writingEvaluation: null,
+            factualAudit: null,
+            speak1MediaRecorder: null,
+            speak1AudioChunks: [],
+            speak1AudioBlob: null,
+            speak1TimerInterval: null,
+            speak1Seconds: 0,
+            speak1Transcript: '',
+            speak1Evaluation: null,
+            upgradedSpeakingScript: '',
+            speak2MediaRecorder: null,
+            speak2AudioChunks: [],
+            speak2AudioBlob: null,
+            speak2TimerInterval: null,
+            speak2Seconds: 0,
+            speak2Transcript: '',
+            speak2Evaluation: null,
+            finalReportCard: null,
+            activeLogbookFilter: 'all'
+        };
 
         function getSynthesisLogbook() {
             try {
@@ -422,11 +455,16 @@ Return ONLY a valid JSON object without markdown fences, code blocks, or backtic
 
             try {
                 let result = null;
-                try {
-                    const response = await callGeminiAPI(`Analyze this reading material and extract insights & academic vocabularies:\n\n${textToAnalyze.slice(0, 15000)}`, systemPrompt);
-                    result = extractJsonFromLLM(response);
-                } catch (apiErr) {
-                    console.warn("Gemini extraction call failed, using heuristic fallback:", apiErr);
+                const apiKey = (localStorage.getItem('ielts_gemini_api_key') || '').trim();
+                if (apiKey) {
+                    try {
+                        const response = await callGeminiAPI(`Analyze this reading material and extract insights & academic vocabularies:\n\n${textToAnalyze.slice(0, 15000)}`, systemPrompt);
+                        result = extractJsonFromLLM(response);
+                    } catch (apiErr) {
+                        console.warn("Gemini extraction call failed, using heuristic fallback:", apiErr);
+                    }
+                } else {
+                    showToast("Mode Cerdas Lokal Aktif (Tambahkan API Key di Pengaturan untuk Analisis AI Penuh)", "info");
                 }
 
                 if (!result || !result.summary || !result.extractedVocabs || result.extractedVocabs.length === 0) {
@@ -941,11 +979,16 @@ Return ONLY a valid JSON object (no markdown fences, no backticks, no code block
 
             try {
                 let parsed = null;
-                try {
-                    const response = await callGeminiAPI(`Analyze and transform this student essay against the source reading material:\n\n${rawText}`, systemPrompt);
-                    parsed = extractJsonFromLLM(response);
-                } catch (apiErr) {
-                    console.warn("Gemini essay eval error, using local heuristic fallback:", apiErr);
+                const apiKey = (localStorage.getItem('ielts_gemini_api_key') || '').trim();
+                if (apiKey) {
+                    try {
+                        const response = await callGeminiAPI(`Analyze and transform this student essay against the source reading material:\n\n${rawText}`, systemPrompt);
+                        parsed = extractJsonFromLLM(response);
+                    } catch (apiErr) {
+                        console.warn("Gemini essay eval error, using local heuristic fallback:", apiErr);
+                    }
+                } else {
+                    showToast("Evaluasi Examiner Standar Aktif (Tambahkan API Key untuk Analisis AI Penuh)", "info");
                 }
 
                 if (!parsed || (!parsed.tier2 && !parsed.isInvalid)) {

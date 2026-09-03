@@ -1,6 +1,43 @@
 /* ============================================================
    IELTS GO — Daily Affirmation Ritual · Deck Manager
    ============================================================ */
+        const DEFAULT_AFFIRMATIONS = [
+            {
+                id: 'aff_1',
+                en: "Every sentence I practice today elevates my score closer to IELTS Band 8.0.",
+                id_trans: "Setiap kalimat yang saya latih hari ini menaikkan skor saya mendekati IELTS Band 8.0.",
+                timesCompleted: 0,
+                dateCreated: 1756620000000
+            },
+            {
+                id: 'aff_2',
+                en: "English is not a barrier; it is my golden bridge to global opportunities.",
+                id_trans: "Bahasa Inggris bukanlah penghalang, melainkan jembatan emas saya menuju peluang global.",
+                timesCompleted: 0,
+                dateCreated: 1756620000000
+            },
+            {
+                id: 'aff_3',
+                en: "I do not fear making mistakes; every error corrected is a band score elevated.",
+                id_trans: "Saya tidak takut salah; setiap koreksi adalah peningkatan level kemampuan saya.",
+                timesCompleted: 0,
+                dateCreated: 1756620000000
+            },
+            {
+                id: 'aff_4',
+                en: "My consistency of twenty minutes today will transform twenty years of my future.",
+                id_trans: "Konsistensi 20 menit hari ini akan mengubah 20 tahun masa depan saya.",
+                timesCompleted: 0,
+                dateCreated: 1756620000000
+            },
+            {
+                id: 'aff_5',
+                en: "My voice matters, my English is expanding, and I express my ideas with confidence.",
+                id_trans: "Suara saya berharga, bahasa Inggris saya terus berkembang, dan saya bicara dengan percaya diri.",
+                timesCompleted: 0,
+                dateCreated: 1756620000000
+            }
+        ];
 
         function getAffirmationState() {
             try {
@@ -681,8 +718,7 @@ Return ONLY a valid JSON object in this exact format:
         // =========================================================================
         // IeltsGo v7.3 — SYNTHESIS LAB ENGINE (4-Skill Integrated English & IELTS)
         // =========================================================================
-
-        const synthesisState = {
+        window.synthesisState = window.synthesisState || {
             currentStep: 1,
             mode: 'ielts', // 'ielts' | 'general'
             inputMode: 'ocr', // 'ocr' | 'type'
@@ -715,3 +751,4 @@ Return ONLY a valid JSON object in this exact format:
             finalReportCard: null,
             activeLogbookFilter: 'all'
         };
+        var synthesisState = window.synthesisState;
