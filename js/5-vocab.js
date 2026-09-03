@@ -608,7 +608,7 @@ PHONETIC & EXPLANATION GUIDELINES (TARGET ACCENT: ${accentName}):
   * Contoh ridiculous: "ri-DI-kyu-les ↘ (ri: 'ri' cepat, DI: ditekan kuat seperti 'titik', kyu: seperti 'kios/Q', les: berima 'poles')"
   * Sesuai Target Aksen: ${accentName}.
 - "ipa": Official Cambridge IPA phonetics symbol (e.g. "/luːz/", "/ˈɒb.vi.əs/").
-- "childExplanation": A vivid, intuitive mental model / analogy written in CLEAR SIMPLE ENGLISH (Explain Like I'm 5 / ELI5) so that anyone can immediately understand the essence of this word without confusing jargon.
+- "childExplanation": A tangible physical analogy written in ULTRA-SIMPLE EVERYDAY ENGLISH that even a 7-year-old child or a beginner language learner can understand in 3 seconds. Ground the concept using concrete everyday physical objects (e.g. asking a tailor to fit pants to your exact waist instead of buying loose baggy ones, melting an ice cube in the sun, a phone charger, pouring water into a full cup). DILARANG mendefinisikan kata menggunakan kata kamus abstrak lain (e.g. do not use 'specifically customized' to explain 'tailored')! Keep it visual, tangible, and max 2 short sentences.
 - "dailyExamples": Array of 2 realistic daily/casual conversation sentences using this word.
 
 Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):

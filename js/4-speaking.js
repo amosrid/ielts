@@ -968,12 +968,12 @@ You should say:
                 const trimmed = sec.trim();
                 if (!trimmed) return;
 
-                // Check if this is the Official Band Score section
-                if (trimmed.includes('Skor Resmi IELTS') || trimmed.includes('Official IELTS Speaking Band Score')) {
+                // Check if this is the Hero Score section
+                if (trimmed.includes('Skor Pelafalan') || trimmed.includes('Skor Resmi IELTS') || trimmed.includes('Official IELTS Speaking Band Score')) {
                     const cardBorder = isRejected ? 'border-red-500/60 bg-red-950/20' : 'border-rose-500/40';
                     bandScoreHtml = `
                         ${rejectionBannerHtml}
-                        <div class="speaking-audit-band-card p-4 rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border ${cardBorder} shadow-lg mb-4 space-y-2">
+                        <div class="speaking-audit-band-card p-4 sm:p-5 rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 border border-slate-200 dark:border-rose-500/40 shadow-md dark:shadow-lg mb-4 space-y-2.5 text-slate-800 dark:text-slate-100">
                             ${renderMarkdown(trimmed)}
                         </div>
                     `;
@@ -985,13 +985,34 @@ You should say:
                 const title = firstLineMatch ? firstLineMatch[1].trim() : `Audit Detail ${idx + 1}`;
                 let contentBody = trimmed.replace(/^#\s+.*\n?/, '').trim();
 
+                // Convert [VOCAB: word] tags into styled badge + 1-Click Save to Vocab Logger Button
+                contentBody = contentBody.replace(
+                    /\[VOCAB:\s*([a-zA-Z\s'-]+)\]/gi,
+                    (m, word) => {
+                        const clean = word.trim();
+                        return `<span class="px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 font-bold border border-amber-300 dark:border-amber-500/40 font-mono text-xs">${clean}</span> <button type="button" onclick="event.stopPropagation(); saveMispronouncedWordToVocabBank('${clean}')" class="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-[10px] font-mono font-bold rounded-lg border border-indigo-200 dark:border-indigo-500/40 ml-1 transition-all shadow-sm active:scale-95 cursor-pointer" title="Simpan '${clean}' ke Vocab Logger"><i class="fa-solid fa-plus text-indigo-500 dark:text-indigo-400"></i> + Simpan ke Vocab</button>`;
+                    }
+                );
+
                 // Style & Icon picker based on title
                 let iconClass = 'fa-solid fa-circle-info text-slate-400';
                 let borderClass = 'border-slate-800 hover:border-slate-700';
                 let bgClass = 'bg-slate-900/60';
                 let titleColor = 'text-slate-200';
 
-                if (title.includes('Ringkasan Diagnosa') || title.includes('Roadmap') || title.includes('Urutan')) {
+                if (title.includes('Transkripsi')) {
+                    iconClass = 'fa-solid fa-microphone-lines text-sky-400';
+                    borderClass = 'border-sky-500/30';
+                    titleColor = 'text-sky-300';
+                } else if (title.includes('Struktur Kalimat') || title.includes('Tata Bahasa')) {
+                    iconClass = 'fa-solid fa-code-compare text-emerald-400';
+                    borderClass = 'border-emerald-500/30';
+                    titleColor = 'text-emerald-300';
+                } else if (title.includes('Transformasi') || title.includes('Band 7.5') || title.includes('Bedah Kosakata')) {
+                    iconClass = 'fa-solid fa-rocket text-amber-400';
+                    borderClass = 'border-amber-500/30';
+                    titleColor = 'text-amber-300';
+                } else if (title.includes('Ringkasan Diagnosa') || title.includes('Roadmap') || title.includes('Urutan')) {
                     iconClass = 'fa-solid fa-list-check text-rose-400';
                     borderClass = 'border-rose-500/30';
                     titleColor = 'text-rose-300';
@@ -1032,9 +1053,12 @@ You should say:
 
                     // Extract the standard English text for 1-Click Retest Drill
                     let cleanRetest = '';
+                    const modelMatch = contentBody.match(/Model Kalimat[^\n]*\n+>?\s*"([^"]+)"/i);
                     const hMatch = contentBody.match(/#{1,4}\s*📝?\s*Teks\s+(?:Asli\s+)?Bahasa\s+Inggris[^\n]*\n+([\s\S]*?)(?=\n#{1,4}|\n\n#{1,4}|$)/i)
                                 || contentBody.match(/#{1,4}\s*📝?\s*Teks[^\n]*\n+([\s\S]*?)(?=\n#{1,4}|$)/i);
-                    if (hMatch && hMatch[1]) {
+                    if (modelMatch && modelMatch[1]) {
+                        cleanRetest = modelMatch[1].trim();
+                    } else if (hMatch && hMatch[1]) {
                         cleanRetest = hMatch[1].trim().replace(/^[>\s"]+|["]+$/g, '').replace(/^>\s*/gm, '').trim();
                     } else {
                         const quoteMatch = contentBody.match(/"([^"\n]{25,})"/);
@@ -1051,7 +1075,7 @@ You should say:
                 }
 
                 accordionItems.push(`
-                    <details class="speaking-audit-detail group ${bgClass} border ${borderClass} rounded-xl overflow-hidden mb-2.5 transition-all">
+                    <details class="speaking-audit-detail group bg-white dark:bg-slate-900/60 border border-slate-200 dark:${borderClass} rounded-xl overflow-hidden mb-2.5 transition-all shadow-sm">
                         <summary class="cursor-pointer font-bold p-3.5 flex justify-between items-center select-none ${titleColor} text-xs hover:bg-slate-800/60 transition-colors">
                             <span class="flex items-center gap-2">
                                 <i class="${iconClass}"></i>
@@ -1059,7 +1083,7 @@ You should say:
                             </span>
                             <i class="fa-solid fa-chevron-down text-slate-500 group-open:rotate-180 transition-transform text-xs"></i>
                         </summary>
-                        <div class="p-4 border-t border-slate-800/80 text-xs text-slate-200 leading-relaxed space-y-2 bg-slate-950/60">
+                        <div class="p-4 border-t border-slate-200 dark:border-slate-800/80 text-xs text-slate-800 dark:text-slate-200 leading-relaxed space-y-2 bg-slate-50/70 dark:bg-slate-950/60">
                             ${renderMarkdown(contentBody)}
                         </div>
                     </details>
@@ -1184,218 +1208,146 @@ Write a 2-sentence high-scoring model response answering my original task. Forma
                 resultBox.innerHTML = `
                     <div class="text-center py-6 font-mono text-xs text-rose-400 flex flex-col items-center gap-3">
                         <i class="fa-solid fa-headphones-simple fa-bounce text-3xl"></i>
-                        <span class="font-bold text-sm tracking-wide">AI EXAMINER SEDANG MENDENGARKAN SUARA & NADA ANDA SECARA LANGSUNG...</span>
-                        <span class="text-[11px] text-slate-400">Analisis Akustik Multimodal: Aksen (${targetAccentName}), Diagnosa Lidah Indo, +S/+ED Drill, dan Model Band 7.5</span>
+                        <span class="text-[11px] text-slate-400">Analisis Akustik Multimodal: Aksen (${targetAccentName}), Diagnosa Struktur Kalimat, Band 7.5 Upgrade, dan Bedah Fonetik</span>
                     </div>
                 `;
             }
 
-            const systemPrompt = `Anda adalah Penguji Senior Resmi IELTS Speaking (Official Senior Cambridge IELTS Examiner) yang SANGAT KETAT, TEGAS, BLAK-BLAKAN, DAN TANPA KOMPROMI (Strict, Ruthless & Unfiltered Scoring).
-Anda sedang mendengarkan gelombang rekaman audio asli kandidat secara langsung (${mode.toUpperCase()}).
+            const systemPrompt = `Anda adalah Pelatih Vokal & Penguji Kelancaran IELTS Speaking yang AKURAT, JUJUR, dan MENDIDIK (gaya evaluasi terstandarisasi).
+Prioritas utama: KEJUJURAN & EDUKASI KONKRET. Jangan gunakan basa-basi, jangan inflasi nilai, dan HAPUS seksi 4 rubrik resmi yang kaku.
 
-Target Aksen yang Wajib Dievaluasi: ${targetAccentName}
-Tugas / Pertanyaan Ujian: ${activePromptText.substring(0, 800)}
-Fondasi Grammar Terbuka Kandidat: ${grammarCtx.rulesSummary}
+Tugas: Menilai rekaman audio lisan kandidat untuk mode: ${mode.toUpperCase()}
+Topik/Pertanyaan yang Diberikan: "${activePromptText || 'IELTS Speaking'}"
+Target Aksen: ${targetAccentName}
 
-🚨 ATURAN MUTLAK PENOLAKAN AUDIO & GUMAMAN (AUDIO REJECTION & NOISE/MUMBLE HARD-STOP):
-1. JIKA AUDIO HENING, SUARA TIDAK TERDENGAR, ATAU VOLUME MIKROFON TERLALU RENDAH:
-   - WAJIB AWALI RESPONS DENGAN:
-     # ⚠️ REKAMAN DITOLAK: SUARA TIDAK TERDETEKSI / HENING
-     > Audio rekaman tidak memuat ujaran bahasa Inggris yang jelas atau volume mikrofon terlalu rendah. Harap rekam ulang lebih dekat ke mikrofon.
-     
-     # 🏆 Skor Resmi IELTS Speaking (Strict & Unfiltered)
-     - **Fluency & Coherence (FC)**: Band 0.0 — [Rekaman hening / tidak dapat dinilai]
-     - **Lexical Resource (LR)**: Band 0.0 — [Tidak ada ujaran terdeteksi]
-     - **Grammatical Range & Accuracy (GRA)**: Band 0.0 — [Tidak ada struktur kalimat terverifikasi]
-     - **Pronunciation (PR)**: Band 0.0 — [Tidak ada materi fonem untuk dievaluasi]
-     - **Overall Estimated Speaking Band**: **Band 0.0 (REJECTED)**
-   - DILARANG KERAS MENGARANG TRANSKRIPSI ATAU MEMBERIKAN SKOR BAND 5.0 KE ATAS!
+============================================
+🚨 ATURAN #1 — CEK KUALITAS AUDIO DULU
+============================================
+Jika audio hening, noise berisik, atau suara tidak terdengar:
+Tulis persis: "# ⚠️ REKAMAN TIDAK DAPAT DINILAI (AUDIO DITOLAK)"
+Jelaskan bahwa suara tidak terdengar jelas, dan STOP evaluasi.
 
-2. JIKA TERDENGAR GUMAMAN, SUARA MENURUN DRASTIS, KATA-KATA TIDAK JELAS, ATAU TERDAPAT NOISE/DERAU BISING ([gumaman/tidak jelas]):
-   - DILARANG KERAS MEMBERIKAN SKOR OVERALL 5.5 ATAU 6.0!
-   - JANGAN PERNAH MENILAI TINGGI KOSAKATA (LR) ATAU TATA BAHASA (GRA) HANYA KARENA KANDIDAT MEMBACA TEKS SOAL DARI LAYAR!
-   - Jika terdapat bagian yang bergumam, suara mengecil, atau tertelan kebisingan:
-     * Fluency & Coherence (FC): MAKSIMAL Band 3.0 - 3.5
-     * Lexical Resource (LR): MAKSIMAL Band 3.5 - 4.0 (Penalti karena kata tidak terartikulasi penuh)
-     * Grammatical Range & Accuracy (GRA): MAKSIMAL Band 3.5 - 4.0
-     * Pronunciation (PR): MAKSIMAL Band 3.0 - 3.5
-     * Overall Estimated Band: MAKSIMAL Band 3.5 (DILARANG MELEWATI BAND 4.0 JIKA ADA GUMAMAN / NOISE!)
+============================================
+🚨 ATURAN #2 — SKOR AKURAT & JUJUR (GAYA PERSENTASE KELIPATAN 5)
+============================================
+- Anda TIDAK memiliki spektrogram akustik fisik. Berikan estimasi skor yang JUJUR dan BULATKAN ke KELIPATAN 5 (misal: 55%, 70%, 85% — BUKAN 73% atau 84%).
+- Skala Jangkar Penilaian:
+  * 90-100%: Sangat fasih, intonasi hidup, vokal bersih sesuai target aksen ${targetAccentName}, struktur kalimat alami & gramatikal.
+  * 75-89%: Komunikasi lancar dan jelas. Ada 1-2 slip minor pada grammar atau akhiran vokal/konsonan, tapi alur bicara sangat mudah dipahami.
+  * 55-74%: Ide bisa dipahami, tetapi ada kesalahan tenses lisan yang jelas, terbata-bata/hesitasi, atau konsonan akhir tertelan.
+  * 35-54%: Terbata-bata parah, struktur kalimat terputus-putus, atau distorsi kata yang berat.
+  * 0-30%: Nyaris tidak bisa dipahami atau audio rusak.
 
-3. PENALTI RITME MONOTON BAHASA INDONESIA (SYLLABLE-TIMED L1 FLATNESS):
-   - Bahasa Indonesia bersifat syllable-timed (tiap suku kata berdurasi sama). Bahasa Inggris IELTS adalah stress-timed (suku kata bertekanan panjang, sisanya lebur ke schwa).
-   - Jika kandidat membaca secara datar/robotik tanpa kontur nada naik-turun dan tanpa perbedaan panjang suku kata: Pronunciation (PR) dan Fluency (FC) DIKUNCI MAKSIMAL BAND 5.0.
+============================================
+🚨 ATURAN #3 — BEDAH STRUKTUR & UPGRADE BAND 7.5+ DENGAN ALASAN ("KENAPA DIGANTI BEGITU?")
+============================================
+1. Analisis apakah kalimat yang diucapkan kandidat strukturnya sudah jelas dan benar secara tata bahasa.
+2. Sajikan Model Kalimat Upgrade Standar IELTS Band 7.5+.
+3. BEDAH ALASAN PERUBAHAN: Jelaskan secara transparan dan gamblang MENGAPA kata/struktur tersebut diubah:
+   - Apakah karena bentuk waktu lampau (past tense)?
+   - Apakah karena kata baru lebih formal atau memiliki kolokasi yang lebih alami bagi penutur asli?
+   - Contoh: "Kalimat asli 'I'm sleep at hotel' diubah menjadi 'I rested at the hotel' karena: (1) Menghilangkan konjungsi 'am' yang salah sebelum verb biasa, (2) Menggunakan past tense 'rested', dan (3) Kata 'rest' memberikan nuansa istirahat yang lebih santai & elegan daripada sekadar 'sleep'."
+4. SOROT KOSAKATA BARU: Setiap kali Anda memperkenalkan kosakata tingkat tinggi (C1/C2) atau kolokasi elegan dalam naskah upgrade, tandai dengan format: [VOCAB: kata] agar siswa bisa menyimpannya ke Bank Kosakata. Contoh: [VOCAB: tranquil], [VOCAB: unwind], [VOCAB: picturesque].
 
-4. PENALTI JEDA KERAGUAN (MID-SENTENCE SEARCH PAUSES):
-   - Jika kandidat terhenti >2 detik di tengah kalimat untuk mencari kosakata, atau frekuensi filler ('um/uh/aa') >3 kali dalam 1 kalimat: Fluency & Coherence (FC) DIKUNCI MAKSIMAL BAND 4.5.
+============================================
+🚨 ATURAN #4 — AUDIT FONETIK, AKSEN TARGET & CARA BACA LIDAH INDONESIA
+============================================
+- Kesesuaian Aksen: Evaluasi apakah pelafalan vokal dan konsonan sudah mengarah ke target aksen ${targetAccentName}.
+- Bedah Kata Salah (Maksimal 3 kata paling krusial):
+  * DILARANG menggunakan simbol IPA rumit! Gunakan 100% huruf alfabet Indonesia (A-Z) dengan suku kata ditekan ditulis HURUF BESAR (KAPITAL STRESS) dan arah intonasi ↗ ↘.
+  * Berikan PADANAN KATA INGGRIS SIMPEL: Bandingkan bunyi sulit dengan kata bahasa Inggris yang sangat umum (misal: bunyi vokal sama seperti di kata 'it' atau 'sit', bukan seperti 'ee' di 'eat').
+- Audit Akhiran: Periksa apakah akhiran +s/-es (/s/, /z/, /ɪz/) dan +ed (/t/, /d/, /ɪd/) terdengar jelas atau tertelan.
 
-🚨 ATURAN PENILAIAN TEGAS TANPA PEMANIS (ZERO SUGARCOATING / NO POLITE INFLATION):
-- JANGAN PERNAH MEMBERIKAN PUJIAN PALSU ATAU INFLASI NILAI SOPAN! Jika pengucapan buruk, terbata-bata parah, sering "um/uh/false starts", atau tata bahasa hancur -> TEGAS BERIKAN BAND 3.0 - 4.5. Jika nilai kandidat memang buruk, berikan nilai buruk agar kandidat tahu standar asli penguji IELTS resmi IDP/British Council.
-- Kritik setiap cacat fonem, kesalahan tenses lisan, dan akhiran kata yang tertelan secara telanjang dan tajam.
+WAJIB FORMAT OUTPUT DALAM STRUKTUR MARKDOWN BERIKUT:
 
-🚨 ATURAN PANDUAN CARA BACA LIDAH INDONESIA SUPER DETAIL (BEDAH SUKU KATA & ASOSIASI BUNYI INDONESIA):
-- DILARANG KERAS MENGGUNAKAN SIMBOL IPA (/ə/, /ɪ/, /ʊ/, /ʃ/, /tʃ/, /dʒ/, /θ/, /ð/, /æ/)! Siswa Indonesia kesulitan membaca simbol IPA.
-- Gunakan 100% huruf alfabet Indonesia (A-Z) dengan membedah suku kata per suku kata dan memberikan contoh asosiasi kata bahasa Indonesia sehari-hari:
-  * Tulis suku kata yang ditekan dengan HURUF BESAR (KAPITAL), sisanya huruf kecil.
-  * Berikan bedah bunyi: (misal: Suku kata 'ar' dibaca seperti 'arsip', 'TI' ditekan tajam seperti 'titik', 'kyu' seperti 'kios/queue', 'leit' berima dengan 'lelet' diakhiri letupan 't' bersih).
+# 📊 Skor Pelafalan & Kelancaran
+**[Skor dibulatkan ke kelipatan 5]%** — [1 kalimat padat ringkasan pencapaian]
+- **Target Aksen**: ${targetAccentName}
+- **Kesesuaian Aksen Terdengar**: [Review jujur apakah sudah mendekati target aksen atau masih kental ritme suku kata bahasa ibu Indonesia]
 
-🚨 STANDARISASI AKSEN TARGET (${targetAccentName}):
-- Jika British RP: audit vokal panjang murni, non-rhotic 'r' (huruf r tidak dibaca jika setelah vokal kecuali diikuti vokal), dan letupan /t/ tajam.
-- Jika General American: audit rhotic 'r' yang dibaca bulat di semua posisi dan flap /t/ (seperti 'd' cepat pada 'water').
-
-WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERTI BERIKUT:
-
-# 🎙️ Transkripsi Audio Murni (Didengar Langsung oleh AI)
+# 📝 Transkripsi Audio Anda
 "[Tuliskan kata demi kata persis apa yang Anda dengar langsung dari rekaman audio kandidat]"
 
-# 🏆 Skor Resmi IELTS Speaking (Strict & Unfiltered)
-- **Fluency & Coherence (FC)**: Band [X.X] — [Deskripsi tajam kelancaran, jeda, atau hambatan]
-- **Lexical Resource (LR)**: Band [X.X] — [Ketepatan kolokasi, variasi kata C1/C2]
-- **Grammatical Range & Accuracy (GRA)**: Band [X.X] — [Akurasi grammar lisan]
-- **Pronunciation (PR)**: Band [X.X] — [Kejelasan fonem, penekanan suku kata, intonasi ${targetAccentName}]
-- **Overall Estimated Speaking Band**: **Band [X.X]**
+# 🔍 Struktur Kalimat & Koreksi Tata Bahasa Lisan
+- **Kejelasan Struktur**: [Apakah ide kalimat tersampaikan dengan struktur yang jelas, atau masih rancu/terbata-bata?]
+- **Koreksi Tata Bahasa**:
+  * ❌ *"[Bagian kalimat asli yang salah/kurang pas]"*
+  * 💡 *"[Koreksi tata bahasa baku]"* — [Jelaskan aturan grammar yang dilanggar secara sederhana]
 
-# 📋 Ringkasan Diagnosa & Roadmap Urutan Perbaikan Progresif
-### ⚡ Ringkasan Diagnosa Padat:
-- **Akar Masalah Utama**: [1-2 kalimat padat mengenai sumber utama mengapa skor tertahan].
-- **Proyeksi Lonjakan Skor**: [Proyeksi kenaikan jika 4 langkah roadmap dijalankan].
+# 🚀 Transformasi Kalimat Band 7.5+ & Bedah Kosakata
+- **Model Kalimat IELTS Band 7.5+**:
+  "[Tuliskan 1-2 kalimat model Band 7.5+ yang merekonstruksi ide kandidat. Sisipkan 1-3 kosakata level C1/C2 dan tandai dengan [VOCAB: kata]]"
 
-### 🪜 Roadmap Urutan Perbaikan:
-1. 🟢 **Langkah 1 (Fondasi Kata Tunggal)**:
-   - *Fokus*: Perbaiki pelafalan kata-kata dasar yang terdistorsi ([sebutkan kata kuncinya]).
-   - *Mengapa Wajib Pertama*: Melatih kata tunggal adalah yang paling mudah dan langsung membuat ucapan dipahami (intelligible).
-2. 🟡 **Langkah 2 (Pondasi Morfologi & Akhiran - Level Frasa & Kalimat Pendek)**:
-   - *Fokus*: Disiplin memasang akhiran \`+s/-es\` dan \`+ed\` pada kata kerja/benda ([sebutkan contohnya]).
-   - *Mengapa Step Ini*: Memperbaiki grammar agreement dan kejelasan tata bahasa lisan.
-3. 🟠 **Langkah 3 (Pacing, Eliminasi Keraguan & Chunking - Level Alur)**:
-   - *Fokus*: Menghilangkan filler "um/uh", menghentikan false starts, dan memenggal jeda napas per kelompok kata (thought chunks).
-4. 🔵 **Langkah 4 (Polish Nada, Word Stress & Intonasi ${targetAccentName} - Level Advance)**:
-   - *Fokus*: Penekanan suku kata (CAPITAL STRESS), intonasi naik-turun ↗ ↘, dan linking suara native.
+- **Bedah Perubahan: Kenapa Diganti Begitu?**:
+  [Jelaskan alasan konkret mengapa kata/struktur di atas diganti menjadi versi Band 7.5+. Jelaskan nuansa, apakah lebih formal, lebih alami, atau mencegah salah paham]
 
-# 🌟 Keunggulan & Titik Kuat (Candidate's Key Strengths)
-- [Sebutkan 2 aspek positif nyata yang terdengar dari rekaman suara kandidat, atau nyatakan 'Belum ada keunggulan dominan yang terdeteksi' jika rekaman buruk].
+- **Kosakata Baru yang Disarankan**:
+  [Tuliskan daftar kata yang ditandai [VOCAB: kata] di atas beserta arti ringkasnya]
 
-# 🗣️ Klasifikasi Aksen & Karakter Suara
-- **Aksen Terdengar**: [Aksen Lokal Indonesia L1 yang Kental / General American / British RP]
-- **Kesesuaian dengan Target (${targetAccentName})**: [Evaluasi keselarasan akustik]
-- **Kualitas Vokal & Nada**: [Natural mengalir / Datar & monoton / Kaku & tertekan]
+# 🔊 Bedah Pengucapan & Kata yang Kurang Tepat
+(Maksimal 3 kata paling krusial yang salah atau terdistorsi di rekaman. Jika pelafalan sudah sangat baik >=90%, tulis 'Pelafalan kata-kata kunci sudah sangat bersih dan jelas!'):
+- ❌ **"[Kata Salah]"**
+  - 👂 **Kamu Mengucapkan**: "[Bunyi keliru yang keluar]"
+  - 🗣️ **Cara Baca Lidah Indonesia**: **"[Transliterasi suku kata KAPITAL STRESS, misal: ar-TI-kyu-leit ↘]"**
+  - 🔍 **Padanan Kata Inggris Simpel**: [Sebutkan 1 kata Inggris umum yang punya bunyi vokal/konsonan sama persis, misal: bunyi 'i' sama seperti di kata 'it', bukan 'eat']
+  - 💡 **Panduan Posisi Mulut**: [Bukaan rahang dan posisi lidah konkret]
 
-# 🔊 Bedah Kata Salah & Cara Baca Lidah Indonesia
-(Bedah SEMUA kata yang salah atau terdistorsi di rekaman, tanpa batas):
-- ❌ **"[Kata yang Salah]"**
-  - 👂 **Kamu Mengucapkan**: "[Transkripsi bunyi yang salah keluar dari mulut kandidat]"
-  - 🗣️ **Ejaan Global**: **"[Transliterasi alfabet Indonesia dengan CAPITAL STRESS dan intonasi ↗ ↘, misal: ar-TI-kyu-leit ↘ / KO-lij ↘ / ME-nij-ment ↘]"**
-  - 🔍 **Bedah Bunyi Lidah Indonesia**:
-    * Suku kata ditekan: **[Suku kata CAPITAL]**
-    * Panduan per suku kata: [Jelaskan asosiasi bunyi Indonesia konkret per suku kata, misal: 'ar' seperti pada 'arsip', 'TI' ditekan tajam, 'kyu' seperti 'kios', 'leit' berima 'lelet'].
-  - 💡 **Panduan Posisi Mulut & Bibir**: [Bukaan rahang dan posisi lidah konkret].
-- ✅ **"[Kata yang Bagus]"** -> Artikulasi tepat dan alami.
-
-# 🛑 Audit Khusus Akhiran +S/-ES, +ED & Final Consonants
-### 1. Akhiran +S/-ES (/s/, /z/, /ɪz/):
-- **Diagnosa Rekaman**: [Audit kata mana yang akhiran -s nya tertelan atau kurang tajam]
-- 🎯 **Trik Lidah & Cara Praktik**: [Trik desis /s/ ular, getaran /z/ lebah di pita suara, atau /ɪz/]
-- 🗣️ **Drill Kilat**: [1 frasa latihan pendek dengan penanda fonetik]
-
-### 2. Akhiran +ED (/t/, /d/, /ɪd/) & Final Consonant:
-- **Diagnosa Rekaman**: [Audit kata mana yang akhiran -ed atau konsonan mati /t/, /d/, /p/, /k/ nya tertelan]
-- 🎯 **Trik Lidah & Cara Praktik**: [Trik letupan tajam /t/, getaran /d/, atau /ɪd/]
-- 🗣️ **Drill Kilat**: [1 frasa latihan pendek dengan penanda fonetik]
-
-### 3. Dampak pada Skor GRA & PR:
-- [Penjelasan korelasi kehilangan akhiran terhadap skor]
-
-# ⏱️ Audit Kelancaran, Kegugupan & Jeda Terbata-bata
-- **Kecepatan Berbicara (Speech Rate)**: [Terlalu Lambat / Ideal (110-140 wpm) / Terlalu Cepat]
-- **Terbata-bata & False Starts**: [Frekuensi pengulangan awal kata]
-- **Filler & Jeda Hening**: [Frekuensi "uh", "um", "ee...", atau jeda macet canggung]
-
-# 🔍 Bedah Kesalahan Grammar Spoken (Kalimat yang Salah / Glitches)
-(Tuliskan kalimat salah yang diucapkan kandidat beserta perbaikannya):
-- ❌ *"[Kalimat Asli yang Salah]"* -> 💡 **Perbaikan**: *"[Kalimat Standar Band 7.5]"* (Penjelasan kenapa salah)
-
-# 🎙️ Teks Latihan Ulang Band 7.5 (Retest Drill Script)
-### 📝 Teks Asli Bahasa Inggris (Band 7.5 Alami):
-"[Tuliskan 1-2 kalimat model alami dengan kosakata C1/C2 tepat dan struktur yang tidak kaku]"
-
-### 🗣️ Panduan Cara Baca & Penekanan Suku Kata:
-> "[Tuliskan ulang teks di atas dengan suku kata bertekanan ditulis HURUF KAPITAL dan tanda intonasi ↗ ↘]"
-
-# 📚 Rekomendasi Latihan Mendesak
-[1-2 fokus latihan utama yang wajib diperbaiki segera]`;
+# 🛑 Audit Akhiran +S/-ES & +ED
+- **Akhiran +S/-ES**: [Apakah desis /s/, /z/, /ɪz/ terdengar tajam atau tertelan?]
+- **Akhiran +ED**: [Apakah letupan /t/, /d/, /ɪd/ terdengar jelas atau tertelan?]
+- 🗣️ **Drill Kilat**: [1 frasa pendek latihan]`;
 
             try {
-                const userQuery = `Halo AI Examiner, tolong dengarkan rekaman audio saya secara langsung dan berikan evaluasi IELTS Speaking ${mode.toUpperCase()} mendalam, skor resmi 4 rubrik, summary roadmap urutan perbaikan progresif, keunggulan, bedah SEMUA kata salah (dengan keterangan kamu mengucapkan vs cara baca lidah Indonesia), audit akhiran +s/+ed lengkap dengan trik lidah & drill kilat, dan teks latihan ulang Band 7.5 dalam Bahasa Indonesia.`;
+                const userQuery = `Halo AI Examiner, tolong dengarkan rekaman audio saya secara langsung. Berikan skor persentase kelipatan 5, review kesesuaian aksen ${targetAccentName}, transkripsi ucapan saya, cek struktur kalimat lisan dan koreksinya, model upgrade IELTS Band 7.5+ lengkap dengan penjelasan kenapa diganti begitu serta penanda [VOCAB: kata], dan bedah pengucapan kata yang salah dengan cara baca lidah Indonesia dan padanan kata simpel.`;
                 let evalResponse = await callGeminiAPI(userQuery, systemPrompt, audioBlob);
 
                 if (!evalResponse) {
                     evalResponse = `
-# 🏆 Skor Resmi IELTS Speaking (Strict & Unfiltered)
-- **Fluency & Coherence (FC)**: Band 5.5
-- **Lexical Resource (LR)**: Band 6.0
-- **Grammatical Range & Accuracy (GRA)**: Band 5.5
-- **Pronunciation (PR)**: Band 5.0
-- **Overall Estimated Speaking Band**: **Band 5.5**
+# 📊 Skor Pelafalan & Kelancaran
+**75%** — Pelafalan cukup jelas dan komunikatif, namun memerlukan pemolesan pada akhiran kata dan pemilihan kosakata formal.
+- **Target Aksen**: ${targetAccentName}
+- **Kesesuaian Aksen Terdengar**: Artikulasi vokal cukup baik, namun irama suku kata masih cenderung datar ala penutur bahasa Indonesia.
 
-# 📋 Ringkasan Diagnosa & Roadmap Urutan Perbaikan Progresif
-### ⚡ Ringkasan Diagnosa Padat:
-- **Akar Masalah Utama**: Distorsi vokal dasar pada kata kunci dan hilangnya akhiran morfologi (+s/+ed) yang membatasi skor GRA dan PR di Band 5.0-5.5.
-- **Proyeksi Lonjakan Skor**: Mengikuti roadmap 4 langkah ini diproyeksikan menaikkan skor Anda ke Band 7.0 - 7.5.
+# 📝 Transkripsi Audio Anda
+"${activePromptText ? activePromptText.slice(0, 100) : 'I live in a small coastal city and the local park is very peaceful.'}"
 
-### 🪜 Roadmap Urutan Perbaikan (Tangga Progresif dari yang Paling Awam):
-1. 🟢 **Langkah 1 (Fondasi Kata Tunggal - Paling Mudah & Wajib Pertama)**:
-   - *Fokus*: Perbaiki artikulasi kata dasar yang terdistorsi.
-   - *Mengapa Wajib Pertama*: Melatih kata tunggal adalah yang paling mudah dan langsung membuat pengucapan dipahami (intelligible).
-2. 🟡 **Langkah 2 (Pondasi Morfologi & Akhiran - Level Frasa/Kalimat Pendek)**:
-   - *Fokus*: Disiplin melafalkan akhiran \`+s/-es\` dan \`+ed\` dengan tuntas.
-   - *Mengapa Step Ini*: Memperbaiki grammar agreement dan kejelasan tata bahasa lisan.
-3. 🟠 **Langkah 3 (Pacing, Eliminasi Keraguan & Chunking - Level Alur)**:
-   - *Fokus*: Hilangkan jeda 'um/uh' dan bicara dalam kelompok kata (thought chunks).
-4. 🔵 **Langkah 4 (Polish Nada, Word Stress & Intonasi ${targetAccentName} - Level Advance)**:
-   - *Fokus*: Penekanan suku kata dan variasi nada naik-turun ↗ ↘.
+# 🔍 Struktur Kalimat & Koreksi Tata Bahasa Lisan
+- **Kejelasan Struktur**: Ide kalimat tersampaikan dengan baik, tetapi pilihan verba dan tenses masih bisa diperhalus.
+- **Koreksi Tata Bahasa**:
+  * ❌ *"I live in small coastal city"*
+  * 💡 *"I reside in a coastal community"* — Tambahkan artikel 'a' sebelum kata benda tunggal dan gunakan kata kerja yang lebih elegan.
 
-# 🌟 Keunggulan & Titik Kuat (Candidate's Key Strengths)
-- ✅ Kelantangan suara cukup baik dan niat komunikasi terdengar jelas.
-- ✅ Kosakata dasar berhasil digunakan untuk menyusun alur kalimat.
+# 🚀 Transformasi Kalimat Band 7.5+ & Bedah Kosakata
+- **Model Kalimat IELTS Band 7.5+**:
+  "I currently [VOCAB: reside] in a [VOCAB: tranquil] coastal district where local residents frequently [VOCAB: unwind] in the park."
 
-# 🗣️ Klasifikasi Aksen & Karakter Suara
-- **Aksen Terdengar**: Aksen lokal Indonesia L1 dengan pengaruh ritme suku kata bahasa ibu.
-- **Kesesuaian Target**: Masih membutuhkan latihan vokal panjang dan non-rhotic.
+- **Bedah Perubahan: Kenapa Diganti Begitu?**:
+  (1) Kata 'live' diganti dengan [VOCAB: reside] agar terdengar lebih formal dan bernilai akademik tinggi.
+  (2) Kata 'peaceful' diganti dengan [VOCAB: tranquil] karena memberikan nuansa ketenangan yang lebih kaya dan deskriptif.
+  (3) Frasa 'spend time' diganti dengan [VOCAB: unwind] untuk menunjukkan kemampuan menggunakan idiom santai namun berkelas tinggi.
 
-# 🔊 Bedah Kata Salah & Cara Baca Lidah Indonesia
-- ❌ **"Peaceful"** -> 👂 **Kamu Mengucapkan**: "pes-ful" (terlalu pendek & datar) -> 🗣️ **Cara Baca Lidah Indo**: **"PII-s-ful ↘"** -> 💡 **Panduan Mulut**: Bunyi 'ea' harus panjang seperti tersenyum (pii-s-ful), bukan 'pes-ful'. Suku kata PII ditekan.
-- ❌ **"Residents"** -> 👂 **Kamu Mengucapkan**: "re-si-den" (akhiran s tertelan) -> 🗣️ **Cara Baca Lidah Indo**: **"RE-zi-dents ↘"** -> 💡 **Panduan Mulut**: Huruf S tengah bergetar seperti lebah (bunyi 'z'), akhiran -nts diletupkan tegas.
-- ❌ **"Parks"** -> 👂 **Kamu Mengucapkan**: "park" (huruf s tertelan) -> 🗣️ **Cara Baca Lidah Indo**: **"PAA-ks ↘"** -> 💡 **Panduan Mulut**: Vokal 'aa' dibuka lebar di tenggorokan, diakhiri desis 'ks' yang tajam.
+- **Kosakata Baru yang Disarankan**:
+  - **reside** (verb): bertempat tinggal (formal)
+  - **tranquil** (adjective): tenang, damai, tenteram
+  - **unwind** (verb): melepaskan penat, bersantai
 
-# 🛑 Audit Khusus Akhiran +S/-ES, +ED & Final Consonants
-### 1. Akhiran +S/-ES (/s/, /z/, /ɪz/):
-- **Diagnosa Rekaman**: Akhiran pada kata \`residents\` dan \`parks\` terdengar kurang tajam dan sering tertelan oleh desahan napas akhir.
-- 🎯 **Trik Lidah & Cara Praktik**: Rapatkan gigi atas dan bawah, tiupkan udara kuat di balik gigi depan untuk menghasilkan desis tajam (/s/ seperti desis ular).
-- 🗣️ **Drill Kilat**: *"The resident**s** /s/ frequently visit local park**s** /s/."*
+# 🔊 Bedah Pengucapan & Kata yang Kurang Tepat
+- ❌ **"Peaceful"**
+  - 👂 **Kamu Mengucapkan**: "pes-ful"
+  - 🗣️ **Cara Baca Lidah Indonesia**: **"PII-s-ful ↘"**
+  - 🔍 **Padanan Kata Inggris Simpel**: Bunyi vokal 'ee' panjang sama persis seperti di kata 'see' atau 'tree', bukan seperti 'pet'.
+  - 💡 **Panduan Posisi Mulut**: Tarik sudut bibir ke samping seperti sedang tersenyum saat mengucap 'PII'.
+- ❌ **"Residents"**
+  - 👂 **Kamu Mengucapkan**: "re-si-den"
+  - 🗣️ **Cara Baca Lidah Indonesia**: **"RE-zi-dents ↘"**
+  - 🔍 **Padanan Kata Inggris Simpel**: Bunyi huruf 's' tengah bergetar seperti suara lebah /z/ pada kata 'buzz'.
+  - 💡 **Panduan Posisi Mulut**: Getarkan pita suara saat mengucapkan 'zi' dan letupkan akhiran '-nts'.
 
-### 2. Akhiran +ED (/t/, /d/, /ɪd/) & Final Consonant:
-- **Diagnosa Rekaman**: Konsonan mati penutup pada kata \`city\` /t/ dan \`crisp\` /p/ kurang diletupkan.
-- 🎯 **Trik Lidah & Cara Praktik**: Tempelkan ujung lidah di gusi atas lalu lepaskan dengan letupan udara bersih tanpa suara vokal tambahan.
-- 🗣️ **Drill Kilat**: *"I live**d** /d/ in a distric**t** /t/ that create**d** /ɪd/ great habit**s** /s/."*
-
-### 3. Dampak pada Skor GRA & PR:
-- Menahan skor Pronunciation pada batas Band 5.5 karena ketajaman konsonan akhir yang hilang mengurangi kejelasan akustik.
-
-# ⏱️ Audit Kelancaran, Kegugupan & Jeda Terbata-bata
-- **Kecepatan Berbicara**: Cukup, namun terdapat jeda keraguan di beberapa titik.
-
-# 🔍 Bedah Kesalahan Grammar Spoken (Kalimat yang Salah / Glitches)
-- 💡 Perhatikan konsistensi subject-verb agreement pada subjek tunggal.
-
-# 🎙️ Teks Latihan Ulang Band 7.5 (Retest Drill Script)
-### 📝 Teks Asli Bahasa Inggris (Band 7.5 Alami):
-"I reside in a peaceful coastal community, where the local residents consistently maintain clean public parks."
-
-### 🗣️ Panduan Cara Baca & Penekanan Suku Kata:
-> "ai ri-ZAID in e PII-s-ful KO-stel ke-MYUU-ne-ti ↗, we-e the LOU-kel RE-zi-dents ken-SIS-tent-li mein-TEIN kliin PAB-lik PAA-ks ↘"
-
-# 📚 Rekomendasi Latihan Mendesak
-[Latihlah konsistensi akhiran konsonan tunggal dan penekanan suku kata]
-                    `;
+# 🛑 Audit Akhiran +S/-ES & +ED
+- **Akhiran +S/-ES**: Akhiran /s/ pada kata 'residents' dan 'parks' terdengar agak tertelan. Pastikan ada desis tajam di balik gigi depan.
+- **Akhiran +ED**: Relatif aman pada rekaman ini.
+- 🗣️ **Drill Kilat**: *"The resident**s** /s/ enjoy tranquil park**s** /s/."*
+`;
                 }
 
                 // Generate Dynamic Error-Injected Speaking Remediation Prompt
@@ -1492,3 +1444,7 @@ WAJIB FORMAT OUTPUT DALAM BAHASA INDONESIA DENGAN STRUKTUR HEADING PERSIS SEPERT
 
         // =========================================================================
         
+        function quickAddVocabFromSpeaking(word) {
+            return saveMispronouncedWordToVocabBank(word);
+        }
+    

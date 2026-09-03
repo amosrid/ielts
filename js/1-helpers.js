@@ -190,14 +190,14 @@
             // Headings
             html = html.replace(/^### (.*$)/gim, '<h3 class="text-xs font-mono font-bold text-amber-300 mt-4 mb-2 flex items-center gap-2 uppercase tracking-wide"><i class="fa-solid fa-chevron-right text-[10px] text-amber-400"></i> $1</h3>');
             html = html.replace(/^## (.*$)/gim, '<h2 class="text-sm font-bold text-indigo-300 mt-5 mb-2 border-b border-slate-800 pb-1.5 flex items-center gap-2">$1</h2>');
-            html = html.replace(/^# (.*$)/gim, '<h1 class="text-base font-black text-white mt-5 mb-3 bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 flex items-center gap-2">$1</h1>');
+            html = html.replace(/^# (.*$)/gim, '<h1 class="text-base font-black text-slate-900 dark:text-white mt-4 mb-3 bg-rose-50 dark:bg-slate-950/80 p-3 rounded-xl border border-rose-200 dark:border-slate-800 flex items-center gap-2 shadow-sm">$1</h1>');
 
             // Bold & Italic
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-300 font-semibold">$1</strong>');
             html = html.replace(/\*(.*?)\*/g, '<em class="text-slate-300">$1</em>');
 
             // Bullet Lists
-            html = html.replace(/^\s*[\-\*]\s+(.*$)/gim, '<div class="flex items-start space-x-2 my-1.5"><i class="fa-solid fa-circle-notch text-[8px] text-cyan-400 mt-1.5"></i><span class="text-slate-300 text-xs leading-relaxed">$1</span></div>');
+            html = html.replace(/^\s*[\-\*]\s+(.*$)/gim, '<div class="flex items-start space-x-2 my-1.5"><i class="fa-solid fa-circle-notch text-[8px] text-rose-500 dark:text-cyan-400 mt-1.5 shrink-0"></i><span class="text-slate-800 dark:text-slate-300 text-xs leading-relaxed">$1</span></div>');
 
             // Line breaks
             html = html.replace(/\n\n/g, '<div class="h-2"></div>');

@@ -76,13 +76,14 @@
             <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-indigo-500/30 dark:border-indigo-400/30 bg-white flex items-center justify-center shadow-md flex-shrink-0">
-                        <img src="img/logo.jpg" alt="IeltsGo Logo" class="w-full h-full object-cover rounded-full">
+                        <img src="img/logo.jpg" alt="IeltsGo Logo" class="w-full h-full object-cover">
                     </div>
-                    <div>
-                        <h1 class="font-black text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
-                            <span>IeltsGo</span>
-                            <span class="text-[10px] font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800/40">Academy</span>
-                        </h1>
+                    <div class="flex flex-col justify-center">
+                        <div class="flex items-center gap-1.5 leading-none">
+                            <span class="font-black text-lg tracking-tight text-slate-900 dark:text-white">IeltsGo</span>
+                            <span class="text-[10px] font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/80 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800/50">Academy</span>
+                        </div>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono tracking-tight mt-0.5">IELTS Prep Engine</span>
                     </div>
                 </div>
                 <!-- Mobile Action Icons -->
@@ -151,7 +152,7 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="p-3 lg:p-4 space-y-2 flex-1 lg:flex-initial lg:bg-slate-900/90 lg:border lg:border-slate-800/90 lg:rounded-2xl lg:sticky lg:top-20 lg:shadow-xl">
+            <div class="p-3 lg:p-4 space-y-2 flex-1 lg:flex-initial bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 rounded-2xl lg:sticky lg:top-24 shadow-md dark:shadow-xl">
                 <!-- 1. Dashboard Nav Button -->
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn nav-btn-active active w-full text-left p-2.5 rounded-xl border flex items-center justify-between transition-all">
                     <div class="flex items-center space-x-2.5">
