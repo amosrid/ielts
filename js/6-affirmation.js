@@ -4,8 +4,8 @@
         const DEFAULT_AFFIRMATIONS = [
             {
                 id: 'aff_1',
-                en: "Every sentence I practice today elevates my score closer to IELTS Band 8.0.",
-                id_trans: "Setiap kalimat yang saya latih hari ini menaikkan skor saya mendekati IELTS Band 8.0.",
+                en: "Every sentence I practice today elevates my score closer to IELTS Band 7.5+.",
+                id_trans: "Setiap kalimat yang saya latih hari ini menaikkan skor saya mendekati IELTS Band 7.5+.",
                 timesCompleted: 0,
                 dateCreated: 1756620000000
             },
@@ -676,7 +676,7 @@ WAJIB KELUARKAN HANYA OBJEK JSON VALID TANPA TEKS LAIN:
                 btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>Menciptakan Afirmasi IELTS...</span>`;
             }
 
-            const prompt = `Generate 1 powerful, inspiring, high-level IELTS & English mindset affirmation sentence for a student aiming for Band 8.0+.
+            const prompt = `Generate 1 powerful, inspiring, high-level IELTS & English mindset affirmation sentence for a student aiming for Band 7.5+.
 Return ONLY a valid JSON object in this exact format:
 {
   "en": "English affirmation sentence (10-18 words, uplifting, academic tone)",

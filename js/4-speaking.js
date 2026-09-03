@@ -285,7 +285,7 @@ Format in Markdown:
 "[Write the question in quotes]"
 
 # 💡 Strategy Tip & Grammar Anchor
-- [Brief tip on how to structure a Band 8.0 answer using: ${grammarCtx.rulesSummary}${injectedVocabs.length > 0 ? ` and applying vocabularies (${injectedVocabs.map(v => v.word).join(', ')})` : ''}]`;
+- [Brief tip on how to structure a natural Band 7.5+ answer using: ${grammarCtx.rulesSummary}${injectedVocabs.length > 0 ? ` and applying vocabularies (${injectedVocabs.map(v => v.word).join(', ')})` : ''}]`;
                 userPrompt = `Generate a challenging Part 3 question matching unlocked grammar: ${grammarCtx.rulesSummary}${injectedVocabs.length > 0 ? ` and integrating words: ${injectedVocabs.map(v => v.word).join(', ')}` : ''}`;
             }
 

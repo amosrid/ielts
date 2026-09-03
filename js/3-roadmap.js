@@ -253,8 +253,8 @@ Required Concept / Task: "${stagePromptData.writingPrompt || s.desc}".
   * Assign Band 4.0 - 5.0.
   * You MUST write: '# 🚦 VERDICT: FAILED'
   * Detail EXACTLY what grammar rule was broken and why.
-- If and ONLY if the sentence is valid, grammatically clean, accurate, applies complex subordination / advanced register, and properly applies the target grammar concept (Band 6.5 - 8.5):
-  * Assign Band 6.5 - 8.5.
+- If and ONLY if the sentence is valid, grammatically clean, accurate, applies complex subordination / advanced register, and properly applies the target grammar concept (Band 6.5 - 7.5+):
+  * Assign Band 6.5 - 7.5+.
   * You MUST write: '# 🚦 VERDICT: PASSED'
 
 YOUR RESPONSE MUST FOLLOW THIS EXACT STRUCTURE IN MARKDOWN (BAHASA INDONESIA):
@@ -269,8 +269,8 @@ YOUR RESPONSE MUST FOLLOW THIS EXACT STRUCTURE IN MARKDOWN (BAHASA INDONESIA):
 - **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: [Jelaskan kebiasaan bahasa Indonesia mana yang memicu kesalahan ini, misal: menerjemahkan kata per kata, ketiadaan konjugasi '-s', atau ketiadaan tenses di bahasa ibu]
 - **Peningkatan Register Akademik**: [Saran kolokasi C1/C2 dan nominalization]
 
-# 🛠️ Model Kalimat Perbaikan Band 8.5+ & Bedah Formula
-- **Model Kalimat Slayer (Band 8.5+)**: [Tuliskan model kalimat versi Band 8.5+ yang ideal]
+# 🛠️ Model Kalimat Perbaikan Band 7.5+ & Bedah Formula
+- **Model Kalimat Upgrade (Band 7.5+)**: [Tuliskan model kalimat versi Band 7.5+ yang ideal dan mengalir alami]
 - **Bedah Formula Sintaksis**: [Tuliskan rumus struktur kalimatnya, misal: 'Given that + [Noun Phrase], [Subject] + [Band 8 Verb Collocation] + [Object]']
 
 # 📚 Rekomendasi Belajar
@@ -410,7 +410,7 @@ ${aiEvaluation.substring(0, 800)}
 
 Please help me master this specific concept with the following 4 steps:
 1. Explain WHY my sentence ${isPassed ? 'can be elevated even further' : 'failed the grammar check and how to fix the root error'}.
-2. Provide 3 Band 8.5+ native academic sentence variations based on this exact topic.
+2. Provide 3 Band 7.5+ native academic sentence variations based on this exact topic.
 3. Teach me 1 memorable mental rule/analogy so I never repeat this mistake in IELTS Writing Task 1/2.
 4. Give me 3 interactive practice drill sentences for me to fix step-by-step.`;
 
@@ -604,8 +604,8 @@ Identify grammar errors and explain the L1 Indonesian root habit behind them (e.
 # 🔄 Remediation Plan (Stage yang Wajib Diulang)
 Provide specific stage recommendations. Mention the exact stage IDs (e.g. stage1-1, stage1-2, stage2-3) that need revision. If all are flawless, state "Semua stage di fase ini telah dikuasai dengan sempurna!".
 
-# 🚀 Model Paragraf Band 8.5+ & Bedah Formula
-Provide an exemplary Band 8.5+ model paragraph demonstrating all phase skills flawlessly, accompanied by a 2-point formula breakdown explaining why it scores Band 8.5+.`;
+# 🚀 Model Paragraf Band 7.5+ & Bedah Formula
+Provide an exemplary Band 7.5+ model paragraph demonstrating all phase skills flawlessly, accompanied by a 2-point formula breakdown explaining why it scores Band 7.5+.`;
 
             try {
                 let aiResponse = await callGeminiAPI(`Prompt: ${data.essayPrompt}\n\nCandidate Paragraph:\n${essayText}`, systemPrompt);
@@ -625,7 +625,7 @@ Provide an exemplary Band 8.5+ model paragraph demonstrating all phase skills fl
 # 🔄 Remediation Plan (Stage yang Perlu Dipelajari Kembali)
 - Tinjau kembali stage-stage di fase ini untuk memperdalam presisi tata bahasa.
 
-# 🚀 Model Paragraf Band 8.5+
+# 🚀 Model Paragraf Band 7.5+
 "The rapid evolution of modern infrastructure has fundamentally transformed daily commuting patterns. Although implementation requires substantial financial resources, systematic urban planning continues to yield measurable improvements in societal well-being."
 
 > 💡 *Hubungkan Gemini API Key Anda untuk mendapatkan analisis diagnostik real-time yang detail per stage!*
@@ -874,7 +874,7 @@ Provide an exemplary Band 8.5+ model paragraph demonstrating all phase skills fl
 - **Glitch & Kesalahan Tata Bahasa**: Nol fatal glitch terdeteksi pada pemeriksaan aturan dasar.
 - **Peningkatan Register Akademik**: Dapat ditingkatkan dengan menambahkan kata sifat presisi atau nominalisasi formal.
 
-# 🛠️ Model Kalimat Perbaikan Band 8.5+
+# 🛠️ Model Kalimat Perbaikan Band 7.5+
 "The systematic implementation of these policies has demonstrated measurable improvements in overall operational efficiency."
 
 # 📚 Rekomendasi Belajar
@@ -892,7 +892,7 @@ Pertahankan akurasi ini dan latih integrasi klausa kompleks (subordinasi & hedgi
 ${glitches.join('\n')}
 - **Peningkatan Register Akademik**: Perbaiki kesalahan fundamental sebelum meningkatkan kosakata.
 
-# 🛠️ Model Kalimat Perbaikan Band 8.5+
+# 🛠️ Model Kalimat Perbaikan Band 7.5+
 ${fixes.join('\n')}
 
 # 📚 Rekomendasi Belajar
@@ -1062,7 +1062,7 @@ Berikan 1 analogi dunia nyata yang sangat hidup dan mudah dibayangkan (Explain L
 # 🐛 4. DIAGNOSIS FORENSIK GLITCH & L1 TRANSFER
 - **Glitch yang Terdeteksi**: [Sebutkan kesalahan tata bahasa atau kelemahan register formal]
 - **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: [Bedah kebiasaan bahasa Indonesia mana yang memicu kesalahan ini, misal: menerjemahkan kata per kata, ketiadaan konjugasi, atau pola pikir kalimat lisan]
-- **Versi Slayer Band 8.5+**: [Tuliskan kalimat versi Band 8.5+ yang superior]
+- **Versi Upgrade Band 7.5+**: [Tuliskan kalimat versi Band 7.5+ yang superior dan alami]
 - **Bedah Formula Kalimat**: [Tuliskan rumus struktur kalimatnya, misal: 'In light of + [Noun Phrase], [Subject] + [Band 8 Collocation]']
 
 # 🚀 5. LATIHAN & RETRIEVAL DRILL AKTIF
@@ -1147,7 +1147,7 @@ Candidate Drill Submission:
 🚨 RIGID EVALUATION POLICY (ZERO SUGARCOATING):
 1. Grade each numbered question submitted by the candidate (Item 1: Correct / Incorrect, Item 2: Correct / Incorrect).
 2. Point out ANY remaining glitches, missing articles, wrong prepositions, or informal phrasing.
-3. Show the Band 8.5+ Slayer Model & formula for each item.
+3. Show the Band 7.5+ Upgrade Model & formula for each item.
 4. Conclude with:
    # 🏆 Drill Mastery Score: [e.g. 2/2 Sempurna / 1/2 Perlu Poles / 0/2 Gagal Total]
    # 🚦 Status: [MASTERED (+50 XP) or NEEDS PRACTICE]`;
@@ -1161,7 +1161,7 @@ Candidate Drill Submission:
 # 🏆 Drill Evaluation Report
 - **Status Evaluasi**: Jawaban telah diterima dan dianalisis.
 - **Komentar Tata Bahasa**: Struktur kalimat yang diperbaiki menunjukkan peningkatan pemahaman konsep.
-- **Model Jawaban Band 8.5+**: Pastikan subjek, verba, dan klausa utama saling mengikat tanpa konjungsi ganda.
+- **Model Jawaban Band 7.5+**: Pastikan subjek, verba, dan klausa utama saling mengikat tanpa konjungsi ganda.
 - **Skor**: **MASTERED (+50 XP)**
                     `;
                 }
@@ -1182,7 +1182,7 @@ ${gradeResponse.substring(0, 700)}
 
 Please provide:
 1. Clear explanation of any remaining grammatical glitches and the exact rules broken.
-2. 3 Band 8.5+ native academic model sentences.
+2. 3 Band 7.5+ native academic model sentences.
 3. 2 new quick test sentences for me to practice right now.`;
 
                 currentDrillStudyPromptText = drillStudyPrompt;
@@ -1334,19 +1334,19 @@ Structure your comprehensive diagnostic report in Markdown using EXACTLY these h
 - **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: [Jelaskan pola pikir bahasa Indonesia mana yang paling banyak merusak kealamian esai ini]
 
 # 🛠️ Top 3 Glitch Repair Guide & Bedah Formula
-(Ambil 3 kalimat paling bermasalah dari esai kandidat dan transformasikan ke standar Band 8.5+):
+(Ambil 3 kalimat paling bermasalah dari esai kandidat dan transformasikan ke standar Band 7.5+):
 1. ❌ **Kalimat Asli**: "[Kutipan kalimat kandidat]"
-   - 💡 **Versi Band 8.5+**: "[Kalimat hasil rekonstruksi]"
+   - 💡 **Versi Band 7.5+**: "[Kalimat hasil rekonstruksi]"
    - ⚙️ **Bedah Formula**: [Rumus sintaksisnya]
 2. ❌ **Kalimat Asli**: "[Kutipan kalimat kandidat]"
-   - 💡 **Versi Band 8.5+**: "[Kalimat hasil rekonstruksi]"
+   - 💡 **Versi Band 7.5+**: "[Kalimat hasil rekonstruksi]"
    - ⚙️ **Bedah Formula**: [Rumus sintaksisnya]
 3. ❌ **Kalimat Asli**: "[Kutipan kalimat kandidat]"
-   - 💡 **Versi Band 8.5+**: "[Kalimat hasil rekonstruksi]"
+   - 💡 **Versi Band 7.5+**: "[Kalimat hasil rekonstruksi]"
    - ⚙️ **Bedah Formula**: [Rumus sintaksisnya]
 
-# 🚀 Model Paragraf Band 8.5+ Slayer
-[Tuliskan 1 model paragraf Body Paragraph Band 8.5+ yang sempurna untuk menjawab topik ini]`;
+# 🚀 Model Paragraf Band 7.5+ Upgrade
+[Tuliskan 1 model paragraf Body Paragraph Band 7.5+ yang luwes dan berbobot untuk menjawab topik ini]`;
 
             try {
                 const userQuery = `Prompt: ${prompt}\n\nCandidate Response:\n${essay}`;
@@ -1370,7 +1370,7 @@ Structure your comprehensive diagnostic report in Markdown using EXACTLY these h
 1. *Before*: "People need to managing money." $\\rightarrow$ *After*: "Individuals are required to manage their financial assets."
 2. *Before*: "Because of costs rose so demand dropped." $\\rightarrow$ *After*: "Owing to rising costs, consumer demand decreased substantially."
 
-# 🚀 Band 8.0 Model Paragraph Preview
+# 🚀 Band 7.5+ Model Paragraph Preview
 "It is often argued that financial education should be incorporated into the mandatory school curriculum. While parental guidance remains pivotal, formal instruction ensures standardized literacy across diverse socio-economic backgrounds."
 
 > 💡 *Silakan masukkan Gemini API Key Anda melalui tombol kunci di atas untuk mendapatkan evaluasi real-time yang disesuaikan secara dinamis dengan esai Anda!*

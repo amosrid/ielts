@@ -847,7 +847,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 
             vocabBank = starterPack;
             saveVocabBank();
-            showToast("5 Kosakata IELTS Band 8.0 berhasil ditambahkan!", "success");
+            showToast("5 Kosakata IELTS Band 7.5+ berhasil ditambahkan!", "success");
             SoundFX.play('levelup');
         }
 
@@ -1874,7 +1874,7 @@ Sinonim: ${(vocab.synonyms || []).join(', ') || '-'}
 
 Tolong berikan saya:
 1. 3 kolokasi akademik yang paling natural (${vocab.word} + apa?)
-2. Cara penggunaan di IELTS Writing Task 2 dengan 2 contoh kalimat lengkap (Band 8.0+)
+2. Cara penggunaan di IELTS Writing Task 2 dengan 2 contoh kalimat lengkap (Band 7.5+)
 3. Perbedaan nuansa dengan sinonim-sinonimnya
 4. 1 contoh kalimat Speaking Part 3 yang menggunakan kata ini secara natural
 5. Kesalahan umum pelajar Indonesia yang harus dihindari
@@ -1959,7 +1959,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
     "[Subject] + make an impertinent remark / comment",
     "It is impertinent of [Someone] to + [Verb]"
   ],
-  "upgradedSentence": "Contoh kalimat versi upgrade tingkat tinggi (Band 8.0+) yang menyempurnakan ide kalimat siswa.",
+  "upgradedSentence": "Contoh kalimat versi upgrade tingkat tinggi (Band 7.5+) yang menyempurnakan ide kalimat siswa secara natural.",
   "srsDays": 4
 }`;
 
@@ -2076,7 +2076,7 @@ Contoh Kalimat: "${sentence}"`;
                 formulasHtml = `
                     <div class="space-y-1.5 p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/40">
                         <div class="text-[11px] font-mono font-bold text-indigo-700 dark:text-indigo-400 uppercase flex items-center gap-1.5">
-                            <i class="fa-solid fa-graduation-cap"></i> Formula Sintaks Standar IELTS (Band 8.0+):
+                            <i class="fa-solid fa-graduation-cap"></i> Formula Sintaks Standar IELTS (Band 7.5+):
                         </div>
                         <div class="space-y-1.5 pt-0.5">
                             ${feedback.syntaxFormulas.map((f, i) => `
@@ -2096,7 +2096,7 @@ Contoh Kalimat: "${sentence}"`;
                 upgradedHtml = `
                     <div class="space-y-1.5 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/40">
                         <div class="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 uppercase flex items-center justify-between flex-wrap gap-2">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-sparkles"></i> Model Kalimat Sempurna (Band 8.5+ Upgrade):</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-sparkles"></i> Model Kalimat IELTS (Band 7.5+ Upgrade):</span>
                             <button onclick="speakWord('${feedback.upgradedSentence.replace(/'/g, "\\'")}', 'en-GB')" class="px-2.5 py-1 rounded bg-emerald-100 dark:bg-emerald-900/80 hover:bg-emerald-200 dark:hover:bg-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs font-mono font-bold flex items-center gap-1 shadow-sm border border-emerald-300 dark:border-emerald-500/40 cursor-pointer" title="Dengarkan pelafalan kalimat ini">
                                 <i class="fa-solid fa-volume-high text-[10px]"></i> Dengar
                             </button>
@@ -2210,7 +2210,7 @@ Contoh Kalimat: "${sentence}"`;
 Design 1 sharp, creative challenge in Indonesian with an English requirement.
 Examples of great challenge formats:
 - "Buat 1 kalimat argumen IELTS Speaking Part 3 / Writing Task 2 yang membandingkan dua kondisi kontras menggunakan kata '${vocab.word}' secara tepat!"
-- "Perbaiki kalimat rancu berikut agar bernuansa akademik Band 8.0 dengan menyisipkan kata '${vocab.word}': [berikan 1 kalimat rancu relevan]."
+- "Perbaiki kalimat rancu berikut agar bernuansa akademik Band 7.5+ dengan menyisipkan kata '${vocab.word}': [berikan 1 kalimat rancu relevan]."
 
 Keep the prompt instruction concise (1-2 sentences) in Indonesian. Do NOT provide the answer.`;
 
@@ -2550,8 +2550,8 @@ Provide a concise evaluation in Indonesian with high-scoring IELTS tips.
 1. Meaning Critique: If provided, is it semantically accurate?
 2. Sentence Critique: Is grammar, collocation, and IELTS context accurate?
 3. Grammar Errors: Array of specific correction notes (empty if flawless).
-4. Syntax Formulas: 1-2 Band 8.0+ syntax formula patterns using "${vocab.word}".
-5. Upgraded Sentence: 1 perfect Band 8.5+ IELTS sentence.
+4. Syntax Formulas: 1-2 Band 7.5+ syntax formula patterns using "${vocab.word}".
+5. Upgraded Sentence: 1 natural Band 7.5+ IELTS sentence.
 6. Score: 0-100.
 
 Return JSON ONLY:
@@ -2641,7 +2641,7 @@ Return JSON ONLY:
 
                             ${parsed.syntaxFormulas && parsed.syntaxFormulas.length > 0 ? `
                                 <div class="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/40 space-y-1">
-                                    <div class="text-[10px] font-mono font-bold text-indigo-400 uppercase">Formula Sintaks Band 8.0+:</div>
+                                    <div class="text-[10px] font-mono font-bold text-indigo-400 uppercase">Formula Sintaks Band 7.5+:</div>
                                     ${parsed.syntaxFormulas.map(f => `<div class="text-xs text-indigo-200 font-mono">• ${f}</div>`).join('')}
                                 </div>
                             ` : ''}
@@ -2649,7 +2649,7 @@ Return JSON ONLY:
                             ${parsed.upgradedSentence ? `
                                 <div class="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 space-y-1">
                                     <div class="text-[10px] font-mono font-bold text-emerald-400 uppercase flex items-center justify-between">
-                                        <span>Model Kalimat Upgrade (Band 8.5+):</span>
+                                        <span>Model Kalimat Upgrade (Band 7.5+):</span>
                                         <button onclick="speakWord('${parsed.upgradedSentence.replace(/'/g, "\\'")}', 'en-GB')" class="text-[10px] text-emerald-300 hover:text-white">
                                             <i class="fa-solid fa-volume-high"></i> Dengar
                                         </button>

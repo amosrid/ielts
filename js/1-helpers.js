@@ -129,7 +129,7 @@
             { id: 'speaking_cuecard', title: 'Cue Card Champion', desc: 'Deliver a 2-minute Part 2 Cue Card monologue', icon: 'fa-id-card-clip', condition: (s) => s.speakingHistory && s.speakingHistory['part2'] },
             { id: 'speaking_master', title: 'Speaking Slayer', desc: 'Conquer all 3 Speaking Lab modes', icon: 'fa-comments', condition: (s) => s.speakingHistory && s.speakingHistory['part1'] && s.speakingHistory['part2'] && s.speakingHistory['part3'] },
             { id: 'boss_unlocked', title: 'Arena Challenger', desc: 'Unlock the 60-Minute Boss Arena', icon: 'fa-dragon', condition: (s) => s.bossUnlocked },
-            { id: 'grand_master', title: 'Band 8.5 Legend', desc: 'Complete all 14 Stages in the Roadmap', icon: 'fa-crown', condition: (s) => Object.keys(s.completedStages || {}).length >= 14 }
+            { id: 'grand_master', title: 'Band 7.5+ Grandmaster', desc: 'Complete all 14 Stages in the Roadmap', icon: 'fa-crown', condition: (s) => Object.keys(s.completedStages || {}).length >= 14 }
         ];
 
         // Player State Management (Permanently saved in LocalStorage)
@@ -156,8 +156,8 @@
             { minLevel: 16, title: 'Band 6.5 • Academic Practitioner' },
             { minLevel: 21, title: 'Band 7.0 • Precision Scholar' },
             { minLevel: 28, title: 'Band 7.5 • Fluent Synthesizer' },
-            { minLevel: 36, title: 'Band 8.0 • Senior Stylist' },
-            { minLevel: 45, title: 'Band 8.5 • Master of Rhetoric' },
+            { minLevel: 36, title: 'Band 7.5 • Advanced Stylist' },
+            { minLevel: 45, title: 'Band 7.5+ • Master of Rhetoric' },
             { minLevel: 55, title: 'Band 9.0 • Grand Laureate' },
             { minLevel: 70, title: 'Band 9.0+ • IELTS Grandmaster' }
         ];
@@ -355,7 +355,7 @@
                 desc: 'Transform standard positive sentence into negative:',
                 analogy: 'Kunci Pas Khusus Mekanik: Auxiliary "Do" adalah alat bantu yang hanya dipasang saat ingin membongkar kalimat menjadi negatif (do not) atau tanya (do you...?). Jangan memasang 2 kunci pas bersamaan seperti "They are not agree".',
                 whyHow: 'Di IELTS Speaking Part 3, kandidat sering panik saat menyatakan ketidaksetujuan dan mengucapkan "I am not agree" atau "They do not fulfilling". Ini merusak kelancaran tata bahasa.',
-                aiPrompt: `Act as an IELTS Examiner. I am studying Stage 3: Auxiliary 'Do' in Negations & Questions (avoiding 'I am not agree' or 'They do not fulfilling').\n\n1. Explain the mechanical separation between 'Be' and 'Do' with a clear mental model.\n2. Show 5 high-frequency speaking & writing scenarios where candidates confuse 'Do' and 'Be' in negation/interrogation, and provide the Band 8.0 corrections.\n3. Drill me with 5 positive academic statements to transform into negative formal statements and follow-up inquiry questions.`,
+                aiPrompt: `Act as an IELTS Examiner. I am studying Stage 3: Auxiliary 'Do' in Negations & Questions (avoiding 'I am not agree' or 'They do not fulfilling').\n\n1. Explain the mechanical separation between 'Be' and 'Do' with a clear mental model.\n2. Show 5 high-frequency speaking & writing scenarios where candidates confuse 'Do' and 'Be' in negation/interrogation, and provide the Band 7.5+ corrections.\n3. Drill me with 5 positive academic statements to transform into negative formal statements and follow-up inquiry questions.`,
                 questions: [
                     {
                         question: 'Negative form of: "They fulfill their financial obligations."',
@@ -469,7 +469,7 @@
                 desc: 'Continuous trend description for Task 1:',
                 analogy: 'Kamera Video (Continuous) vs Garis Proyeksi Kompas (Future): Continuous menangkap video aksi yang sedang bergulir saat ini, sedangkan Future adalah kalkulasi kompas menuju titik di masa depan.',
                 whyHow: 'Krusial untuk Task 1 yang memiliki data tahun depan (misal: "is projected to reach 80% by 2035") dan Speaking Part 3 saat mendiskusikan perubahan sosial masa depan.',
-                aiPrompt: `Act as an IELTS Academic Coach. I am studying Stage 5: Continuous Forms and Academic Future Forecasting (will, is predicted to, is projected to, is likely to).\n\n1. Teach me how to describe ongoing trends and future projections for IELTS Writing Task 1 line graphs without using repetitive words.\n2. Provide 6 Band 8.0 sentence structures for making predictions and forecasts based on statistical data.\n3. Give me 3 data points (e.g. Year 2035 projected figures) and challenge me to write high-band predictive sentences. Evaluate my output.`,
+                aiPrompt: `Act as an IELTS Academic Coach. I am studying Stage 5: Continuous Forms and Academic Future Forecasting (will, is predicted to, is projected to, is likely to).\n\n1. Teach me how to describe ongoing trends and future projections for IELTS Writing Task 1 line graphs without using repetitive words.\n2. Provide 6 Band 7.5+ sentence structures for making predictions and forecasts based on statistical data.\n3. Give me 3 data points (e.g. Year 2035 projected figures) and challenge me to write high-band predictive sentences. Evaluate my output.`,
                 questions: [
                     {
                         question: 'Select the correct continuous trend sentence for ongoing processes:',
@@ -497,7 +497,7 @@
                         ],
                         correct: 0,
                         explanations: [
-                            'Benar! "is projected to decline" adalah formula akademik standar Band 8.0 untuk estimasi masa depan.',
+                            'Benar! "is projected to decline" adalah formula akademik standar Band 7.5+ untuk estimasi masa depan.',
                             'Glitch: Modal "will" harus diikuti bare verb ("will decline"), bukan "-ing".',
                             'Glitch: "is project" salah bentuk (seharusnya passive participle "projected").',
                             'Glitch: Kurang auxiliary "is" sebelum "going to".'
@@ -526,7 +526,7 @@
                 desc: 'Proper modal verb pairing without extra "to":',
                 analogy: 'Bumper Pengaman Mobil: Klaim mutlak ("Akan selalu menghancurkan ekonomi") ibarat mobil tanpa bumper—mudah ditolak oleh akademisi. Modal verbs (may, could, should, tends to) adalah bumper pelindung argumen agar bernilai ilmiah dan terukur.',
                 whyHow: 'Menentukan skor Task Achievement di Task 2. Kandidat yang membuat klaim mutlak (over-generalization) biasanya tertahan di Band 6.0 karena argumennya dianggap tidak realistis.',
-                aiPrompt: `Act as an IELTS Task 2 Essay Master. I am learning Stage 6: Modal Verbs & Academic Hedging (toning down absolute claims into sophisticated nuanced arguments).\n\n1. Explain the concept of 'Academic Hedging' with an intuitive analogy and why absolute statements (like 'Smoking always kills people') lower IELTS Band scores.\n2. Transform 5 overgeneralized statements into nuanced, Band 8.0 academic claims using modals, probability adverbs, and cautious reporting verbs (e.g. 'It could be argued that...', 'tends to indicate').\n3. Give me 3 controversial prompts and test my ability to write hedged opinion statements.`,
+                aiPrompt: `Act as an IELTS Task 2 Essay Master. I am learning Stage 6: Modal Verbs & Academic Hedging (toning down absolute claims into sophisticated nuanced arguments).\n\n1. Explain the concept of 'Academic Hedging' with an intuitive analogy and why absolute statements (like 'Smoking always kills people') lower IELTS Band scores.\n2. Transform 5 overgeneralized statements into nuanced, Band 7.5+ academic claims using modals, probability adverbs, and cautious reporting verbs (e.g. 'It could be argued that...', 'tends to indicate').\n3. Give me 3 controversial prompts and test my ability to write hedged opinion statements.`,
                 questions: [
                     {
                         question: 'Select the correct academic modal sentence without grammatical bugs:',
@@ -754,7 +754,7 @@
                 desc: 'Complex clause subordination without double connectors:',
                 analogy: 'Jembatan Layang Bertingkat: Menggabungkan dua jalan raya menjadi jembatan bertingkat tanpa memasang dua lampu merah di titik yang sama (Double Conjunction Crash: "Because... so...").',
                 whyHow: 'Kriteria penentu Band 7.0+ adalah kemampuan menyusun *complex sentences* dengan *subordinating conjunctions* (Although, Whereas) dan *relative pronouns* (which, who) secara luwes.',
-                aiPrompt: `Act as a Senior IELTS Examiner. I am mastering Stage 10: Clause Combining, Subordination, and Relative Clauses (FANBOYS vs Complex Subordinators like Although, Whereas, In spite of, Which, Who).\n\n1. Explain how to combine two simple ideas into a Band 8.0 complex sentence without falling into the 'Double Conjunction' trap (e.g., 'Although... but...').\n2. Show 5 examples of turning simple sentences into non-defining relative clauses and concessive clauses for Task 2 body paragraphs.\n3. Give me 4 pairs of choppy simple sentences and prompt me to synthesize each pair into a single Band 8.0 compound-complex sentence.`,
+                aiPrompt: `Act as a Senior IELTS Examiner. I am mastering Stage 10: Clause Combining, Subordination, and Relative Clauses (FANBOYS vs Complex Subordinators like Although, Whereas, In spite of, Which, Who).\n\n1. Explain how to combine two simple ideas into a Band 7.5+ complex sentence without falling into the 'Double Conjunction' trap (e.g., 'Although... but...').\n2. Show 5 examples of turning simple sentences into non-defining relative clauses and concessive clauses for Task 2 body paragraphs.\n3. Give me 4 pairs of choppy simple sentences and prompt me to synthesize each pair into a single Band 7.5+ compound-complex sentence.`,
                 questions: [
                     {
                         question: 'Select the accurate complex cause-and-effect sentence without double conjunctions:',
@@ -811,7 +811,7 @@
                 desc: 'Passive voice transformation for academic register:',
                 analogy: 'Jubah Peneliti Formal: Dalam tulisan ilmiah, fokus utama adalah pada AKSI dan TEMUANNYA, bukan pada siapa yang melakukannya. Passive Voice menyamarkan subjek personal "I / We" menjadi fakta objektif bernilai akademik tinggi.',
                 whyHow: 'Menghilangkan gaya bahasa obrolan santai ("People in my city built roads") dan menaikkannya ke register formal ("A sophisticated transit system was constructed"). Wajib di Task 1 Process Diagram.',
-                aiPrompt: `Act as an Academic Writing Coach for IELTS. I am learning Stage 11: Passive Voice Shielding and Present Perfect Formulations for Academic Register.\n\n1. Explain why passive voice and impersonal structures (e.g., 'It is widely acknowledged that...', 'Measures have been taken') elevate academic register and objectivity in IELTS essays.\n2. Convert 5 personal/informal sentences (e.g., 'People in the city built new roads') into Band 8.0 passive and perfect constructions.\n3. Provide a Task 1 process diagram description drill where passive voice is mandatory. Guide me step-by-step.`,
+                aiPrompt: `Act as an Academic Writing Coach for IELTS. I am learning Stage 11: Passive Voice Shielding and Present Perfect Formulations for Academic Register.\n\n1. Explain why passive voice and impersonal structures (e.g., 'It is widely acknowledged that...', 'Measures have been taken') elevate academic register and objectivity in IELTS essays.\n2. Convert 5 personal/informal sentences (e.g., 'People in the city built new roads') into Band 7.5+ passive and perfect constructions.\n3. Provide a Task 1 process diagram description drill where passive voice is mandatory. Guide me step-by-step.`,
                 questions: [
                     {
                         question: 'Passive form of: "The council established a new policy."',
@@ -855,7 +855,7 @@
                         ],
                         correct: 0,
                         explanations: [
-                            'Benar! "It is widely argued that..." adalah template formal impersonal passive Band 8.0+.',
+                            'Benar! "It is widely argued that..." adalah template formal impersonal passive Band 7.5+.',
                             'Glitch: "argue" harus dalam bentuk V3 ("argued").',
                             'Glitch: Frase aktif tanpa subjek agen yang logis.',
                             'Glitch: "is widely been" salah kombinasi tenses.'
@@ -867,8 +867,8 @@
                 title: 'Stage 12: Nominalization & Register',
                 desc: 'Converting action verbs to academic concept nouns:',
                 analogy: 'Mengemas Barang Curah ke Kontainer Resmi: Daripada mengangkut 5 karung barang terpisah ("Ketika orang makan terlalu banyak gula, kesehatan mereka memburuk"), nominalisasi mengemasnya menjadi 1 kontainer ringkas ("Excessive sugar consumption leads to health deterioration").',
-                whyHow: 'Kunci lompatan skor dari Band 6.5 ke Band 8.0 pada kriteria Lexical Resource dan Grammatical Range. Esai Band 8+ padat dengan noun phrase berbobot.',
-                aiPrompt: `Act as an elite IELTS Examiner. I am studying Stage 12: Nominalization (converting verbs/adjectives into abstract nouns) and Parallel Structure in academic lists.\n\n1. Explain the power of 'Nominalization' using a 'packaging loose items into freight containers' analogy to show how it creates concise, authoritative academic prose.\n2. Show 6 before-and-after transformations: Verb-heavy, conversational sentences $\\rightarrow$ Compact, nominalized Band 8.5 academic statements.\n3. Give me 4 verbose sentences and ask me to nominalize the core actions. Review my answers and give precise Band score feedback.`,
+                whyHow: 'Kunci lompatan skor dari Band 6.5 ke Band 7.5+ pada kriteria Lexical Resource dan Grammatical Range. Esai Band 7.5+ padat dengan noun phrase berbobot dan mengalir alami.',
+                aiPrompt: `Act as an elite IELTS Examiner. I am studying Stage 12: Nominalization (converting verbs/adjectives into abstract nouns) and Parallel Structure in academic lists.\n\n1. Explain the power of 'Nominalization' using a 'packaging loose items into freight containers' analogy to show how it creates concise, authoritative academic prose.\n2. Show 6 before-and-after transformations: Verb-heavy, conversational sentences $\\rightarrow$ Compact, nominalized Band 7.5+ academic statements.\n3. Give me 4 verbose sentences and ask me to nominalize the core actions. Review my answers and give precise Band score feedback.`,
                 questions: [
                     {
                         question: 'Nominalized form of: "You need to manage resources well."',
@@ -896,7 +896,7 @@
                         ],
                         correct: 0,
                         explanations: [
-                            'Benar! Mengubah "climate is changing rapidly" menjadi "Rapid climate change" dan "sea levels are rising" menjadi "a marked rise in sea levels" (Band 8.5 Register).',
+                            'Benar! Mengubah "climate is changing rapidly" menjadi "Rapid climate change" dan "sea levels are rising" menjadi "a marked rise in sea levels" (Band 7.5+ Register).',
                             'Glitch: Double conjunction "Because... so..." dan bahasa percakapan dasar.',
                             'Kaku & Glitch: "making sea levels to rise" kausatif salah dan frase nomina canggung.',
                             'Informal: Gaya koordinasi sederhana "and this is causing".'
@@ -944,7 +944,7 @@
                         ]
                     },
                     {
-                        question: 'Rapid transform: "People throw rubbish in rivers, so water gets polluted." $\\rightarrow$ Band 8.0 complex synthesis:',
+                        question: 'Rapid transform: "People throw rubbish in rivers, so water gets polluted." $\\rightarrow$ Band 7.5+ complex synthesis:',
                         options: [
                             'Indiscriminate waste disposal directly exacerbates aquatic pollution.',
                             'People throwing rubbish in rivers causes that water gets polluted.',

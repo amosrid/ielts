@@ -34,7 +34,7 @@ Dokumen ini merupakan intisari dari file [SYSTEM_AUDIT_IELTSGO.md](file:///c:/Us
 - **2.1 STAGE MASTER AI PROMPTS (`STAGE_DATA[stageId].aiPrompt`)** — Kumpulan 14 prompt instruksi eksternal verbatim untuk masing-masing stage dari Stage 1-1 hingga Stage 5-2.
 - **2.2 STAGE QUEST WRITING EXAMINER (Line 6459–6487)** — Prompt sistem ketat pemeriksa tata bahasa tulisan pada Step 2 Quest Stage dengan output wajib `# 🚦 VERDICT: PASSED` atau `FAILED`.
 - **2.3 QUEST REMEDIATION PROMPT (Line 6599–6613)** — Template prompt belajar mandiri 4 langkah yang dirakit dinamis berdasarkan kalimat pengguna dan hasil evaluasi examiner.
-- **2.4 MINI-BOSS DIAGNOSTIC (Line 6765–6791)** — Prompt evaluasi diagnostik paragraf mini-boss fase untuk mengidentifikasi keunggulan, kelemahan spesifik per stage, rencana remediasi, dan model paragraf Band 8.5+.
+- **2.4 MINI-BOSS DIAGNOSTIC (Line 6765–6791)** — Prompt evaluasi diagnostik paragraf mini-boss fase untuk mengidentifikasi keunggulan, kelemahan spesifik per stage, rencana remediasi, dan model paragraf Band 7.5+.
 - **2.5 AI GLITCH LAB — 5-PILLAR ANALYSIS (Line 7232–7248)** — Prompt analisis tata bahasa 5 pilar (Why, How, Analogi, Glitch Analysis & Fix, serta Latihan Retrival).
 - **2.6 AI GLITCH LAB — DRILL EVALUATION (Line 7319–7332)** — Prompt penilai jawaban latihan retrival di Glitch Lab yang menghasilkan skor penguasaan dan status MASTERED/NEEDS PRACTICE.
 - **2.7 BOSS ARENA SPEEDRUN (Line 7475–7484)** — Prompt resmi penguji IELTS Writing untuk menilai esai 60 menit berdasarkan 4 kriteria standar dan checklist 14 stage.
@@ -48,7 +48,7 @@ Dokumen ini merupakan intisari dari file [SYSTEM_AUDIT_IELTSGO.md](file:///c:/Us
 - **2.15 VOCAB BANK — FAST-TRACK CHALLENGE GENERATOR (Line 10490–10497)** — Prompt pembuat 1 soal tantangan spontan tingkat tinggi untuk menguji kelayakan bypass review kata.
 - **2.16 VOCAB BANK — FAST-TRACK ANSWER EVAL (Line 10539–10554)** — Prompt penilai ketat standar Band 7.5+ atas jawaban ujian spontan fast-track mastery.
 - **2.17 DAILY AFFIRMATION — VOCAL EVAL (Line 11097–11130)** — Prompt audit vokal ketat untuk ritual afirmasi harian yang memeriksa artikulasi kata, akhiran morfologis (+s/+ed), kegugupan, dan kelantangan suara.
-- **2.18 AFFIRMATION DECK — AI GENERATOR (Line 11307–11313)** — Prompt pembuat kalimat afirmasi mindset IELTS Band 8.0+ dalam bahasa Inggris beserta terjemahan bahasa Indonesia.
+- **2.18 AFFIRMATION DECK — AI GENERATOR (Line 11307–11313)** — Prompt pembuat kalimat afirmasi mindset IELTS Band 7.5+ dalam bahasa Inggris beserta terjemahan bahasa Indonesia.
 - **2.19 SYNTHESIS LAB — HANDWRITING OCR (Line 11633–11636)** — Prompt transkripsi OCR berpresisi tinggi untuk membaca foto tulisan tangan esai siswa.
 - **2.20 SYNTHESIS LAB — 3-TIER + ANTI-GIBBERISH (Line 11685–11728)** — Prompt transformasi tulisan 3-Tier yang dilengkapi Anti-Hallucination & Gibberish Guard untuk menolak teks acak/sampah serta menyusun Tier 1, Tier 2, Tier 3, dan anchor berbicara.
 - **2.21 SYNTHESIS LAB — SPONTANEOUS SPEAKING EVAL (Line 11980–12001)** — Prompt penguji berbicara spontan Step 4 yang mentranskripsi rekaman, memberi label kelancaran, catatan evaluasi L1 Indonesia, naskah berbicara ter-upgrade, dan tips intonasi.
@@ -371,7 +371,7 @@ Evolusi sistem Feynman dari sekadar uji definisi pasif menjadi **Laboratorium Pr
    - **Langkah 2 (Contoh Kalimat Praktik)**: Mendorong siswa merangkai 1 kalimat utuh dalam konteks IELTS untuk menguji penguasaan *part of speech*, preposisi, dan kolokasi.
 2. **AI Teaching & Collocation Audit**:
    - **Audit Gramatika & Typo**: Mendeteksi kesalahan ejaan (*misal: disrepectfull -> disrespectful*) dan kesalahan struktur kata sifat/kata kerja/kata benda.
-   - **Formula Sintaks Standar IELTS (Band 8.0+)**: Memberikan rumus/pola resmi penggunaan kata dalam kalimat profesional.
+   - **Formula Sintaks Standar IELTS (Band 7.5+)**: Memberikan rumus/pola resmi penggunaan kata dalam kalimat profesional.
    - **Model Kalimat Perbaikan**: Menampilkan kalimat versi upgrade berstandar C1/C2 IELTS dengan tombol dengar audio (*TTS*).
 3. **Interactive Retry & Polish Loop**:
    - Tombol *"🔁 Perbaiki Kalimat & Uji Ulang (+25 XP)"* jika skor $<80\%$, yang memfokuskan kembali kursor ke kotak kalimat agar siswa langsung mempraktikkan ajaran AI hingga mencapai level Mastery.

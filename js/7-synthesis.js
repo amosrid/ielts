@@ -949,7 +949,7 @@ IF AND ONLY IF THE ESSAY IS VALID & COHERENT ENGLISH:
    - "error": the mistake in original text
    - "explanation": concise, candid reason in Bahasa Indonesia
    - "fix": how to fix it
-8. "tier3": Upgraded version (${isIelts ? 'IELTS Band 7.5 - 8.5 academic lexical precision, formal register, complex subordinate clauses, nominalization' : 'Natural, native-sounding idiomatic English with conversational flow'}).
+8. "tier3": Upgraded version (${isIelts ? 'IELTS Band 7.5+ academic lexical precision, formal register, complex subordinate clauses, nominalization' : 'Natural, native-sounding idiomatic English with conversational flow'}).
 9. "lexicalUpgrades": Array of objects explaining the upgrades:
    - "original": original simple phrase
    - "upgrade": upgraded high-level phrase
@@ -1010,7 +1010,7 @@ Return ONLY a valid JSON object (no markdown fences, no backticks, no code block
                         tier3: `In retrospect, ${rawText.toLowerCase().startsWith('the') ? rawText : 'the assertion that ' + rawText.charAt(0).toLowerCase() + rawText.slice(1)} serves as a double-edged sword, demanding rigorous empirical substantiation to withstand critical scrutiny.`,
                         lexicalUpgrades: [
                             { original: "make something less bad", upgrade: "mitigate adverse ramifications", rationale: "Menggunakan kosakata C1 yang secara presisi merepresentasikan terminologi akademik IELTS Task 2." },
-                            { original: "important thing", upgrade: "pivotal parameter", rationale: "Meningkatkan register leksikal ke tingkat formalitas Band 8.0." }
+                            { original: "important thing", upgrade: "pivotal parameter", rationale: "Meningkatkan register leksikal ke tingkat formalitas alami Band 7.5+." }
                         ],
                         speakingAnchors: ["In retrospect", "a double-edged sword", "substantiate empirical claims", "mitigate adverse impacts"]
                     };
@@ -1321,7 +1321,7 @@ CRITICAL EVALUATION RULES:
    - Kecepatan & Kelancaran (Hesitation, pause lama, pengulangan kata)
    - Akurasi Tata Bahasa Spontan (kesalahan grammar lisan vs tulisan)
    - Karakter Aksen (${targetAccent} compliance, L1 Indonesian interference, vokal pendek, konsonan akhir tertelan)
-4. "upgradedScript": An elite, high-scoring speaking script (${isIelts ? 'Band 8.0+ in IELTS mode' : 'Natural Native Conversational in General mode'}) with thought chunking markers (/), stressed syllables in CAPS, and natural fillers ("Well, in all fairness...", "To put it into perspective...").
+4. "upgradedScript": An elite, high-scoring speaking script (${isIelts ? 'Band 7.5+ in IELTS mode' : 'Natural Native Conversational in General mode'}) with thought chunking markers (/), stressed syllables in CAPS, and natural fillers ("Well, in all fairness...", "To put it into perspective...").
 5. "upgradedTips": 2 sharp, actionable tips on sentence stress, thought chunking, and intonation in Bahasa Indonesia.
 
 Return ONLY a valid JSON object (no markdown fences, no backticks, no code blocks):
@@ -1412,7 +1412,7 @@ CRITICAL STRICT SCORING & PHONETIC AUDIT CRITERIA:
    - If broken sentences, severe hesitation, heavy L1 distortion: Band 4.0 - 5.0 (B1)
    - If intelligible with noticeable slips, flat intonation, moderate pacing: Band 5.5 - 6.0 (B2)
    - If good flow, clear pronunciation, minor grammatical slips: Band 6.5 - 7.0 (B2+/C1)
-   - If natural rhythm, sophisticated lexical uptake, precise ${targetAccent} articulation: Band 7.5 - 8.5 (C1/C2)
+   - If natural rhythm, sophisticated lexical uptake, precise ${targetAccent} articulation: Band 7.5+ (C1)
    DO NOT DEFAULT TO BAND 7.5! Grade with rigorous Cambridge standards.
 4. "fluencyDelta", "grammarDelta", "lexicalDelta": Honest percentage growth between Attempt 1 and Attempt 2 (e.g. "+15% Peningkatan Ritme", "+20% Akurasi Klausa"). If poor or no improvement: lower values like "+0%" or "+5%".
 5. "summary": A strict, no-nonsense executive summary in Bahasa Indonesia: 1 real objective strength + 2 critical weaknesses to eliminate immediately. NO fake praise.
