@@ -798,3 +798,37 @@ html.light-mode #main-sidebar > div:first-child {
     background-color: #f8fafc !important;
     border-color: #e2e8f0 !important;
 }
+
+/* Light Mode Pale Text High-Contrast Fixes */
+html.light-mode .text-teal-100,
+html.light-mode .text-teal-200 { color: #0f766e !important; }
+
+html.light-mode .text-emerald-100,
+html.light-mode .text-emerald-200 { color: #065f46 !important; }
+
+html.light-mode .text-rose-100,
+html.light-mode .text-rose-200 { color: #9f1239 !important; }
+
+html.light-mode .text-indigo-100,
+html.light-mode .text-indigo-200 { color: #3730a3 !important; }
+
+html.light-mode .text-amber-100,
+html.light-mode .text-amber-200 { color: #92400e !important; }
+
+/* Vocab Card Modal Mobile Padding Optimization */
+@media (max-width: 640px) {
+    #modal-vocab-card {
+        padding: 0.5rem !important;
+    }
+    #modal-vocab-card > div {
+        padding: 0.875rem !important;
+        max-height: 94vh !important;
+        border-radius: 1rem !important;
+    }
+    #vocab-feynman-container {
+        padding: 0.75rem !important;
+    }
+    #vocab-feynman-feedback-box {
+        padding: 0.75rem !important;
+    }
+}

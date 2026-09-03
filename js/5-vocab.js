@@ -906,9 +906,9 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             if (dailyContainer) {
                 if (vocab.dailyExamples && vocab.dailyExamples.length > 0) {
                     dailyContainer.innerHTML = vocab.dailyExamples.map((dex, i) => `
-                        <div class="flex items-start gap-2 bg-teal-950/20 p-2 rounded-lg border border-teal-500/20">
-                            <span class="text-[10px] font-mono text-teal-400 font-bold mt-0.5">${i+1}.</span>
-                            <span class="text-xs text-teal-100">${dex}</span>
+                        <div class="flex items-start gap-2 bg-slate-50 dark:bg-teal-950/20 p-2 rounded-lg border border-teal-200 dark:border-teal-500/20">
+                            <span class="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-bold mt-0.5">${i+1}.</span>
+                            <span class="text-xs text-slate-800 dark:text-teal-100 font-medium">${dex}</span>
                         </div>
                     `).join('');
                 } else {
@@ -938,13 +938,13 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 const daysLeft = Math.max(1, Math.ceil(((vocab.srNextReview || now) - now) / (1000 * 60 * 60 * 24)));
 
                 if (isMastered) {
-                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-amber-950/80 text-amber-300 px-3 py-1 rounded-full border border-amber-500/50 font-mono font-bold"><i class="fa-solid fa-crown mr-1 text-amber-400"></i> 🏆 Bebas Review Selamanya</span>`;
+                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-500/50 font-mono font-bold"><i class="fa-solid fa-crown mr-1 text-amber-500"></i> 🏆 Bebas Review Selamanya</span>`;
                 } else if (isUnlearned) {
-                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-rose-950/80 text-rose-300 px-3 py-1 rounded-full border border-rose-500/40 font-mono font-bold animate-pulse"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 🔴 Belum Dipelajari (Feynman Drill Wajib)</span>`;
+                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-rose-50 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 px-3 py-1 rounded-full border border-rose-200 dark:border-rose-500/40 font-mono font-bold animate-pulse"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 🔴 Belum Dipelajari</span>`;
                 } else if (isDue) {
-                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-amber-950 text-amber-300 px-3 py-1 rounded-full border border-amber-500/40 font-mono font-bold review-due-pulse"><i class="fa-solid fa-clock-rotate-left mr-1"></i> 🟡 Jatuh Tempo Review Hari Ini</span>`;
+                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-500/40 font-mono font-bold review-due-pulse"><i class="fa-solid fa-clock-rotate-left mr-1"></i> 🟡 Jatuh Tempo Review Hari Ini</span>`;
                 } else {
-                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-emerald-950/70 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/40 font-mono font-bold"><i class="fa-solid fa-circle-check mr-1"></i> 🟢 Dikuasai (Level ${vocab.feynmanLevel || 1}/4) • Review: ${daysLeft} hr lagi</span>`;
+                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/40 font-mono font-bold"><i class="fa-solid fa-circle-check mr-1"></i> 🟢 Dikuasai (Lv.${vocab.feynmanLevel || 1}/4) • Review: ${daysLeft} hr lagi</span>`;
                 }
             }
 
@@ -2054,14 +2054,14 @@ Contoh Kalimat: "${sentence}"`;
             let errorsHtml = '';
             if (feedback.grammarErrors && feedback.grammarErrors.length > 0) {
                 errorsHtml = `
-                    <div class="space-y-1.5 p-3 rounded-xl bg-rose-950/40 border border-rose-500/40">
-                        <div class="text-[11px] font-mono font-bold text-rose-400 uppercase flex items-center gap-1.5">
+                    <div class="space-y-1.5 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/40">
+                        <div class="text-[11px] font-mono font-bold text-rose-700 dark:text-rose-400 uppercase flex items-center gap-1.5">
                             <i class="fa-solid fa-spell-check"></i> Koreksi Ejaan & Struktur Gramatika:
                         </div>
                         <div class="space-y-1 pl-1">
                             ${feedback.grammarErrors.map(err => `
-                                <div class="text-xs text-rose-200 flex items-start gap-2">
-                                    <i class="fa-solid fa-xmark text-rose-400 mt-0.5 text-[10px]"></i>
+                                <div class="text-xs text-rose-900 dark:text-rose-200 flex items-start gap-2 font-medium">
+                                    <i class="fa-solid fa-xmark text-rose-600 dark:text-rose-400 mt-0.5 text-[10px]"></i>
                                     <span>${err}</span>
                                 </div>
                             `).join('')}
@@ -2074,14 +2074,14 @@ Contoh Kalimat: "${sentence}"`;
             let formulasHtml = '';
             if (feedback.syntaxFormulas && feedback.syntaxFormulas.length > 0) {
                 formulasHtml = `
-                    <div class="space-y-1.5 p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/40">
-                        <div class="text-[11px] font-mono font-bold text-indigo-400 uppercase flex items-center gap-1.5">
+                    <div class="space-y-1.5 p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/40">
+                        <div class="text-[11px] font-mono font-bold text-indigo-700 dark:text-indigo-400 uppercase flex items-center gap-1.5">
                             <i class="fa-solid fa-graduation-cap"></i> Formula Sintaks Standar IELTS (Band 8.0+):
                         </div>
                         <div class="space-y-1.5 pt-0.5">
                             ${feedback.syntaxFormulas.map((f, i) => `
-                                <div class="flex items-start gap-2 bg-slate-950/90 p-2 rounded-lg border border-indigo-500/20 font-mono text-xs text-indigo-200">
-                                    <span class="text-indigo-400 font-bold">${i+1}.</span>
+                                <div class="flex items-start gap-2 bg-white dark:bg-slate-950/90 p-2 rounded-lg border border-indigo-200 dark:border-indigo-500/20 font-mono text-xs text-slate-800 dark:text-indigo-200">
+                                    <span class="text-indigo-600 dark:text-indigo-400 font-bold">${i+1}.</span>
                                     <span class="flex-1 select-all font-semibold">${f}</span>
                                 </div>
                             `).join('')}
@@ -2094,14 +2094,14 @@ Contoh Kalimat: "${sentence}"`;
             let upgradedHtml = '';
             if (feedback.upgradedSentence) {
                 upgradedHtml = `
-                    <div class="space-y-1.5 p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40">
-                        <div class="text-[11px] font-mono font-bold text-emerald-400 uppercase flex items-center justify-between flex-wrap gap-2">
+                    <div class="space-y-1.5 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/40">
+                        <div class="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 uppercase flex items-center justify-between flex-wrap gap-2">
                             <span class="flex items-center gap-1.5"><i class="fa-solid fa-sparkles"></i> Model Kalimat Sempurna (Band 8.5+ Upgrade):</span>
-                            <button onclick="speakWord('${feedback.upgradedSentence.replace(/'/g, "\\'")}', 'en-GB')" class="px-2 py-0.5 rounded bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 text-[10px] font-mono font-bold flex items-center gap-1 shadow-sm" title="Dengarkan pelafalan kalimat ini">
-                                <i class="fa-solid fa-volume-high text-[9px]"></i> Dengar
+                            <button onclick="speakWord('${feedback.upgradedSentence.replace(/'/g, "\\'")}', 'en-GB')" class="px-2.5 py-1 rounded bg-emerald-100 dark:bg-emerald-900/80 hover:bg-emerald-200 dark:hover:bg-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs font-mono font-bold flex items-center gap-1 shadow-sm border border-emerald-300 dark:border-emerald-500/40 cursor-pointer" title="Dengarkan pelafalan kalimat ini">
+                                <i class="fa-solid fa-volume-high text-[10px]"></i> Dengar
                             </button>
                         </div>
-                        <div class="text-xs text-emerald-100 font-sans leading-relaxed italic pl-1 border-l-2 border-emerald-500">
+                        <div class="text-xs text-slate-900 dark:text-emerald-100 font-sans leading-relaxed italic pl-1 border-l-2 border-emerald-500 font-medium">
                             "${feedback.upgradedSentence}"
                         </div>
                     </div>
