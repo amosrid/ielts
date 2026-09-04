@@ -205,11 +205,19 @@ const IeltsSyncService = {
         // Update Last Sync Timestamp
         localStorage.setItem(this.KEYS.LAST_SYNC, Date.now().toString());
 
+        // CRITICAL: Reload all in-memory variables from localStorage!
+        if (typeof loadSaveData === 'function') loadSaveData();
+        if (typeof loadVocabBank === 'function') loadVocabBank();
+        if (typeof loadStreakData === 'function') loadStreakData();
+        if (typeof loadDailyAffirmationState === 'function') loadDailyAffirmationState();
+        if (typeof loadSynthesisSessions === 'function') loadSynthesisSessions();
+
         // Refresh live UI
-        if (typeof window.updateUI === 'function') window.updateUI();
-        if (typeof window.renderVocabBank === 'function') window.renderVocabBank();
-        if (typeof window.renderRoadmapStages === 'function') window.renderRoadmapStages();
-        if (typeof window.updateStreakUI === 'function') window.updateStreakUI();
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof renderVocabBank === 'function') renderVocabBank();
+        if (typeof updateVocabBadges === 'function') updateVocabBadges();
+        if (typeof renderRoadmapStages === 'function') renderRoadmapStages();
+        if (typeof updateStreakUI === 'function') updateStreakUI();
 
         return changeSummary.length ? changeSummary.join(', ') : 'Semua data sudah mutakhir dan identik.';
     },
@@ -256,6 +264,42 @@ const IeltsSyncService = {
     },
 
     // 5. Pull and merge data from Supabase Vault by pairing code
+        // 5.1 Inspect what is in the Cloud Vault without merging
+    async fetchCloudSnapshotInfo(code) {
+        const client = this.getClient();
+        if (!client || !code) return null;
+
+        try {
+            const { data, error } = await client
+                .from('sync_vault')
+                .select('*')
+                .eq('sync_code', code.trim().toUpperCase())
+                .single();
+
+            if (error || !data) return null;
+
+            const payload = data.payload || {};
+            const d = payload.data || {};
+            const vocabCount = Array.isArray(d.vocabBank) ? d.vocabBank.length : 0;
+            const xp = d.playerState ? (d.playerState.xp || 0) : 0;
+            const level = d.playerState ? (d.playerState.level || 1) : 1;
+            const stagesCount = d.playerState && d.playerState.completedStages ? Object.keys(d.playerState.completedStages).length : 0;
+
+            return {
+                code: data.sync_code,
+                updatedAt: data.updated_at,
+                deviceInfo: payload.deviceInfo || 'Perangkat Tidak Diketahui',
+                vocabCount,
+                xp,
+                level,
+                stagesCount
+            };
+        } catch (e) {
+            console.warn('[Sync] Failed to fetch cloud info:', e);
+            return null;
+        }
+    },
+
     async pullFromCloud(code) {
         const client = this.getClient();
         if (!client) {
@@ -471,7 +515,7 @@ function switchSyncTab(tab) {
     }
 }
 
-function updateSyncModalView() {
+async function updateSyncModalView() {
     const code = localStorage.getItem(IeltsSyncService.KEYS.PAIRING_CODE);
     const lastSync = localStorage.getItem(IeltsSyncService.KEYS.LAST_SYNC);
     const hasConfig = !!(localStorage.getItem(IeltsSyncService.KEYS.SUPABASE_URL) && localStorage.getItem(IeltsSyncService.KEYS.SUPABASE_KEY));
@@ -505,6 +549,28 @@ function updateSyncModalView() {
 
     if (code) {
         IeltsSyncService.renderQRCode('sync-qrcode-wrapper', code);
+    }
+
+    // Live Cloud Inspector Card Update
+    const cloudBox = document.getElementById('sync-cloud-inspector-card');
+    if (cloudBox && code && hasConfig) {
+        cloudBox.classList.remove('hidden');
+        const timeEl = document.getElementById('sync-cloud-live-time');
+        const deviceEl = document.getElementById('sync-cloud-live-device');
+        const statsEl = document.getElementById('sync-cloud-live-stats');
+
+        if (timeEl) timeEl.innerText = 'Memeriksa Supabase...';
+
+        const info = await IeltsSyncService.fetchCloudSnapshotInfo(code);
+        if (info) {
+            if (timeEl) timeEl.innerText = new Date(info.updatedAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+            if (deviceEl) deviceEl.innerText = info.deviceInfo;
+            if (statsEl) statsEl.innerHTML = `<span class="text-emerald-400 font-bold">${info.vocabCount} Kata Vocab</span> • <span class="text-amber-400 font-bold">${info.xp} XP (Lv.${info.level})</span> • <span class="text-cyan-400 font-bold">${info.stagesCount} Stages</span>`;
+        } else {
+            if (timeEl) timeEl.innerText = 'Data belum pernah diunggah untuk kode ini';
+            if (deviceEl) deviceEl.innerText = '-';
+            if (statsEl) statsEl.innerHTML = '<span class="text-slate-500">Klik tombol \'Upload Snapshot\' untuk membuat data awal di Cloud</span>';
+        }
     }
 }
 

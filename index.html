@@ -3962,6 +3962,25 @@
                             <div class="text-[10px] font-mono text-slate-500 text-center">QR Code Siap Digenerate</div>
                         </div>
                     </div>
+
+                    <!-- Live Cloud Snapshot Inspector -->
+                    <div id="sync-cloud-inspector-card" class="p-3.5 bg-slate-900 border border-cyan-500/30 rounded-xl space-y-1.5 font-mono text-xs shadow-inner">
+                        <div class="flex justify-between items-center flex-wrap gap-1">
+                            <span class="text-cyan-300 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-server text-cyan-400"></i>
+                                <span>Kondisi Data di Cloud Supabase Saat Ini:</span>
+                            </span>
+                            <span id="sync-cloud-live-time" class="text-[11px] text-slate-300 font-semibold">-</span>
+                        </div>
+                        <div class="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-800 text-[11px]">
+                            <div>
+                                <span class="text-slate-400">Pengunggah:</span> <strong id="sync-cloud-live-device" class="text-slate-200">-</strong>
+                            </div>
+                            <div id="sync-cloud-live-stats" class="text-slate-300 font-bold">
+                                -
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Connect From Another Device (Pull) -->
