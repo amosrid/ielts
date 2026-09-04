@@ -31,6 +31,7 @@ function loadVocabBank() {
         function saveVocabBank() {
             try {
                 localStorage.setItem('ielts_vocab_bank_v1', JSON.stringify(vocabBank));
+                if (typeof IeltsSyncService !== 'undefined') IeltsSyncService.triggerAutoSync();
             } catch (e) {
                 console.error("Vocab bank save error:", e);
             }

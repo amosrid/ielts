@@ -3938,13 +3938,21 @@
                             </div>
                             <p class="text-[11px] text-slate-400 max-w-xs leading-relaxed">Ketik kode ini di HP Anda, atau scan QR Code di samping menggunakan kamera HP.</p>
                             <div class="flex flex-wrap gap-2 pt-1">
-                                <button onclick="handleGenerateAndPushCode()" id="btn-sync-generate-push" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white font-mono font-bold text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                                    <span>Buat Kode Baru & Upload</span>
+                                <button onclick="handleSyncNow()" id="btn-sync-two-way" class="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-mono font-bold text-xs rounded-lg transition-all shadow-md flex items-center gap-1.5 active:scale-95" title="Tarik data terbaru dari cloud lalu upload gabungan data">
+                                    <i class="fa-solid fa-arrows-rotate"></i>
+                                    <span>🔁 Sinkronkan Sekarang (Dua Arah)</span>
                                 </button>
-                                <button onclick="handlePushCurrentData()" id="btn-sync-push-now" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono font-bold text-xs rounded-lg transition-all border border-slate-700 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-rotate"></i>
-                                    <span>Update Snapshot</span>
+                                <button onclick="handlePullCurrentData()" id="btn-sync-pull-now" class="px-3 py-1.5 bg-indigo-700 hover:bg-indigo-600 text-white font-mono font-bold text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5 active:scale-95" title="Tarik latihan/progres terbaru dari HP">
+                                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                                    <span>Tarik Data Terbaru</span>
+                                </button>
+                                <button onclick="handlePushCurrentData()" id="btn-sync-push-now" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono font-bold text-xs rounded-lg transition-all border border-slate-700 flex items-center gap-1.5" title="Upload data laptop ini ke cloud">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>Upload Snapshot</span>
+                                </button>
+                                <button onclick="handleGenerateAndPushCode()" id="btn-sync-generate-push" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 font-mono text-[11px] rounded-lg transition-all border border-slate-800 flex items-center gap-1">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>Kode Baru</span>
                                 </button>
                             </div>
                         </div>

@@ -303,7 +303,40 @@ const IeltsSyncService = {
             } catch (err) {
                 console.warn('[Sync] Background auto-sync skipped/failed:', err.message);
             }
-        }, 5000);
+        }, 3000);
+    },
+
+    // Check if cloud has newer data and auto-pull in background
+    async checkAndPullIfNewer() {
+        const client = this.getClient();
+        const code = localStorage.getItem(this.KEYS.PAIRING_CODE);
+        const autoEnabled = localStorage.getItem(this.KEYS.AUTO_SYNC) !== 'false';
+        if (!client || !code || !autoEnabled) return;
+
+        try {
+            const { data, error } = await client
+                .from('sync_vault')
+                .select('updated_at')
+                .eq('sync_code', code.trim().toUpperCase())
+                .single();
+
+            if (error || !data) return;
+
+            const remoteTime = new Date(data.updated_at).getTime();
+            const localLastSync = parseInt(localStorage.getItem(this.KEYS.LAST_SYNC) || '0');
+
+            // If remote is more than 3s newer than local last sync, auto-pull!
+            if (remoteTime > (localLastSync + 3000)) {
+                console.log('[Sync] Newer data detected in Cloud. Auto-pulling...');
+                const res = await this.pullFromCloud(code);
+                this.updateSyncBadge();
+                if (typeof showToast === 'function') {
+                    showToast(`☁️ Data terbaru dari HP/Cloud disinkronkan! (${res.summary})`, 'info');
+                }
+            }
+        } catch(e) {
+            console.warn('[Sync] Auto-pull check failed:', e.message);
+        }
     },
 
     // 7. Render QR Code for pairing
@@ -506,6 +539,76 @@ async function handleGenerateAndPushCode() {
     }
 }
 
+async function handlePullCurrentData() {
+    const code = localStorage.getItem(IeltsSyncService.KEYS.PAIRING_CODE);
+    if (!code) {
+        if (typeof showToast === 'function') showToast('Belum ada kode pairing aktif. Masukkan kode atau buat baru.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('btn-sync-pull-now');
+    try {
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Menarik...';
+            btn.disabled = true;
+        }
+
+        const res = await IeltsSyncService.pullFromCloud(code);
+        updateSyncModalView();
+        IeltsSyncService.updateSyncBadge();
+
+        if (typeof SoundFX !== 'undefined') SoundFX.play('levelup');
+        if (typeof triggerConfetti === 'function') triggerConfetti();
+        if (typeof showToast === 'function') showToast(`Data Cloud berhasil ditarik! (${res.summary})`, 'success');
+
+    } catch (err) {
+        if (typeof SoundFX !== 'undefined') SoundFX.play('error');
+        if (typeof showToast === 'function') showToast(err.message, 'error');
+    } finally {
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-down mr-1.5"></i> Tarik Data Terbaru';
+            btn.disabled = false;
+        }
+    }
+}
+
+async function handleSyncNow() {
+    const code = localStorage.getItem(IeltsSyncService.KEYS.PAIRING_CODE);
+    if (!code) {
+        return handleGenerateAndPushCode();
+    }
+
+    const btn = document.getElementById('btn-sync-two-way');
+    try {
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Sinkronisasi...';
+            btn.disabled = true;
+        }
+
+        // 1. Pull latest from cloud and smart-merge
+        const pullRes = await IeltsSyncService.pullFromCloud(code);
+
+        // 2. Push merged bundle back to cloud
+        await IeltsSyncService.pushToCloud(code);
+
+        updateSyncModalView();
+        IeltsSyncService.updateSyncBadge();
+
+        if (typeof SoundFX !== 'undefined') SoundFX.play('levelup');
+        if (typeof triggerConfetti === 'function') triggerConfetti();
+        if (typeof showToast === 'function') showToast(`Sinkronisasi Selesai! (${pullRes.summary})`, 'success');
+
+    } catch (err) {
+        if (typeof SoundFX !== 'undefined') SoundFX.play('error');
+        if (typeof showToast === 'function') showToast(err.message, 'error');
+    } finally {
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-arrows-rotate mr-1.5"></i> Sinkronkan Sekarang (Dua Arah)';
+            btn.disabled = false;
+        }
+    }
+}
+
 async function handlePushCurrentData() {
     try {
         const code = localStorage.getItem(IeltsSyncService.KEYS.PAIRING_CODE);
@@ -620,8 +723,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         if (typeof IeltsSyncService !== 'undefined') {
             IeltsSyncService.updateSyncBadge();
+            IeltsSyncService.checkAndPullIfNewer();
         }
-    }, 1000);
+    }, 1200);
+});
+
+// Auto-check when switching back to tab
+window.addEventListener('focus', () => {
+    if (typeof IeltsSyncService !== 'undefined') {
+        IeltsSyncService.checkAndPullIfNewer();
+    }
 });
 
 window.IeltsSyncService = IeltsSyncService;
@@ -634,3 +745,6 @@ window.handlePullByCode = handlePullByCode;
 window.handleSaveSupabaseConfig = handleSaveSupabaseConfig;
 window.copyActivePairingCode = copyActivePairingCode;
 window.toggleAutoSync = toggleAutoSync;
+
+window.handlePullCurrentData = handlePullCurrentData;
+window.handleSyncNow = handleSyncNow;
