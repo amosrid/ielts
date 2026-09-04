@@ -801,7 +801,18 @@
                 
                 let streakData = { count: 1, lastDate: todayStr };
                 if (streakDataRaw) {
-                    streakData = JSON.parse(streakDataRaw);
+                    try {
+                        const parsed = JSON.parse(streakDataRaw);
+                        if (parsed && typeof parsed === 'object') {
+                            const rawCount = parsed.count !== undefined ? parsed.count : parsed.currentStreak;
+                            const parsedCount = parseInt(rawCount, 10);
+                            streakData.count = (!isNaN(parsedCount) && parsedCount > 0) ? parsedCount : 1;
+                            streakData.lastDate = parsed.lastDate || parsed.lastStudyDate || todayStr;
+                            streakData.longestStreak = parsed.longestStreak || streakData.count;
+                        }
+                    } catch (pe) {
+                        console.warn("Streak JSON parse error:", pe);
+                    }
                 }
 
                 if (streakData.lastDate) {
@@ -811,7 +822,7 @@
                     const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
                     if (diffDays === 1) {
-                        streakData.count += 1;
+                        streakData.count = (Number(streakData.count) || 0) + 1;
                         streakData.lastDate = todayStr;
                     } else if (diffDays > 1) {
                         streakData.count = 1;
@@ -820,6 +831,11 @@
                 } else {
                     streakData.lastDate = todayStr;
                 }
+
+                // Defensive normalization against undefined / NaN
+                streakData.count = Math.max(1, parseInt(streakData.count, 10) || 1);
+                streakData.currentStreak = streakData.count;
+                streakData.lastStudyDate = streakData.lastDate;
 
                 localStorage.setItem('ielts_study_streak_v1', JSON.stringify(streakData));
                 

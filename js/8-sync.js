@@ -177,10 +177,21 @@ const IeltsSyncService = {
         if (remote.streak) {
             let localStreak = null;
             try { localStreak = JSON.parse(localStorage.getItem('ielts_study_streak_v1') || 'null'); } catch(e) {}
+            
+            const localCount = localStreak ? (localStreak.count || localStreak.currentStreak || 1) : 1;
+            const remoteCount = remote.streak ? (remote.streak.count || remote.streak.currentStreak || 1) : 1;
+            const mergedCount = Math.max(localCount, remoteCount);
+            
+            const localDate = localStreak ? (localStreak.lastDate || localStreak.lastStudyDate || '') : '';
+            const remoteDate = remote.streak ? (remote.streak.lastDate || remote.streak.lastStudyDate || '') : '';
+            const mergedDate = (remoteDate > localDate) ? remoteDate : (localDate || remoteDate);
+
             const mergedStreak = {
-                currentStreak: Math.max(localStreak?.currentStreak || 0, remote.streak.currentStreak || 0),
-                longestStreak: Math.max(localStreak?.longestStreak || 0, remote.streak.longestStreak || 0),
-                lastStudyDate: (remote.streak.lastStudyDate > (localStreak?.lastStudyDate || '')) ? remote.streak.lastStudyDate : (localStreak?.lastStudyDate || remote.streak.lastStudyDate)
+                count: mergedCount,
+                lastDate: mergedDate,
+                currentStreak: mergedCount,
+                longestStreak: Math.max(localStreak?.longestStreak || mergedCount, remote.streak.longestStreak || mergedCount),
+                lastStudyDate: mergedDate
             };
             localStorage.setItem('ielts_study_streak_v1', JSON.stringify(mergedStreak));
             if (typeof window.streakData !== 'undefined') window.streakData = mergedStreak;
@@ -208,7 +219,7 @@ const IeltsSyncService = {
         // CRITICAL: Reload all in-memory variables from localStorage!
         if (typeof loadSaveData === 'function') loadSaveData();
         if (typeof loadVocabBank === 'function') loadVocabBank();
-        if (typeof loadStreakData === 'function') loadStreakData();
+        if (typeof calculateStreak === 'function') calculateStreak();
         if (typeof loadDailyAffirmationState === 'function') loadDailyAffirmationState();
         if (typeof loadSynthesisSessions === 'function') loadSynthesisSessions();
 
