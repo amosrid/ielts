@@ -985,14 +985,10 @@ You should say:
                 const title = firstLineMatch ? firstLineMatch[1].trim() : `Audit Detail ${idx + 1}`;
                 let contentBody = trimmed.replace(/^#\s+.*\n?/, '').trim();
 
-                // Convert [VOCAB: word] tags into styled badge + 1-Click Save to Vocab Logger Button
-                contentBody = contentBody.replace(
-                    /\[VOCAB:\s*([a-zA-Z\s'-]+)\]/gi,
-                    (m, word) => {
-                        const clean = word.trim();
-                        return `<span class="px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 font-bold border border-amber-300 dark:border-amber-500/40 font-mono text-xs">${clean}</span> <button type="button" onclick="event.stopPropagation(); saveMispronouncedWordToVocabBank('${clean}')" class="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-[10px] font-mono font-bold rounded-lg border border-indigo-200 dark:border-indigo-500/40 ml-1 transition-all shadow-sm active:scale-95 cursor-pointer" title="Simpan '${clean}' ke Vocab Logger"><i class="fa-solid fa-plus text-indigo-500 dark:text-indigo-400"></i> + Simpan ke Vocab</button>`;
-                    }
-                );
+                // Format [VOCAB: word] tags into compact bookmark chips and format numbered items
+                contentBody = typeof formatVocabChipsAndReasons === 'function' 
+                    ? formatVocabChipsAndReasons(contentBody)
+                    : contentBody;
 
                 // Style & Icon picker based on title
                 let iconClass = 'fa-solid fa-circle-info text-slate-400';
@@ -1030,7 +1026,7 @@ You should say:
                         /-\s*❌\s*\*\*"?([a-zA-Z\s'-]+)"?\*\*/gi,
                         (match, word) => {
                             const clean = word.trim();
-                            return `- ❌ **"${clean}"** <button type="button" onclick="saveMispronouncedWordToVocabBank('${clean}')" class="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 text-[10px] font-mono rounded border border-indigo-500/40 ml-1.5 transition-all" title="Simpan '${clean}' ke Bank Kosakata"><i class="fa-solid fa-bookmark text-indigo-400"></i> + Bank Vocab</button>`;
+                            return `- ❌ **"${clean}"** <button type="button" onclick="quickAddVocabWithFeedback(this, '${clean}')" class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-[10px] font-mono font-bold rounded border border-indigo-200 dark:border-indigo-500/40 ml-1 transition-all cursor-pointer shadow-xs active:scale-95" title="Simpan '${clean}' ke Bank Kosakata"><i class="fa-solid fa-bookmark text-[9px] text-indigo-500 dark:text-indigo-400"></i><span>Simpan</span></button>`;
                         }
                     );
 
@@ -1065,6 +1061,7 @@ You should say:
                         if (quoteMatch) cleanRetest = quoteMatch[1].trim();
                     }
                     if (cleanRetest) {
+                        cleanRetest = cleanRetest.replace(/\[VOCAB:\s*([^\]]+)\]/gi, '$1').replace(/\s+/g, ' ').trim();
                         contentBody += `\n\n<div class="pt-3 mt-3 border-t border-slate-800 flex flex-wrap gap-2"><button type="button" onclick="loadRetestScriptToSpeakingBox('${mode}', '${encodeURIComponent(cleanRetest)}')" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white font-bold text-xs rounded-xl shadow-lg flex items-center gap-2 border border-emerald-400/30 transition-all"><i class="fa-solid fa-rotate-right"></i> <span>Muat Teks Ini ke Player & Rekam Ulang Sekarang</span></button></div>`;
                     }
 
@@ -1279,10 +1276,13 @@ WAJIB FORMAT OUTPUT DALAM STRUKTUR MARKDOWN BERIKUT:
   "[Tuliskan 1-2 kalimat model Band 7.5+ yang merekonstruksi ide kandidat. Sisipkan 1-3 kosakata level C1/C2 dan tandai dengan [VOCAB: kata]]"
 
 - **Bedah Perubahan: Kenapa Diganti Begitu?**:
-  [Jelaskan alasan konkret mengapa kata/struktur di atas diganti menjadi versi Band 7.5+. Jelaskan nuansa, apakah lebih formal, lebih alami, atau mencegah salah paham]
+  * 1️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti, misal: tenses lampau, register akademik, atau kolokasi alami]
+  * 2️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti]
+  * 3️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti]
 
 - **Kosakata Baru yang Disarankan**:
-  [Tuliskan daftar kata yang ditandai [VOCAB: kata] di atas beserta arti ringkasnya]
+  * [VOCAB: kata1] = [arti ringkas bahasa Indonesia]
+  * [VOCAB: kata2] = [arti ringkas bahasa Indonesia]
 
 # 🔊 Bedah Pengucapan & Kata yang Kurang Tepat
 (Maksimal 3 kata paling krusial yang salah atau terdistorsi di rekaman. Jika pelafalan sudah sangat baik >=90%, tulis 'Pelafalan kata-kata kunci sudah sangat bersih dan jelas!'):

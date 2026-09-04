@@ -901,6 +901,38 @@ Perbaiki kalimat Anda berdasarkan panduan perbaikan di atas, lalu klik tombol Uj
             }
         }
 
+        function generateOfflineGlitchAnalysis(sentence) {
+            const input = sentence ? sentence.trim() : '';
+            return `
+# 💡 1. WHY (Mengapa Konsep Ini Krusial di IELTS)
+Konsep tata bahasa ini sangat krusial untuk memastikan kalimat Anda dinilai objektif dan presisi oleh penguji IELTS. Kesalahan pada kesesuaian subjek-verba atau pasangan konjungsi langsung membatasi skor Grammatical Range & Accuracy (GRA) di batas maksimal Band 5.5.
+
+# ⚙️ 2. HOW (Mekanisme Teknis & Aturan Baku)
+Setiap klausa independen wajib memiliki subjek dan verba aktif/pasif yang utuh. Bila menggunakan kata hubung subordinatif (*although, since, while*), jangan pernah memasangkan konjungsi koordinatif (*but, so*) di klausa utama untuk menghindari tabrakan gramatikal.
+
+# 🎨 3. ANALOGI INTUITIF (Mental Model Dunia Nyata)
+**Satu Sakelar Lampu**: Menyalakan lampu hanya butuh satu sakelar yang terpasang di jalur kabel utama. Memasang dua sakelar yang saling memotong justru memicu korsleting listrik yang memutus arus.
+
+# 🐛 4. DIAGNOSIS FORENSIK GLITCH & L1 TRANSFER
+- **Glitch yang Terdeteksi**: Kalimat input mengandung kelemahan register informal atau struktur klausa yang belum seimbang ("${input.slice(0, 70)}...").
+- **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: Kecenderungan menerjemahkan pola bahasa lisan sehari-hari secara harafiah (*word-for-word translation*) tanpa mengikat tensis dan kolokasi akademik.
+- **Versi Upgrade Band 7.5+**:
+  > "Without fail, diligent candidates must [VOCAB: prioritize] their core competencies to [VOCAB: attain] distinguished academic outcomes."
+- **Bedah Perubahan: Kenapa Diganti Begitu?**:
+  * 1️⃣ **"Pola Kalimat Asli" ➔ "Without fail, candidates must..."**: Memperkuat adverbial stance di awal kalimat untuk memberikan penekanan formal yang alami bagi pembaca akademik.
+  * 2️⃣ **"Kosakata Umum" ➔ "[VOCAB: prioritize] ... [VOCAB: attain]"**: Menggantikan kata kerja sehari-hari menjadi pasangan kolokasi presisi tinggi standar C1/C2 IELTS.
+- **Kosakata Baru yang Disarankan**:
+  * [VOCAB: prioritize] = memprioritaskan / mengutamakan hal penting
+  * [VOCAB: attain] = mencapai / meraih hasil setelah usaha keras
+- **Bedah Formula Kalimat**:
+  [Adverbial Phrase of Certainty] + [Subject] + [Modal Auxiliary] + [Transitive Verb] + [Direct Object] + [Infinitive of Purpose]
+
+# 🚀 5. LATIHAN & RETRIEVAL DRILL AKTIF
+1. Perbaiki kesalahan subordinasi ganda berikut: "Although governments invest in public transit, but traffic congestion remains high."
+2. Transformasikan kalimat ini ke register akademik Band 7.5+: "Young people need to managing their savings well."
+`;
+        }
+
         // State tracking for interactive drill arena in AI Glitch Lab
         let lastAiLabInputText = '';
         let lastAiLabAnalysisResponse = '';
@@ -1062,8 +1094,16 @@ Berikan 1 analogi dunia nyata yang sangat hidup dan mudah dibayangkan (Explain L
 # 🐛 4. DIAGNOSIS FORENSIK GLITCH & L1 TRANSFER
 - **Glitch yang Terdeteksi**: [Sebutkan kesalahan tata bahasa atau kelemahan register formal]
 - **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: [Bedah kebiasaan bahasa Indonesia mana yang memicu kesalahan ini, misal: menerjemahkan kata per kata, ketiadaan konjugasi, atau pola pikir kalimat lisan]
-- **Versi Upgrade Band 7.5+**: [Tuliskan kalimat versi Band 7.5+ yang superior dan alami]
-- **Bedah Formula Kalimat**: [Tuliskan rumus struktur kalimatnya, misal: 'In light of + [Noun Phrase], [Subject] + [Band 8 Collocation]']
+- **Versi Upgrade Band 7.5+**:
+  > "[Tuliskan kalimat versi Band 7.5+ yang superior dan alami. Sisipkan 1-3 kosakata level C1/C2 dan tandai setiap kata baru dengan [VOCAB: kata]]"
+- **Bedah Perubahan: Kenapa Diganti Begitu?**:
+  * 1️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti, misal: bentuk tenses lampau, register akademik, atau kolokasi alami penutur asli]
+  * 2️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti]
+- **Kosakata Baru yang Disarankan**:
+  * [VOCAB: kata1] = [arti ringkas bahasa Indonesia]
+  * [VOCAB: kata2] = [arti ringkas bahasa Indonesia]
+- **Bedah Formula Kalimat**:
+  [Tuliskan rumus struktur kalimatnya, misal: '[Adverbial Phrase] + [Subject] + [Advanced Verb] + [Object]']
 
 # 🚀 5. LATIHAN & RETRIEVAL DRILL AKTIF
 Berikan tepat 2 kalimat latihan interaktif untuk diperbaiki/ditransformasikan sekarang juga. Ajak pengguna mengetik jawabannya di Drill Arena di bawah!`;
@@ -1071,7 +1111,7 @@ Berikan tepat 2 kalimat latihan interaktif untuk diperbaiki/ditransformasikan se
             try {
                 let resText = await callGeminiAPI(input, systemPrompt);
                 if (!resText) {
-                    resText = generateOfflineAnalysis(input);
+                    resText = generateOfflineGlitchAnalysis(input);
                 }
 
                 lastAiLabInputText = input;
@@ -1079,7 +1119,8 @@ Berikan tepat 2 kalimat latihan interaktif untuk diperbaiki/ditransformasikan se
 
                 const resultBox = document.getElementById('ai-lab-result');
                 resultBox.classList.remove('hidden');
-                resultBox.innerHTML = renderMarkdown(resText);
+                const formattedAiLab = typeof formatVocabChipsAndReasons === 'function' ? formatVocabChipsAndReasons(resText) : resText;
+                resultBox.innerHTML = renderMarkdown(formattedAiLab);
 
                 // Reveal interactive drill card
                 const drillCard = document.getElementById('ai-lab-drill-card');
@@ -1098,10 +1139,12 @@ Berikan tepat 2 kalimat latihan interaktif untuk diperbaiki/ditransformasikan se
                 showToast(err.message || "Gagal menghubungi Gemini API. Menampilkan hasil diagnosa lokal...", "error");
                 const resultBox = document.getElementById('ai-lab-result');
                 resultBox.classList.remove('hidden');
-                resultBox.innerHTML = renderMarkdown(generateOfflineAnalysis(input) + `\n\n> ⚠️ **Catatan Error API:** ${err.message}`);
+                const fallbackAnalysis = generateOfflineGlitchAnalysis(input);
+                const formattedFallback = typeof formatVocabChipsAndReasons === 'function' ? formatVocabChipsAndReasons(fallbackAnalysis) : fallbackAnalysis;
+                resultBox.innerHTML = renderMarkdown(formattedFallback + `\n\n> ⚠️ **Catatan Error API:** ${err.message}`);
 
                 lastAiLabInputText = input;
-                lastAiLabAnalysisResponse = generateOfflineAnalysis(input);
+                lastAiLabAnalysisResponse = fallbackAnalysis;
 
                 const drillCard = document.getElementById('ai-lab-drill-card');
                 if (drillCard) drillCard.classList.remove('hidden');

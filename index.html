@@ -88,6 +88,9 @@
                 </div>
                 <!-- Mobile Action Icons -->
                 <div class="flex sm:hidden items-center space-x-2">
+                    <button onclick="openCloudSyncModal()" class="p-2 text-cyan-400 bg-slate-900 border border-slate-800 rounded-lg text-xs" title="Sinkronkan HP & Laptop">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </button>
                     <button onclick="openApiKeyModal()" class="p-2 text-amber-400 bg-slate-900 border border-slate-800 rounded-lg text-xs" title="Pengaturan & Gemini AI">
                         <i class="fa-solid fa-gear"></i>
                     </button>
@@ -117,6 +120,12 @@
                 <!-- Desktop Quick Actions -->
                 <div class="hidden sm:flex items-center space-x-2">
                     <!-- Master Settings & Hub Button (Controls Theme, Audio, AI, Accent, and Reset Data) -->
+                    <!-- Cloud Sync Multi-Device Button -->
+                    <button onclick="openCloudSyncModal()" id="btn-hud-cloud-sync" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-xl transition-all text-xs flex items-center space-x-2 group shadow-sm text-slate-300" title="Sinkronkan HP & Laptop (Cloud Vault)">
+                        <i class="fa-solid fa-cloud-arrow-up text-cyan-400 text-xs group-hover:scale-110 transition-transform"></i>
+                        <span id="hud-sync-status" class="font-mono text-xs font-semibold">Cloud Sync</span>
+                    </button>
+
                     <button onclick="openApiKeyModal()" id="btn-hud-api-key" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl transition-all text-xs flex items-center space-x-2 group shadow-sm" title="Pengaturan Sistem & Gemini AI">
                         <i class="fa-solid fa-gear text-amber-400 text-xs group-hover:rotate-45 transition-transform"></i>
                         <span id="hud-api-key-status" class="font-mono text-xs text-slate-300 font-semibold">Pengaturan</span>
@@ -1623,11 +1632,11 @@
             <div id="tab-speaking-lab" class="tab-content hidden space-y-6">
                 <!-- Header Banner -->
                 <div class="bg-gradient-to-r from-rose-950/80 via-slate-900 to-slate-900 p-6 rounded-2xl border border-rose-500/30 glow-speaking relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-mono font-bold text-rose-400 tracking-wider uppercase bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
-                            <i class="fa-solid fa-microphone mr-1.5"></i> IELTS SPEAKING LAB • GRAMMAR-TO-SPEECH SCAFFOLDING
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                        <span class="text-[10px] sm:text-xs font-mono font-bold text-rose-400 tracking-wider uppercase bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/20 inline-flex items-center truncate max-w-full">
+                            <i class="fa-solid fa-microphone mr-1.5 shrink-0"></i> <span class="truncate">IELTS SPEAKING LAB • GRAMMAR-TO-SPEECH</span>
                         </span>
-                        <span class="text-xs text-amber-400 font-mono"><i class="fa-solid fa-bolt mr-1"></i> Reward: +150 XP per Evaluation</span>
+                        <span class="text-[11px] sm:text-xs text-amber-400 font-mono inline-flex items-center shrink-0"><i class="fa-solid fa-bolt mr-1"></i> Reward: +150 XP per Evaluation</span>
                     </div>
                     <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
                         <span>IeltsGo Speaking Coach & Recorder</span>
@@ -1648,11 +1657,11 @@
                     </div>
 
                     <!-- Target Accent & Phonetics Goal Selector -->
-                    <div class="flex items-center space-x-2.5 w-full lg:w-auto justify-between lg:justify-end bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
-                        <label for="speaking-target-accent" class="text-[11px] font-mono font-bold text-rose-300 whitespace-nowrap flex items-center gap-1.5">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto bg-slate-950 p-2.5 sm:px-3 sm:py-2 rounded-xl border border-slate-800">
+                        <label for="speaking-target-accent" class="text-[11px] font-mono font-bold text-rose-300 whitespace-nowrap flex items-center gap-1.5 shrink-0">
                             <i class="fa-solid fa-earth-americas"></i> Target Accent:
                         </label>
-                        <select id="speaking-target-accent" onchange="updateSpeakingTargetAccent()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1 font-mono focus:outline-none focus:border-rose-500 cursor-pointer">
+                        <select id="speaking-target-accent" onchange="updateSpeakingTargetAccent()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2 py-1 font-mono focus:outline-none focus:border-rose-500 cursor-pointer w-full sm:w-auto truncate">
                             <option value="british_rp">🇬🇧 British RP (Received Pronunciation)</option>
                             <option value="general_american">🇺🇸 General American (US Standard)</option>
                             <option value="australian">🇦🇺 Australian English</option>
@@ -3872,6 +3881,176 @@
         </div>
     </div>
 
+    
+    <!-- Cloud Backup & Device Sync Modal (Supabase Pairing) -->
+    <div id="modal-cloud-sync" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-cyan-500/40 w-full max-w-xl rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+            <button onclick="closeCloudSyncModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg p-1" title="Tutup Modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="flex items-center space-x-3 border-b border-slate-800 pb-3 pr-8">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg border border-cyan-500/30">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <span>Cloud Sync & Device Link</span>
+                        <span id="sync-status-pill" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold">Siap Pairing</span>
+                    </h3>
+                    <p class="text-xs text-slate-400 font-mono">Jembatani progres belajar, kosakata & XP antara Laptop dan HP</p>
+                </div>
+            </div>
+
+            <!-- Tab Navigation (Pairing vs Config vs Offline Backup) -->
+            <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono font-bold">
+                <button onclick="switchSyncTab('pair')" id="sync-tab-btn-pair" class="py-2 px-2 rounded-lg bg-indigo-600 text-white flex items-center justify-center gap-1.5 transition-all shadow-sm truncate">
+                    <i class="fa-solid fa-link text-[11px]"></i>
+                    <span class="truncate">Pairing HP</span>
+                </button>
+                <button onclick="switchSyncTab('config')" id="sync-tab-btn-config" class="py-2 px-2 rounded-lg text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-1.5 truncate">
+                    <i class="fa-solid fa-gear text-[11px]"></i>
+                    <span class="truncate">Setup Cloud</span>
+                </button>
+                <button onclick="switchSyncTab('offline')" id="sync-tab-btn-offline" class="py-2 px-2 rounded-lg text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-1.5 truncate">
+                    <i class="fa-solid fa-hard-drive text-[11px]"></i>
+                    <span class="truncate">File Backup</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: PAIRING PERANGKAT (DEVICE LINKING) -->
+            <div id="sync-panel-pair" class="space-y-4">
+                <!-- Active Sync Code & QR Card -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center text-xs font-mono">
+                        <span class="text-slate-400 flex items-center gap-1.5"><i class="fa-solid fa-qrcode text-cyan-400"></i> Kode Sinkron Aktif Anda:</span>
+                        <span class="text-[10px] text-slate-500">Terakhir: <span id="sync-display-last-time" class="text-slate-300">Belum pernah</span></span>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-3 bg-slate-900/80 rounded-xl border border-slate-800">
+                        <div class="flex flex-col items-center sm:items-start space-y-2 text-center sm:text-left">
+                            <div class="flex items-center gap-2">
+                                <span id="sync-display-active-code" class="text-xl sm:text-2xl font-black font-mono text-cyan-300 tracking-wider">Belum Ada Kode</span>
+                                <button onclick="copyActivePairingCode()" class="p-1.5 text-slate-400 hover:text-cyan-300 rounded-lg hover:bg-slate-800 transition-all" title="Salin Kode">
+                                    <i class="fa-solid fa-copy text-sm"></i>
+                                </button>
+                            </div>
+                            <p class="text-[11px] text-slate-400 max-w-xs leading-relaxed">Ketik kode ini di HP Anda, atau scan QR Code di samping menggunakan kamera HP.</p>
+                            <div class="flex flex-wrap gap-2 pt-1">
+                                <button onclick="handleGenerateAndPushCode()" id="btn-sync-generate-push" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white font-mono font-bold text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>Buat Kode Baru & Upload</span>
+                                </button>
+                                <button onclick="handlePushCurrentData()" id="btn-sync-push-now" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono font-bold text-xs rounded-lg transition-all border border-slate-700 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-rotate"></i>
+                                    <span>Update Snapshot</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- QR Code Container -->
+                        <div class="p-2.5 bg-white rounded-xl shadow-md shrink-0 flex items-center justify-center min-w-[130px] min-h-[130px]" id="sync-qrcode-wrapper">
+                            <div class="text-[10px] font-mono text-slate-500 text-center">QR Code Siap Digenerate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connect From Another Device (Pull) -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="text-xs font-mono font-bold text-slate-300 uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-mobile-screen-button text-indigo-400"></i>
+                        <span>Ingin Menghubungkan Perangkat Ini dari Kode Lain?</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Bila Anda sedang membuka aplikasi di HP dan ingin menarik riwayat belajar dari laptop, masukkan kode pairing dari laptop Anda di bawah:</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="sync-input-code" placeholder="Contoh: IELTS-7842-KM" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-cyan-300 uppercase font-bold focus:outline-none focus:border-cyan-500 tracking-wider">
+                        <button onclick="handlePullByCode()" id="btn-sync-pull-code" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-cloud-arrow-down"></i>
+                            <span>Hubungkan & Tarik Data</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Auto-sync Toggle -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                    <div class="space-y-0.5">
+                        <span class="font-bold text-slate-200 flex items-center gap-1.5"><i class="fa-solid fa-bolt text-amber-400"></i> Auto-Sync Latar Belakang</span>
+                        <p class="text-[10px] text-slate-400">Secara hening mengunggah perubahan saat Anda mendapat XP / menambah kosakata</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="sync-toggle-auto" onchange="toggleAutoSync(this.checked)" checked class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- TAB 2: KONFIGURASI SUPABASE CLOUD -->
+            <div id="sync-panel-config" class="hidden space-y-4">
+                <div class="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-500/30 text-xs text-slate-300 leading-relaxed font-sans flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-info text-cyan-400 text-base mt-0.5 shrink-0"></i>
+                    <div>
+                        <strong class="text-cyan-300">100% Gratis & Milik Anda Sendiri:</strong>
+                        Data Anda disimpan langsung di database project Supabase Anda, aman dan privat. Panduan langkah-demi-langkah tersedia di berkas 
+                        <a href="CLOUD_SYNC_SETUP_GUIDE.md" target="_blank" class="text-cyan-400 underline font-mono font-bold">CLOUD_SYNC_SETUP_GUIDE.md</a>.
+                    </div>
+                </div>
+
+                <div class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <div>
+                        <label class="block text-[11px] font-mono font-bold text-slate-300 uppercase mb-1">Supabase Project URL:</label>
+                        <input type="text" id="sync-supabase-url" placeholder="https://your-project-id.supabase.co" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-mono font-bold text-slate-300 uppercase mb-1">Supabase Anon Public API Key:</label>
+                        <input type="password" id="sync-supabase-key" placeholder="eyJhbGciOi..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button onclick="handleSaveSupabaseConfig()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Simpan Konfigurasi</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: BACKUP FILE OFFLINE (ZERO-CLOUD FALLBACK) -->
+            <div id="sync-panel-offline" class="hidden space-y-4">
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="text-xs font-mono font-bold text-emerald-400 uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Ekspor File Cadangan (.JSON)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Unduh seluruh data kosakata, level, XP, dan riwayat belajar Anda dalam satu berkas mandiri. Bisa Anda simpan di Google Drive atau kirim lewat chat.</p>
+                    <button onclick="IeltsSyncService.downloadBackupFile()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                        <span>Download Backup JSON Sekarang</span>
+                    </button>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="text-xs font-mono font-bold text-amber-400 uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-upload"></i>
+                        <span>Pulihkan / Impor dari File Cadangan (.JSON)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Pilih file .json cadangan Anda. Sistem akan melakukan <em>Smart Merge</em> sehingga data baru digabungkan tanpa menghapus progres yang ada.</p>
+                    <input type="file" id="sync-file-input" accept=".json" onchange="if(this.files[0]) IeltsSyncService.restoreFromBackupFile(this.files[0], (s) => showToast('Data berhasil dipulihkan: ' + s, 'success'), (e) => showToast(e, 'error'))" class="text-xs font-mono text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-mono file:font-bold file:bg-slate-800 file:text-amber-400 hover:file:bg-slate-700 cursor-pointer">
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="border-t border-slate-800 pt-3 flex justify-between items-center text-xs">
+                <span class="text-slate-500 font-mono text-[11px]">Enkripsi Transport TLS 1.3 • Zero-Tracking</span>
+                <button onclick="closeCloudSyncModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono font-bold rounded-xl transition-all">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Supabase Client & QR Code CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="js/1-helpers.js"></script>
     <script src="js/2-core.js"></script>
     <script src="js/3-roadmap.js"></script>
@@ -3879,6 +4058,7 @@
     <script src="js/5-vocab.js"></script>
     <script src="js/6-affirmation.js"></script>
     <script src="js/7-synthesis.js"></script>
+    <script src="js/8-sync.js"></script>
 </body>
 </html>
 

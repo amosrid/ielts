@@ -1241,3 +1241,76 @@
         });
 
         // LocalStorage Management
+// =========================================================================
+// UNIFIED VOCABULARY CHIP & PEDAGOGY FORMATTER
+// =========================================================================
+
+function quickAddVocabWithFeedback(btn, word) {
+    if (!word) return;
+    const cleanWord = word.trim().replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
+    if (!cleanWord) return;
+
+    if (typeof saveMispronouncedWordToVocabBank === 'function') {
+        saveMispronouncedWordToVocabBank(cleanWord);
+    } else {
+        if (typeof vocabBank === 'undefined') vocabBank = [];
+        const existing = vocabBank.find(v => v.word.toLowerCase() === cleanWord.toLowerCase());
+        if (!existing) {
+            vocabBank.unshift({
+                id: 'vocab_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                word: cleanWord,
+                pos: 'noun',
+                cefr: 'B2',
+                meaningId: 'Menganalisis arti dan konteks IELTS...',
+                meaningEn: 'Analyzing Cambridge definition and IELTS context...',
+                indonesianGuide: cleanWord.toUpperCase(),
+                example: 'I practice using ' + cleanWord + ' in my IELTS responses.',
+                synonyms: [],
+                ipa: '',
+                dateAdded: Date.now(),
+                srInterval: 1,
+                srNextReview: Date.now() + 86400000,
+                srReviewCount: 0,
+                status: 'learning'
+            });
+            if (typeof saveVocabBank === 'function') saveVocabBank();
+            if (typeof addXP === 'function') addXP(15);
+            if (typeof showToast === 'function') showToast('Kata "' + cleanWord + '" tersimpan ke Bank Vocab (+15 XP)!', 'success');
+            if (typeof SoundFX !== 'undefined') SoundFX.play('levelup');
+            if (typeof triggerConfetti === 'function') triggerConfetti();
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof enrichVocabCardInBackground === 'function') enrichVocabCardInBackground(vocabBank[0].id, cleanWord);
+        } else {
+            if (typeof showToast === 'function') showToast('"' + cleanWord + '" sudah ada di Bank Kosakata Anda!', 'info');
+        }
+    }
+
+    if (btn) {
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check text-emerald-500 text-[10px]"></i>';
+        btn.classList.add('scale-110');
+        setTimeout(() => {
+            btn.innerHTML = origHtml;
+            btn.classList.remove('scale-110');
+        }, 1800);
+    }
+}
+
+function formatVocabChipsAndReasons(text) {
+    if (!text) return '';
+    let result = String(text);
+
+    // 1. Convert [VOCAB: word] tags into ultra-compact inline chip with bookmark emote/icon
+    result = result.replace(
+        /\[VOCAB:\s*([a-zA-Z\s'-]+)\]/gi,
+        (m, word) => {
+            const clean = word.trim();
+            return '<span class="inline-flex items-center gap-1 bg-amber-50 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-500/40 rounded-md px-1.5 py-0.5 my-0.5 font-mono text-xs font-semibold align-baseline shadow-xs"><span>' + clean + '</span><button type="button" onclick="event.stopPropagation(); quickAddVocabWithFeedback(this, \'' + clean + '\')" class="inline-flex items-center justify-center w-4 h-4 rounded text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-transform active:scale-125 cursor-pointer ml-0.5" title="Simpan \'' + clean + '\' ke Vocab Logger"><i class="fa-solid fa-bookmark text-[10px]"></i></button></span>';
+        }
+    );
+
+    // 2. Separate run-on points like "(1 Frasa...", "(2 Kata...", "(3 Penambahan..." into distinct lines
+    result = result.replace(/\s*\(([1-9])\s*(?:Frasa|Kata|Penambahan|Point|Poin)?\s*/gi, '\n- 💡 ');
+
+    return result;
+}

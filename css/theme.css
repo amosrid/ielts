@@ -12,12 +12,22 @@
        - Error/Review  : Rose (#e11d48 / #f43f5e)
    ============================================================ */
 
+html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+}
+
 body {
     background-color: #f8fafc;
     color: #334155;
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     transition: background-color 0.2s ease, color 0.2s ease;
     -webkit-font-smoothing: antialiased;
+}
+
+main {
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
 /* Modern Restrained Card Elevation (Replaces Neon Glows) */
@@ -395,6 +405,59 @@ html.light-mode #sidebar-model-badge {
             background: #ffffff !important;
             border: 1px solid #e2e8f0 !important;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+
+        
+        /* AI Glitch Lab in Light Mode */
+        html.light-mode #tab-ai-lab .bg-slate-900,
+        html.light-mode #tab-ai-lab .bg-slate-900\/90,
+        html.light-mode #tab-ai-lab #ai-lab-result,
+        html.light-mode #tab-ai-lab #ai-lab-drill-card {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-ai-lab textarea {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-ai-lab #ai-lab-result h1,
+        html.light-mode #tab-ai-lab #ai-lab-result h2,
+        html.light-mode #tab-ai-lab #ai-lab-result h3 {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-ai-lab #ai-lab-result strong {
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-ai-lab #ai-lab-result blockquote {
+            background-color: #f8fafc !important;
+            border-left-color: #6366f1 !important;
+            color: #1e293b !important;
+        }
+
+        
+        /* Cloud Sync Modal in Light Mode */
+        html.light-mode #modal-cloud-sync .bg-slate-900 {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #modal-cloud-sync .bg-slate-950 {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #modal-cloud-sync input {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #modal-cloud-sync h3,
+        html.light-mode #modal-cloud-sync strong {
+            color: #0f172a !important;
         }
 
         /* Top Header Elements (Light Mode) */

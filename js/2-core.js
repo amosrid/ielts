@@ -23,6 +23,7 @@
 
         function saveGameData() {
             localStorage.setItem('ielts_roadmap_save_v4_0', JSON.stringify(playerState));
+            if (typeof IeltsSyncService !== 'undefined') IeltsSyncService.triggerAutoSync();
         }
 
         function restoreDraftsAndSettings() {
