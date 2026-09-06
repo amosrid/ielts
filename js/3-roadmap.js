@@ -1017,7 +1017,8 @@ Every independent clause must have a clear subject and complete verb. When using
             'affirmation_voice':   { level: 'LOW', budget25: 1024, temp: 0.3, maxTokens: 1500 },
             'speaking_topic_gen':  { level: 'LOW', budget25: 1024, temp: 0.5, maxTokens: 1500 },
             'fast_track_gen':      { level: 'LOW', budget25: 1024, temp: 0.5, maxTokens: 1024 },
-            'affirmation_gen':     { level: 'LOW', budget25: 1024, temp: 0.6, maxTokens: 1024 }
+            'affirmation_gen':     { level: 'LOW', budget25: 1024, temp: 0.6, maxTokens: 1024 },
+            'vocab_discovery_eval':{ level: 'LOW', budget25: 1024, temp: 0.2, maxTokens: 2048 }
         };
 
         function buildGeminiGenerationConfig(model, featureKey, options = {}) {

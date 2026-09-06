@@ -2109,17 +2109,39 @@
                         </button>
                     </div>
 
-                    <!-- Single-Row Fast Add Input Bar -->
-                    <div class="pt-2 border-t border-slate-800/80">
+                    <!-- Single-Row Fast Add & Bulk Input Bar -->
+                    <div class="pt-2 border-t border-slate-800/80 space-y-2.5">
                         <div class="flex flex-col sm:flex-row items-stretch gap-2">
                             <div class="relative flex-1">
                                 <input type="text" id="input-vocab-word" placeholder="Ketik kata bahasa Inggris baru (contoh: establish, mitigate, ubiquitous...)" onkeydown="if(event.key==='Enter') addVocabWord()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500 pl-10 shadow-inner">
                                 <i class="fa-solid fa-font absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
                             </div>
-                            <button onclick="addVocabWord()" id="btn-add-vocab" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 whitespace-nowrap active:scale-95">
+                            <button onclick="addVocabWord()" id="btn-add-vocab" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 cursor-pointer">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                <span>Tambah & Analisis AI (+15 XP)</span>
+                                <span>Tambah (+15 XP)</span>
                             </button>
+                            <button onclick="openBulkVocabModal()" id="btn-open-bulk-vocab" class="px-4 py-3 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 font-bold text-xs font-mono rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 cursor-pointer" title="Input banyak kata sekaligus dari catatan membaca Anda">
+                                <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                                <span>Input Massal</span>
+                            </button>
+                        </div>
+
+                        <!-- Autonomous Background AI Worker Progress Banner -->
+                        <div id="vocab-batch-worker-bar" class="hidden p-3 rounded-xl bg-gradient-to-r from-indigo-950/70 via-slate-900 to-indigo-950/70 border border-indigo-500/40 shadow-md space-y-2">
+                            <div class="flex items-center justify-between text-xs font-mono">
+                                <div class="flex items-center gap-2 text-indigo-300 font-bold">
+                                    <i class="fa-solid fa-circle-notch fa-spin text-indigo-400 text-sm"></i>
+                                    <span id="vocab-batch-worker-label">AI Worker: Memperkaya data kosakata di latar belakang...</span>
+                                </div>
+                                <span id="vocab-batch-worker-count" class="text-[11px] text-slate-300 font-bold">0/0 kata</span>
+                            </div>
+                            <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                                <div id="vocab-batch-worker-progress" class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                                <span id="vocab-batch-worker-current-word">Sedang memproses: -</span>
+                                <span>Layar tidak terkunci • Anda bebas beraktivitas</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3432,10 +3454,14 @@
                         <i class="fa-solid fa-spell-check"></i>
                     </div>
                     <div>
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-2 flex-wrap gap-y-1">
                             <h2 id="vocab-card-word" class="text-2xl font-black text-white tracking-tight">establish</h2>
                             <span id="vocab-card-pos" class="text-xs font-mono text-slate-400 italic">verb</span>
                             <span id="vocab-card-cefr" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-b2">B2</span>
+                            <span id="vocab-card-lock-badge" class="hidden text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border bg-amber-950/90 text-amber-300 border-amber-500/50 flex items-center gap-1">
+                                <i class="fa-solid fa-lock text-amber-400"></i>
+                                <span>Locked Challenge</span>
+                            </span>
                         </div>
                         <div id="vocab-card-ipa" class="text-xs font-mono text-emerald-400 mt-0.5">/ɪˈstæb.lɪʃ/</div>
                     </div>
@@ -3454,7 +3480,131 @@
                 </div>
             </div>
 
-            <!-- TAB SWITCHER (3 Tabs: essence, ielts deep, practice) -->
+            <!-- ================= AI BACKGROUND ENRICHING VIEW ================= -->
+            <div id="vocab-card-enriching-view" class="hidden p-6 rounded-2xl bg-gradient-to-b from-indigo-950/40 to-slate-950 border border-indigo-500/40 text-center space-y-3.5 shadow-lg">
+                <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl mx-auto border border-indigo-500/30">
+                    <i class="fa-solid fa-circle-notch fa-spin text-indigo-400"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-base font-bold text-white font-mono flex items-center justify-center gap-2">
+                        <span>Sedang Dianalisis AI di Latar Belakang</span>
+                        <span id="vocab-card-enriching-status-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 border border-indigo-500/40 text-indigo-300">QUEUE</span>
+                    </h3>
+                    <p class="text-xs text-slate-300 font-sans max-w-md mx-auto leading-relaxed">
+                        AI Autonomous Worker sedang mendiagnosa tingkat CEFR, menyiapkan 3 konteks kontras untuk sistem gembok, serta memetakan kolokasi akademik. Tampilan kartu akan langsung terbuka otomatis begitu selesai.
+                    </p>
+                </div>
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-400">
+                    <i class="fa-solid fa-hourglass-half text-indigo-400 animate-pulse"></i>
+                    <span id="vocab-card-enriching-status-label">Menunggu giliran antrean...</span>
+                </div>
+            </div>
+
+            <!-- ================= LOCKED DISCOVERY VIEW (THE PADLOCK PROTOCOL) ================= -->
+            <div id="vocab-card-locked-view" class="hidden space-y-4">
+                <!-- 1. Challenge Hero Banner -->
+                <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-950 border border-amber-500/40 shadow-lg space-y-2">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2 text-amber-300 font-mono font-bold text-xs uppercase tracking-wide">
+                            <i class="fa-solid fa-lock text-base text-amber-400 animate-pulse"></i>
+                            <span>Locked Vocabulary Challenge</span>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800">Context Deduction</span>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Native speakers acquire vocabulary by noticing recurring patterns across different situations. Read these <strong>3 contrasting contexts</strong> below and deduce the core meaning to unlock this card.
+                    </p>
+                </div>
+
+                <!-- 2. The 3 Contrasting Context Sentences -->
+                <div class="space-y-2.5">
+                    <div class="text-[11px] font-mono font-bold text-slate-300 uppercase flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-layer-group text-amber-400"></i> 3 Contrasting Contexts:</span>
+                        <span class="text-[10px] text-slate-400 font-normal">Click audio to hear sentence</span>
+                    </div>
+
+                    <div id="vocab-discovery-contexts-list" class="space-y-2.5">
+                        <!-- Dynamically populated with 3 cards -->
+                    </div>
+                </div>
+
+                <!-- 3. Socratic Guess Input Card -->
+                <div id="vocab-discovery-input-card" class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3 shadow-md">
+                    <div class="space-y-1">
+                        <label for="input-vocab-discovery-guess" class="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-question text-teal-400"></i>
+                            <span id="vocab-discovery-question-label">What do you think this word means in these contexts?</span>
+                        </label>
+                        <p class="text-[11px] text-slate-400 font-sans">Type your intuitive guess in English (one word, phrase, or short explanation):</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="input-vocab-discovery-guess" placeholder="e.g. It refers to something that is most common or widespread..." onkeydown="if(event.key==='Enter') submitVocabDiscoveryGuess()" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-sans text-white focus:outline-none focus:border-amber-500 shadow-inner">
+                        <button id="btn-submit-discovery-guess" onclick="submitVocabDiscoveryGuess()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 cursor-pointer">
+                            <i class="fa-solid fa-brain"></i>
+                            <span id="btn-submit-discovery-text">Check Guess</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3B. Review Mode Status Card (shown only during review) -->
+                <div id="vocab-discovery-review-card" class="hidden p-4 rounded-2xl bg-slate-950 border border-emerald-500/40 space-y-3 shadow-md">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="text-xs font-mono font-bold text-emerald-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Unlocked via Context Deduction</span>
+                            </div>
+                            <div class="text-xs text-slate-200 font-sans">
+                                Core Meaning: <strong id="vocab-discovery-review-meaning" class="text-emerald-300"></strong>
+                            </div>
+                        </div>
+                        <button type="button" onclick="returnToUnlockedVocabCard()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold text-xs rounded-xl transition-all border border-slate-700 shrink-0 cursor-pointer flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                            <span>Back to Full Card</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Socratic AI Feedback Container (Hidden initially) -->
+                <div id="vocab-discovery-feedback-container" class="hidden space-y-3">
+                    <!-- A. Natural Phrasing Recast Box (SLA Conversational Modeling) -->
+                    <div id="vocab-discovery-recast-box" class="hidden p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 space-y-1.5 shadow-sm">
+                        <div class="text-[10px] font-mono font-bold text-indigo-300 uppercase flex items-center gap-1.5">
+                            <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i> Natural Phrasing Recast:
+                        </div>
+                        <div id="vocab-discovery-recast-phrase" class="text-xs text-slate-200 font-sans italic leading-relaxed"></div>
+                        <div id="vocab-discovery-recast-diff" class="text-[10px] font-mono text-slate-400 flex items-center gap-1.5 pt-1"></div>
+                    </div>
+
+                    <!-- B. Semantic Feedback & Socratic Clue Card -->
+                    <div id="vocab-discovery-feedback-card" class="p-4 rounded-xl border text-xs font-sans space-y-2.5 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span id="vocab-discovery-feedback-title" class="font-mono font-bold uppercase flex items-center gap-1.5"></span>
+                            <span id="vocab-discovery-attempt-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400"></span>
+                        </div>
+                        <p id="vocab-discovery-feedback-message" class="leading-relaxed text-slate-200"></p>
+                        <div id="vocab-discovery-hint-box" class="hidden p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-300 text-[11px] leading-relaxed"></div>
+                        <div id="vocab-discovery-action-box" class="pt-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= UNLOCKED VOCAB CARD MASTER VIEW ================= -->
+            <div id="vocab-card-unlocked-view" class="space-y-4">
+                <!-- Replay Contexts Banner -->
+                <div id="vocab-card-replay-banner" class="hidden flex items-center justify-between text-[11px] font-mono text-slate-300 bg-slate-950/70 px-3.5 py-2 rounded-xl border border-slate-800">
+                    <span class="flex items-center gap-1.5 text-emerald-400 font-bold">
+                        <i class="fa-solid fa-lock-open text-xs"></i>
+                        <span>Unlocked via Context Deduction</span>
+                    </span>
+                    <button type="button" onclick="viewVocabDiscoveryChallenge()" class="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 cursor-pointer transition-colors">
+                        <i class="fa-solid fa-layer-group text-[10px]"></i>
+                        <span>Review 3 Contexts</span>
+                    </button>
+                </div>
+
+                <!-- TAB SWITCHER (3 Tabs: essence, ielts deep, practice) -->
             <div class="flex items-center p-1 bg-slate-950 rounded-xl border border-slate-800 gap-1 font-mono text-xs">
                 <button type="button" id="btn-vocab-tab-quick" onclick="switchVocabModalTab('quick')" class="flex-1 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-sm cursor-pointer lowercase">
                     <i class="fa-solid fa-bolt text-amber-300"></i>
@@ -3818,6 +3968,7 @@
                     </div>
                 </div>
             </div>
+            </div>
 
             <!-- Actions Footer -->
             <div class="flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t border-slate-800 font-mono text-xs">
@@ -3836,6 +3987,71 @@
                     </button>
                     <button onclick="closeVocabCard()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-md">
                         Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Vocabulary Input Modal (Batch Import) -->
+    <div id="modal-bulk-vocab" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-indigo-500/40 w-full max-w-2xl rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[92vh] flex flex-col overflow-y-auto">
+            <button onclick="closeBulkVocabModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg z-10 p-1 cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="space-y-1.5 border-b border-slate-800 pb-3 pr-8">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg border border-indigo-500/30">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white font-mono">Input Kosakata Massal (Batch)</h3>
+                        <p class="text-xs text-slate-400 font-sans">Tempel daftar kata dari bacaan Anda. Semua kata langsung masuk seketika, dan AI Worker akan memperkaya data di latar belakang.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Textarea for Batch Words -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs font-mono">
+                    <label for="textarea-bulk-vocab" class="text-slate-300 font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-paste text-indigo-400"></i>
+                        <span>Daftar Kata (Baris baru, koma, atau bullet):</span>
+                    </label>
+                    <span id="bulk-vocab-counter-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-950 text-indigo-300 border border-indigo-500/40 font-bold">0 kata terdeteksi</span>
+                </div>
+                <textarea id="textarea-bulk-vocab" rows="6" oninput="onBulkVocabInput()" placeholder="Contoh:&#10;prevailing&#10;mitigate&#10;scrutinize&#10;unprecedented&#10;ubiquitous&#10;&#10;Atau dipisah koma: paramount, bolster, delve..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 resize-y leading-relaxed shadow-inner"></textarea>
+            </div>
+
+            <!-- Live Parsing Preview Chips Container -->
+            <div id="bulk-vocab-preview-container" class="space-y-2 p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                    <span class="flex items-center gap-1.5 font-bold text-slate-300">
+                        <i class="fa-solid fa-tags text-indigo-400"></i>
+                        <span>Pratinjau Kata Terdeteksi:</span>
+                    </span>
+                    <span id="bulk-vocab-summary-text" class="text-[10px] text-slate-400">Ketik atau tempel teks di atas.</span>
+                </div>
+                <div id="bulk-vocab-chips-list" class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
+                    <!-- Dynamic chips: green for new words, slate for existing words -->
+                </div>
+            </div>
+
+            <!-- Actions Footer -->
+            <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-amber-400"></i>
+                    <span>+10 XP per kata baru • Instan masuk tanpa loading</span>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <button type="button" onclick="closeBulkVocabModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs font-mono rounded-xl transition-all border border-slate-700 cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="button" id="btn-submit-bulk-vocab" onclick="submitBulkVocabWords()" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-95 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span id="btn-submit-bulk-text">Masukkan Semua ke Bank</span>
                     </button>
                 </div>
             </div>

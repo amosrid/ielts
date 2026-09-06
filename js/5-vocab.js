@@ -51,6 +51,22 @@ function loadVocabBank() {
                 const saved = localStorage.getItem('ielts_vocab_bank_v1');
                 if (saved) {
                     vocabBank = JSON.parse(saved);
+                    // Ensure backward compatibility: legacy entries default to unlocked
+                    vocabBank.forEach(v => {
+                        if (v && v.lockStatus === undefined) {
+                            v.lockStatus = 'unlocked';
+                        }
+                    });
+
+                    // Resume any pending background enrichment queue after page load
+                    const hasPendingEnrichment = vocabBank.some(v => v && (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing'));
+                    if (hasPendingEnrichment) {
+                        setTimeout(() => {
+                            if (typeof processVocabEnrichmentQueue === 'function') {
+                                processVocabEnrichmentQueue();
+                            }
+                        }, 1200);
+                    }
                 } else {
                     vocabBank = [];
                 }
@@ -388,16 +404,29 @@ function loadVocabBank() {
 
             // 4. Render 2-Column Responsive High-Density Card Grid
             listContainer.innerHTML = filtered.map(v => {
-                const isDue = v.status !== 'mastered' && (v.srNextReview || 0) <= now + 3600000;
-                const isMastered = v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5);
-                const isUnlearnedFeynman = !isMastered && (!v.feynmanLevel || v.feynmanLevel === 0);
+                const isEnriching = (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing');
+                const isLocked = v.lockStatus === 'locked';
+                const isDue = !isEnriching && !isLocked && v.status !== 'mastered' && (v.srNextReview || 0) <= now + 3600000;
+                const isMastered = !isEnriching && !isLocked && (v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5));
+                const isUnlearnedFeynman = !isEnriching && !isLocked && !isMastered && (!v.feynmanLevel || v.feynmanLevel === 0);
                 
                 let scheduleTag = '';
                 let borderClass = 'border-slate-800';
                 let bgClass = 'bg-slate-900/90';
                 let itemStatusClass = '';
 
-                if (isMastered) {
+                if (isEnriching) {
+                    const statusText = (v.enrichmentStatus === 'analyzing') ? 'AI Menganalisis...' : 'Antrean AI';
+                    scheduleTag = `<span class="badge-vocab-enriching text-[10px] bg-indigo-950/90 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/50 font-bold font-mono flex items-center gap-1.5 animate-pulse"><i class="fa-solid fa-circle-notch fa-spin text-indigo-400"></i> ${statusText}</span>`;
+                    borderClass = 'border-indigo-500/40';
+                    bgClass = 'bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/20';
+                    itemStatusClass = 'vocab-item-enriching';
+                } else if (isLocked) {
+                    scheduleTag = `<span class="badge-vocab-locked text-[10px] bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/50 font-bold font-mono flex items-center gap-1 animate-pulse"><i class="fa-solid fa-lock text-amber-400"></i> Locked Challenge</span>`;
+                    borderClass = 'border-amber-500/40';
+                    bgClass = 'bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/20';
+                    itemStatusClass = 'vocab-item-locked';
+                } else if (isMastered) {
                     scheduleTag = `<span class="badge-feynman-mastered text-[10px] bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/50 font-bold font-mono"><i class="fa-solid fa-crown mr-1 text-amber-400"></i> 🏆 Bebas Review</span>`;
                     borderClass = 'border-amber-500/40';
                     bgClass = 'bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/20';
@@ -429,6 +458,30 @@ function loadVocabBank() {
                     ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-1" title="${v.highYieldContext}"><i class="fa-solid fa-fire text-amber-400"></i> High-Yield</span>`
                     : '';
 
+                const lockHeaderTag = isEnriching
+                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-indigo-950/90 text-indigo-300 border border-indigo-500/50 font-bold flex items-center gap-1"><i class="fa-solid fa-circle-notch fa-spin text-indigo-400 text-[8px]"></i> Loading</span>`
+                    : (isLocked
+                        ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-950/90 text-amber-300 border border-amber-500/50 font-bold flex items-center gap-1"><i class="fa-solid fa-lock text-amber-400 text-[8px]"></i> Locked</span>`
+                        : '');
+
+                const meaningPreview = isEnriching
+                    ? `<p class="text-xs text-indigo-300/80 line-clamp-2 font-mono italic"><i class="fa-solid fa-gear fa-spin mr-1 text-[10px] text-indigo-400"></i> AI sedang menyusun CEFR, 3 konteks kontras & kolokasi...</p>`
+                    : (isLocked
+                        ? `<p class="text-xs text-amber-300/80 line-clamp-2 font-mono italic">🔒 Deduce meaning from 3 contrasting contexts...</p>`
+                        : `<p class="text-xs text-slate-300 line-clamp-2 font-medium leading-relaxed">${v.meaningId || v.meaningEn || ''}</p>`);
+
+                const openBtnClass = isEnriching
+                    ? `px-2.5 py-1 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 font-mono font-bold text-[11px] rounded-lg transition-all border border-indigo-500/40 flex items-center gap-1 shadow-sm`
+                    : (isLocked
+                        ? `px-2.5 py-1 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 font-mono font-bold text-[11px] rounded-lg transition-all border border-amber-500/40 flex items-center gap-1 shadow-sm`
+                        : `px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-mono font-bold text-[11px] rounded-lg transition-all border border-emerald-500/30 flex items-center gap-1`);
+
+                const openBtnText = isEnriching
+                    ? `<span>Cek Status</span><i class="fa-solid fa-circle-notch fa-spin text-[9px] text-indigo-400"></i>`
+                    : (isLocked
+                        ? `<span>Buka Gembok</span><i class="fa-solid fa-key text-[9px] text-amber-400"></i>`
+                        : `<span>Buka Kartu</span><i class="fa-solid fa-chevron-right text-[9px]"></i>`);
+
                 return `
                     <div class="${bgClass} border ${borderClass} rounded-2xl p-4 flex flex-col justify-between gap-3 vocab-item ${itemStatusClass} shadow-md transition-all hover:border-slate-700 hover:shadow-xl">
                         <div class="space-y-1.5 cursor-pointer" onclick="openVocabCard('${v.id}')">
@@ -439,6 +492,7 @@ function loadVocabBank() {
                                     <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${(v.cefr || 'b2').toLowerCase()}">${v.cefr}</span>
                                 </div>
                                 <div class="flex items-center gap-1">
+                                    ${lockHeaderTag}
                                     ${regMini}
                                     ${highYieldBadge}
                                 </div>
@@ -448,7 +502,7 @@ function loadVocabBank() {
                                 <span>${v.ipa || ''}</span>
                             </div>
 
-                            <p class="text-xs text-slate-300 line-clamp-2 font-medium leading-relaxed">${v.meaningId || v.meaningEn || ''}</p>
+                            ${meaningPreview}
                             
                             <div class="text-[10px] font-mono text-amber-300/90 flex items-center gap-1 pt-1 border-t border-slate-800/60">
                                 <i class="fa-solid fa-bullhorn text-[9px] text-amber-400 shrink-0"></i>
@@ -463,9 +517,8 @@ function loadVocabBank() {
                                 <button onclick="speakWord('${v.word}', 'en-GB')" class="p-1.5 bg-slate-950 hover:bg-slate-800 text-rose-300 rounded-lg text-xs border border-slate-800 transition-all shadow-sm" title="Dengarkan Audio UK">
                                     <i class="fa-solid fa-volume-high"></i>
                                 </button>
-                                <button onclick="openVocabCard('${v.id}')" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-mono font-bold text-[11px] rounded-lg transition-all border border-emerald-500/30 flex items-center gap-1">
-                                    <span>Buka Kartu</span>
-                                    <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                                <button onclick="openVocabCard('${v.id}')" class="${openBtnClass}">
+                                    ${openBtnText}
                                 </button>
                             </div>
                         </div>
@@ -547,6 +600,24 @@ function loadVocabBank() {
                     targetEntry.synonyms = analysis.synonyms || targetEntry.synonyms || [];
                     targetEntry.antonyms = analysis.antonyms || targetEntry.antonyms || [];
                     targetEntry.ipa = analysis.ipa || targetEntry.ipa || '';
+                    if (!targetEntry.discoveryChallenge || !targetEntry.discoveryChallenge.contexts || targetEntry.discoveryChallenge.contexts.length === 0) {
+                        targetEntry.discoveryChallenge = {
+                            targetWord: finalWord,
+                            contexts: (Array.isArray(analysis.discoveryContexts) && analysis.discoveryContexts.length === 3)
+                                ? analysis.discoveryContexts
+                                : [
+                                    { domain: "Daily / General", sentence: analysis.example || `The concept of ${finalWord} is central to everyday life.` },
+                                    { domain: "Society / Observation", sentence: (analysis.naturalExamples && analysis.naturalExamples[0]) || `Experts notice how ${finalWord} affects modern society.` },
+                                    { domain: "Professional / Academic", sentence: (analysis.naturalExamples && analysis.naturalExamples[1]) || `Research shows that ${finalWord} plays a significant role in outcomes.` }
+                                ],
+                            guesses: targetEntry.discoveryChallenge?.guesses || [],
+                            attemptsCount: targetEntry.discoveryChallenge?.attemptsCount || 0,
+                            unlockedAt: targetEntry.discoveryChallenge?.unlockedAt || Date.now()
+                        };
+                    }
+                    if (!targetEntry.lockStatus) {
+                        targetEntry.lockStatus = 'unlocked';
+                    }
                     saveVocabBank();
                     if (input) input.value = '';
                     addXP(15);
@@ -560,6 +631,20 @@ function loadVocabBank() {
                 const newVocab = {
                     id: 'vocab_' + Date.now(),
                     word: finalWord,
+                    lockStatus: 'locked',
+                    discoveryChallenge: {
+                        targetWord: finalWord,
+                        contexts: (Array.isArray(analysis.discoveryContexts) && analysis.discoveryContexts.length === 3)
+                            ? analysis.discoveryContexts
+                            : [
+                                { domain: "Daily / General", sentence: analysis.example || `The concept of ${finalWord} is central to everyday life.` },
+                                { domain: "Society / Observation", sentence: (analysis.naturalExamples && analysis.naturalExamples[0]) || `Experts notice how ${finalWord} affects modern society.` },
+                                { domain: "Professional / Academic", sentence: (analysis.naturalExamples && analysis.naturalExamples[1]) || `Research shows that ${finalWord} plays a significant role in outcomes.` }
+                            ],
+                        guesses: [],
+                        attemptsCount: 0,
+                        unlockedAt: null
+                    },
                     pos: analysis.pos || 'noun',
                     cefr: analysis.cefr || 'B2',
                     registerLevel: analysis.registerLevel || 'formal',
@@ -610,7 +695,7 @@ function loadVocabBank() {
                 addXP(15);
                 SoundFX.play('levelup');
                 triggerConfetti();
-                showToast(`Kata "${finalWord}" berhasil ditambahkan ke Bank (+15 XP)!`, "success");
+                showToast(`Kata "${finalWord}" berhasil ditambahkan (+15 XP)! Selesaikan tantangan 3 konteks untuk membuka kartu.`, "success");
 
                 openVocabCard(newVocab.id);
                 renderVocabBank();
@@ -666,6 +751,11 @@ CRITICAL TEACHING RULES:
    [{ "en": "Example sentence 1", "meaningB1": "Simple explanation of sentence meaning" }, ...]
 11. "indonesianGuide": 100% HURUF ALFABET INDONESIA (A-Z) TANPA SIMBOL IPA! Suku kata ditekan KAPITAL + asosiasi kata Indonesia.
 12. "ipa": Official Cambridge IPA symbol.
+13. "discoveryContexts": Exactly 3 contrasting sentences showcasing the word in contrasting situations, with NO definitions or translations included:
+   - Context 1: Everyday & Physical / Nature world.
+   - Context 2: Society & Human behavior / Culture.
+   - Context 3: Academic / Economic / Professional conditions.
+   Format: [{ "domain": "Nature & Everyday World", "sentence": "..." }, { "domain": "Society & Human Behavior", "sentence": "..." }, { "domain": "Academic & Formal Trends", "sentence": "..." }]
 
 CRITICAL PRE-ANALYSIS:
 - If misspelling: set "correctedWord" to correct spelling, "isNonEnglish": false.
@@ -738,6 +828,11 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
     { "en": "The thick fog gradually dissipated as the sun rose.", "meaningB1": "The fog slowly disappeared." },
     { "en": "Her anger eventually dissipated after they talked.", "meaningB1": "Her anger slowly became weaker." },
     { "en": "The crowd began to dissipate after the concert.", "meaningB1": "People gradually left the venue." }
+  ],
+  "discoveryContexts": [
+    { "domain": "Nature & Everyday World", "sentence": "The thick fog gradually dissipated as the morning sun rose over the valley." },
+    { "domain": "Society & Human Behavior", "sentence": "Tension among the committee members dissipated once the final decision was explained." },
+    { "domain": "Academic & Formal Trends", "sentence": "Economists observed that inflationary pressures dissipated faster than anticipated." }
   ],
   "example": "The tension between both countries gradually dissipated after bilateral discussions.",
   "synonyms": ["disperse", "fade away", "vanish"],
@@ -1061,13 +1156,16 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 
             currentActiveVocabId = vocabId;
 
-            // Auto-trigger background enrichment if card still has placeholder text
-            if (vocab.meaningId && (vocab.meaningId.includes('Menganalisis') || vocab.meaningId.includes('Fokus perbaikan pelafalan') || (vocab.meaningEn && vocab.meaningEn.includes('Key spoken vocabulary')))) {
-                enrichVocabCardInBackground(vocab.id, vocab.word);
-            }
-
-            // Always switch to Tab 1 (Quick Essence) by default
-            switchVocabModalTab('quick');
+            const isEnriching = (vocab.enrichmentStatus === 'queued' || vocab.enrichmentStatus === 'analyzing');
+            const isLocked = (vocab.lockStatus === 'locked');
+            const lockBadgeEl = document.getElementById('vocab-card-lock-badge');
+            const lockedViewEl = document.getElementById('vocab-card-locked-view');
+            const unlockedViewEl = document.getElementById('vocab-card-unlocked-view');
+            const enrichingViewEl = document.getElementById('vocab-card-enriching-view');
+            const enrichingStatusBadge = document.getElementById('vocab-card-enriching-status-badge');
+            const enrichingStatusLabel = document.getElementById('vocab-card-enriching-status-label');
+            const replayBannerEl = document.getElementById('vocab-card-replay-banner');
+            const masteredBtn = document.getElementById('btn-card-mastered');
 
             // Header Elements
             const wordEl = document.getElementById('vocab-card-word');
@@ -1095,6 +1193,67 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             if (accentBadgeEl) {
                 accentBadgeEl.innerText = accentBadgeNames[targetAccentKey] || '🇬🇧 British RP';
             }
+
+            if (lockBadgeEl) {
+                if (isEnriching) {
+                    lockBadgeEl.classList.remove('hidden');
+                    lockBadgeEl.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-indigo-400"></i> <span>Analyzing AI...</span>`;
+                } else if (isLocked) {
+                    lockBadgeEl.classList.remove('hidden');
+                    lockBadgeEl.innerHTML = `<i class="fa-solid fa-lock text-amber-400"></i> <span>Locked Challenge</span>`;
+                } else {
+                    lockBadgeEl.classList.add('hidden');
+                }
+            }
+
+            if (replayBannerEl) {
+                if (!isEnriching && !isLocked && vocab.discoveryChallenge?.contexts?.length > 0) {
+                    replayBannerEl.classList.remove('hidden');
+                } else {
+                    replayBannerEl.classList.add('hidden');
+                }
+            }
+
+            if (masteredBtn) {
+                masteredBtn.classList.toggle('hidden', (isEnriching || isLocked));
+            }
+
+            if (isEnriching) {
+                if (enrichingViewEl) enrichingViewEl.classList.remove('hidden');
+                if (lockedViewEl) lockedViewEl.classList.add('hidden');
+                if (unlockedViewEl) unlockedViewEl.classList.add('hidden');
+                if (enrichingStatusBadge) {
+                    enrichingStatusBadge.innerText = (vocab.enrichmentStatus === 'analyzing') ? 'SEDANG DIPROSES' : 'DALAM ANTREAN';
+                }
+                if (enrichingStatusLabel) {
+                    enrichingStatusLabel.innerText = (vocab.enrichmentStatus === 'analyzing') 
+                        ? 'AI sedang mengekstrak CEFR, 3 kalimat konteks, dan kolokasi...' 
+                        : 'Menunggu giliran antrean AI Worker...';
+                }
+                document.getElementById('modal-vocab-card').classList.remove('hidden');
+                return;
+            } else {
+                if (enrichingViewEl) enrichingViewEl.classList.add('hidden');
+            }
+
+            if (isLocked) {
+                if (lockedViewEl) lockedViewEl.classList.remove('hidden');
+                if (unlockedViewEl) unlockedViewEl.classList.add('hidden');
+                renderVocabDiscoveryView(vocab, false);
+                document.getElementById('modal-vocab-card').classList.remove('hidden');
+                return;
+            } else {
+                if (lockedViewEl) lockedViewEl.classList.add('hidden');
+                if (unlockedViewEl) unlockedViewEl.classList.remove('hidden');
+            }
+
+            // Auto-trigger background enrichment if card still has placeholder text
+            if (vocab.meaningId && (vocab.meaningId.includes('Menganalisis') || vocab.meaningId.includes('Fokus perbaikan pelafalan') || (vocab.meaningEn && vocab.meaningEn.includes('Key spoken vocabulary')))) {
+                enrichVocabCardInBackground(vocab.id, vocab.word);
+            }
+
+            // Always switch to Tab 1 (Quick Essence) by default
+            switchVocabModalTab('quick');
 
             // ================= TAB 1: QUICK ESSENCE =================
             // A. B1 Core Meaning & Indonesian Translation
@@ -1509,7 +1668,6 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             if (fastTrackResult) fastTrackResult.classList.add('hidden');
 
             // Mastered Button State
-            const masteredBtn = document.getElementById('btn-card-mastered');
             if (masteredBtn) {
                 if (vocab.status === 'mastered') {
                     masteredBtn.className = "px-4 py-2 bg-amber-950 text-amber-300 font-bold rounded-xl transition-all border border-amber-500/40 flex items-center gap-1.5";
@@ -3207,4 +3365,747 @@ Return JSON ONLY:
             SoundFX.play('click');
             reviewCurrentIndex++;
             renderReviewCard();
+        }
+
+        // =========================================================================
+        // IeltsGo v6.0 — THE PADLOCK PROTOCOL (CONTEXTUAL DISCOVERY GATEWAY)
+        // =========================================================================
+
+        function safeEscape(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function highlightTargetWordInSentence(sentence, targetWord) {
+            if (!sentence || !targetWord) return sentence || '';
+            const cleanWord = targetWord.trim();
+            const escaped = cleanWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Match word boundary with common English inflectional endings
+            const regex = new RegExp(`(\\b${escaped}(?:ing|ed|es|s|ly|d|tion|able)?\\b)`, 'gi');
+            if (regex.test(sentence)) {
+                return sentence.replace(regex, '<span class="bg-amber-400/25 text-amber-300 font-bold px-1.5 py-0.5 rounded border border-amber-500/40">$1</span>');
+            }
+            const subRegex = new RegExp(`(${escaped})`, 'gi');
+            return sentence.replace(subRegex, '<span class="bg-amber-400/25 text-amber-300 font-bold px-1.5 py-0.5 rounded border border-amber-500/40">$1</span>');
+        }
+
+        function renderVocabDiscoveryView(vocab, isReviewMode = false) {
+            if (!vocab) return;
+
+            const contextsListEl = document.getElementById('vocab-discovery-contexts-list');
+            const questionLabelEl = document.getElementById('vocab-discovery-question-label');
+            const inputCard = document.getElementById('vocab-discovery-input-card');
+            const reviewCard = document.getElementById('vocab-discovery-review-card');
+            const reviewMeaningEl = document.getElementById('vocab-discovery-review-meaning');
+            const guessInput = document.getElementById('input-vocab-discovery-guess');
+            const feedbackContainer = document.getElementById('vocab-discovery-feedback-container');
+
+            // Socratic Question Label
+            if (questionLabelEl) {
+                questionLabelEl.innerText = `What do you think "${vocab.word}" means in these contexts?`;
+            }
+
+            // Render 3 Contrasting Context Sentences
+            if (contextsListEl) {
+                let contexts = vocab.discoveryChallenge?.contexts || [];
+                if (!Array.isArray(contexts) || contexts.length === 0) {
+                    contexts = [
+                        { domain: "Daily / General", sentence: vocab.example || `The concept of ${vocab.word} is central to everyday life.` },
+                        { domain: "Society / Observation", sentence: (vocab.naturalExamples && vocab.naturalExamples[0]) || `Experts notice how ${vocab.word} affects modern society.` },
+                        { domain: "Professional / Academic", sentence: (vocab.naturalExamples && vocab.naturalExamples[1]) || `Research shows that ${vocab.word} plays a significant role in outcomes.` }
+                    ];
+                }
+
+                contextsListEl.innerHTML = contexts.map((ctx, idx) => {
+                    const domainName = ctx.domain || `Context ${idx + 1}`;
+                    const highlightedSentence = highlightTargetWordInSentence(ctx.sentence, vocab.word);
+                    const escapedRawSentence = (ctx.sentence || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                    return `
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-slate-950 text-amber-400 border border-amber-500/30">
+                                    <i class="fa-solid fa-layer-group text-[9px] mr-1"></i> ${domainName}
+                                </span>
+                                <button type="button" onclick="speakWord('${escapedRawSentence}', 'en-GB')" class="px-2.5 py-1 bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-cyan-300 rounded-lg text-[10px] font-mono border border-slate-800 transition-colors flex items-center gap-1 cursor-pointer" title="Listen to sentence">
+                                    <i class="fa-solid fa-volume-high text-[10px]"></i>
+                                    <span>Audio</span>
+                                </button>
+                            </div>
+                            <div class="text-xs text-slate-200 font-sans leading-relaxed">
+                                ${highlightedSentence}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (isReviewMode) {
+                // Review Mode: Card already unlocked
+                if (inputCard) inputCard.classList.add('hidden');
+                if (reviewCard) {
+                    reviewCard.classList.remove('hidden');
+                    if (reviewMeaningEl) {
+                        reviewMeaningEl.innerText = vocab.coreMeaningB1 || vocab.meaningEn || '';
+                    }
+                }
+                if (feedbackContainer) feedbackContainer.classList.add('hidden');
+            } else {
+                // Challenge Mode: Word is locked
+                if (inputCard) inputCard.classList.remove('hidden');
+                if (reviewCard) reviewCard.classList.add('hidden');
+                if (guessInput) {
+                    guessInput.value = '';
+                    guessInput.placeholder = "e.g. It refers to something that is most common or widespread...";
+                }
+
+                if (vocab.discoveryChallenge?.lastFeedback) {
+                    renderVocabDiscoveryFeedback(vocab.discoveryChallenge.lastFeedback, vocab.discoveryChallenge.attemptsCount || 1);
+                } else {
+                    if (feedbackContainer) feedbackContainer.classList.add('hidden');
+                }
+            }
+        }
+
+        async function evaluateVocabDiscoveryGuess(vocab, userGuess, attemptsCount) {
+            const contextsText = (vocab.discoveryChallenge?.contexts || [])
+                .map((c, i) => `${i + 1}. [${c.domain}] ${c.sentence}`)
+                .join('\n');
+
+            const systemPrompt = `You are a calm, sharp, encouraging IELTS English Lexical Coach.
+A learner is trying to deduce the meaning of the English word "${vocab.word}" from 3 contrasting context sentences.
+
+Target Word: "${vocab.word}"
+Target Part of Speech: "${vocab.pos || 'unknown'}"
+Actual Core Meaning: "${vocab.coreMeaningB1 || vocab.meaningEn || ''}"
+3 Context Sentences:
+${contextsText || vocab.example || ''}
+
+Learner's Attempt #${attemptsCount}: "${userGuess}"
+
+Your Pedagogical Instructions:
+1. STRICT LANGUAGE RULE: Respond ONLY in clear, simple B1 English. NEVER use Indonesian or any languages other than English. Keep sentences direct, encouraging, and easy to understand.
+2. SLA CONVERSATIONAL RECASTING:
+   - Carefully inspect the learner's phrasing for grammar, preposition, or collocational awkwardness.
+   - If there is a grammatical error or awkward phrasing, provide a natural recast in conversational English (e.g., "Did you mean: '...'?"). Show what changed simply and clearly in the "note".
+   - IMPORTANT: DO NOT penalize the learner's score or mark their guess wrong just because of grammar or spelling slips! Evaluate their conceptual understanding separately from their grammar.
+3. SEMANTIC ACCURACY EVALUATION:
+   - "correct": The learner captured the core essence or an accurate synonym/concept.
+   - "close": The learner is in the right ballpark, identified a related connotation, or grasped part of the meaning, but needs slight precision.
+   - "incorrect": The learner's guess is far off, misunderstands the word, or describes something completely different.
+4. SOCRATIC FEEDBACK ("NO LEBAY"):
+   - Maintain a calm, friendly, mature tone. DO NOT use hyperbolic, overly dramatic praise ("OMG AMAZING UNBELIEVABLE GENIUS"). Keep it professional and supportive ("Spot on!", "Exactly right.", "You're very close!").
+   - If "correct": Congratulate briefly and state clearly how this core meaning fits across all 3 sentences.
+   - If "close": Acknowledge what they got right, point out the subtle difference, and give a nudging hint.
+   - If "incorrect":
+     - On Attempt 1: Offer a gentle Socratic question directing attention to common elements across the 3 sentences.
+     - On Attempt 2 or higher: Activate "Tangible Physical Object Anchoring" (give a simple everyday physical analogy or concrete clue, e.g. "Think of a heavy wind blowing across a field that pushes everything in one direction").
+5. GIVE UP / EXPLANATION:
+   - If attemptsCount >= 3 and semanticAccuracy is "incorrect", set "canUnlock": true so the learner is never permanently stuck. Explain the meaning clearly and concisely.
+
+Return ONLY a valid JSON object matching this schema:
+{
+  "semanticAccuracy": "correct" | "close" | "incorrect",
+  "recast": {
+    "needed": boolean,
+    "original": string,
+    "recastPhrase": string,
+    "note": string
+  },
+  "feedbackTitle": string,
+  "feedbackMessage": string,
+  "socraticHint": string | null,
+  "canUnlock": boolean
+}`;
+
+            const userPrompt = `Evaluate this deduction attempt for "${vocab.word}": "${userGuess}" (Attempt #${attemptsCount})`;
+
+            try {
+                const response = await callGeminiAPI(userPrompt, systemPrompt, null, { feature: 'vocab_discovery_eval' });
+                let cleaned = (response || '').trim();
+                if (cleaned.startsWith('```')) {
+                    cleaned = cleaned.replace(/^```[a-z]*\n/i, '').replace(/```$/g, '').trim();
+                }
+                const parsed = JSON.parse(cleaned);
+                return parsed;
+            } catch (err) {
+                console.warn("Gemini discovery eval error:", err);
+                const guessLower = userGuess.toLowerCase();
+                const meaningWords = (vocab.coreMeaningB1 || vocab.meaningEn || '').toLowerCase().split(/\W+/).filter(w => w.length > 3);
+                const isKeywordMatch = meaningWords.some(w => guessLower.includes(w));
+
+                return {
+                    semanticAccuracy: isKeywordMatch ? "correct" : (attemptsCount >= 3 ? "close" : "incorrect"),
+                    recast: { needed: false, original: userGuess, recastPhrase: userGuess, note: "" },
+                    feedbackTitle: isKeywordMatch ? "Great Deduction!" : (attemptsCount >= 3 ? "Ready to Unlock" : "Keep Exploring Contexts"),
+                    feedbackMessage: isKeywordMatch 
+                        ? `Your guess aligns nicely with the core meaning across these contexts.` 
+                        : `Notice how "${vocab.word}" behaves across the 3 examples. What common trait connects them?`,
+                    socraticHint: attemptsCount >= 2 ? `Focus on what state or action persists throughout all three situations.` : null,
+                    canUnlock: isKeywordMatch || attemptsCount >= 3
+                };
+            }
+        }
+
+        function renderVocabDiscoveryFeedback(result, attemptsCount) {
+            const feedbackContainer = document.getElementById('vocab-discovery-feedback-container');
+            const recastBox = document.getElementById('vocab-discovery-recast-box');
+            const recastPhraseEl = document.getElementById('vocab-discovery-recast-phrase');
+            const recastDiffEl = document.getElementById('vocab-discovery-recast-diff');
+            const feedbackCard = document.getElementById('vocab-discovery-feedback-card');
+            const titleEl = document.getElementById('vocab-discovery-feedback-title');
+            const attemptBadgeEl = document.getElementById('vocab-discovery-attempt-badge');
+            const messageEl = document.getElementById('vocab-discovery-feedback-message');
+            const hintBox = document.getElementById('vocab-discovery-hint-box');
+            const actionBox = document.getElementById('vocab-discovery-action-box');
+
+            if (!feedbackContainer || !feedbackCard) return;
+
+            feedbackContainer.classList.remove('hidden');
+
+            // 1. Natural Phrasing Recast Box (SLA Conversational Recasting)
+            if (result.recast && result.recast.needed && result.recast.recastPhrase) {
+                if (recastBox) {
+                    recastBox.classList.remove('hidden');
+                    if (recastPhraseEl) {
+                        recastPhraseEl.innerHTML = `Did you mean: <strong class="text-indigo-200">"${safeEscape(result.recast.recastPhrase)}"</strong>?`;
+                    }
+                    if (recastDiffEl) {
+                        const noteText = result.recast.note || 'Conversational natural phrasing (grammar slip does not count against your score)';
+                        recastDiffEl.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-400"></i> <span>${safeEscape(noteText)}</span>`;
+                    }
+                }
+            } else {
+                if (recastBox) recastBox.classList.add('hidden');
+            }
+
+            // 2. Semantic Accuracy Styling & Content
+            const isCorrect = (result.semanticAccuracy === 'correct');
+            const isClose = (result.semanticAccuracy === 'close');
+            const canUnlock = Boolean(result.canUnlock || isCorrect);
+
+            if (attemptBadgeEl) {
+                attemptBadgeEl.innerText = `Attempt #${attemptsCount || 1}`;
+            }
+
+            if (isCorrect) {
+                feedbackCard.className = "p-4 rounded-xl border bg-emerald-950/40 border-emerald-500/40 text-xs font-sans space-y-2.5 shadow-sm";
+                if (titleEl) {
+                    titleEl.className = "font-mono font-bold uppercase flex items-center gap-1.5 text-emerald-300";
+                    titleEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> <span>${safeEscape(result.feedbackTitle || 'Spot On! Meaning Captured')}</span>`;
+                }
+            } else if (isClose) {
+                feedbackCard.className = "p-4 rounded-xl border bg-amber-950/40 border-amber-500/40 text-xs font-sans space-y-2.5 shadow-sm";
+                if (titleEl) {
+                    titleEl.className = "font-mono font-bold uppercase flex items-center gap-1.5 text-amber-300";
+                    titleEl.innerHTML = `<i class="fa-solid fa-circle-half-stroke text-amber-400"></i> <span>${safeEscape(result.feedbackTitle || 'Very Close! Nuance Check')}</span>`;
+                }
+            } else {
+                feedbackCard.className = "p-4 rounded-xl border bg-slate-900 border-slate-700 text-xs font-sans space-y-2.5 shadow-sm";
+                if (titleEl) {
+                    titleEl.className = "font-mono font-bold uppercase flex items-center gap-1.5 text-slate-300";
+                    titleEl.innerHTML = `<i class="fa-solid fa-compass text-cyan-400"></i> <span>${safeEscape(result.feedbackTitle || 'Context Reflection')}</span>`;
+                }
+            }
+
+            if (messageEl) {
+                messageEl.innerText = result.feedbackMessage || '';
+            }
+
+            // 3. Socratic Clue / Physical Object Anchor
+            if (result.socraticHint && !isCorrect) {
+                if (hintBox) {
+                    hintBox.classList.remove('hidden');
+                    const icon = (attemptsCount >= 2) ? 'fa-cubes text-amber-400' : 'fa-lightbulb text-cyan-400';
+                    const label = (attemptsCount >= 2) ? 'Physical Anchor Clue:' : 'Socratic Clue:';
+                    hintBox.innerHTML = `
+                        <div class="font-mono font-bold text-slate-300 flex items-center gap-1.5 mb-1">
+                            <i class="fa-solid ${icon}"></i>
+                            <span>${label}</span>
+                        </div>
+                        <div>${safeEscape(result.socraticHint)}</div>
+                    `;
+                }
+            } else {
+                if (hintBox) hintBox.classList.add('hidden');
+            }
+
+            // 4. Action Box (Unlock button when correct or permitted)
+            if (actionBox) {
+                if (canUnlock) {
+                    actionBox.innerHTML = `
+                        <button type="button" onclick="unlockCurrentVocab()" class="w-full py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
+                            <i class="fa-solid fa-unlock-keyhole text-amber-300"></i>
+                            <span>Unlock Full Vocab Card (+25 XP)</span>
+                        </button>
+                    `;
+                } else {
+                    actionBox.innerHTML = `
+                        <div class="text-[11px] text-slate-400 font-mono italic">
+                            💡 Try another guess above to unlock the full card.
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        async function submitVocabDiscoveryGuess() {
+            const vocab = vocabBank.find(v => v.id === currentActiveVocabId);
+            if (!vocab) return;
+
+            const guessInput = document.getElementById('input-vocab-discovery-guess');
+            const userGuess = (guessInput?.value || '').trim();
+
+            if (!userGuess) {
+                showToast("Please type your intuitive guess in English first.", "info");
+                if (guessInput) guessInput.focus();
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-discovery-guess');
+            const btnText = document.getElementById('btn-submit-discovery-text');
+            if (btn) btn.disabled = true;
+            if (btnText) btnText.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Checking...`;
+
+            try {
+                if (!vocab.discoveryChallenge) {
+                    vocab.discoveryChallenge = {
+                        targetWord: vocab.word,
+                        contexts: [],
+                        guesses: [],
+                        attemptsCount: 0,
+                        unlockedAt: null
+                    };
+                }
+
+                vocab.discoveryChallenge.attemptsCount = (vocab.discoveryChallenge.attemptsCount || 0) + 1;
+                const attemptsCount = vocab.discoveryChallenge.attemptsCount;
+
+                const result = await evaluateVocabDiscoveryGuess(vocab, userGuess, attemptsCount);
+
+                vocab.discoveryChallenge.guesses = vocab.discoveryChallenge.guesses || [];
+                vocab.discoveryChallenge.guesses.push({
+                    guess: userGuess,
+                    result: result,
+                    timestamp: Date.now()
+                });
+                vocab.discoveryChallenge.lastFeedback = result;
+                saveVocabBank();
+
+                renderVocabDiscoveryFeedback(result, attemptsCount);
+
+                if (result.semanticAccuracy === 'correct') {
+                    SoundFX.play('levelup');
+                } else if (result.semanticAccuracy === 'close') {
+                    SoundFX.play('click');
+                }
+
+            } catch (err) {
+                showToast("Error checking guess: " + err.message, "error");
+            } finally {
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.innerText = "Check Guess";
+            }
+        }
+
+        function unlockCurrentVocab() {
+            const vocab = vocabBank.find(v => v.id === currentActiveVocabId);
+            if (!vocab) return;
+
+            vocab.lockStatus = 'unlocked';
+            if (!vocab.discoveryChallenge) {
+                vocab.discoveryChallenge = {
+                    targetWord: vocab.word,
+                    contexts: [],
+                    guesses: [],
+                    attemptsCount: 0,
+                    unlockedAt: Date.now()
+                };
+            } else {
+                vocab.discoveryChallenge.unlockedAt = Date.now();
+            }
+            saveVocabBank();
+            addXP(25);
+            SoundFX.play('levelup');
+            triggerConfetti();
+            showToast(`Word "${vocab.word}" unlocked (+25 XP)!`, "success");
+
+            openVocabCard(vocab.id);
+            renderVocabBank();
+        }
+
+        function viewVocabDiscoveryChallenge() {
+            const vocab = vocabBank.find(v => v.id === currentActiveVocabId);
+            if (!vocab) return;
+
+            const lockedViewEl = document.getElementById('vocab-card-locked-view');
+            const unlockedViewEl = document.getElementById('vocab-card-unlocked-view');
+
+            if (lockedViewEl) lockedViewEl.classList.remove('hidden');
+            if (unlockedViewEl) unlockedViewEl.classList.add('hidden');
+
+            renderVocabDiscoveryView(vocab, true);
+        }
+
+        function returnToUnlockedVocabCard() {
+            const lockedViewEl = document.getElementById('vocab-card-locked-view');
+            const unlockedViewEl = document.getElementById('vocab-card-unlocked-view');
+
+            if (lockedViewEl) lockedViewEl.classList.add('hidden');
+            if (unlockedViewEl) unlockedViewEl.classList.remove('hidden');
+        }
+
+        // =========================================================================
+        // IeltsGo v6.0 — BULK VOCABULARY IMPORT & AUTONOMOUS BACKGROUND AI WORKER
+        // =========================================================================
+
+        let isVocabBatchWorkerRunning = false;
+
+        function openBulkVocabModal() {
+            SoundFX.play('click');
+            const modal = document.getElementById('modal-bulk-vocab');
+            const textarea = document.getElementById('textarea-bulk-vocab');
+            if (modal) modal.classList.remove('hidden');
+            if (textarea) {
+                textarea.value = '';
+                textarea.focus();
+            }
+            onBulkVocabInput();
+        }
+
+        function closeBulkVocabModal() {
+            const modal = document.getElementById('modal-bulk-vocab');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function parseBulkVocabInput(rawText) {
+            if (!rawText || typeof rawText !== 'string') return { newWords: [], existingWords: [] };
+
+            const linesOrCommas = rawText.split(/[\r\n,;]+/);
+            const candidateMap = new Map(); // cleanWord -> cleanWord
+
+            for (let raw of linesOrCommas) {
+                // Strip numbers/bullets like "1.", "1)", "-", "*", "•", "#", etc.
+                let token = raw.replace(/^[\s\d.\-*•#)]+/, '').trim();
+
+                // If user wrote "word - meaning" or "word : meaning", take only the word part
+                if (token.includes(' - ')) {
+                    token = token.split(' - ')[0].trim();
+                } else if (token.includes(' : ')) {
+                    token = token.split(' : ')[0].trim();
+                }
+
+                // Strip part of speech annotations like "(v.)", "[adj]", etc.
+                token = token.replace(/\s*[\(\[][a-zA-Z.]+[\)\]]/g, '').trim();
+
+                // Strip non-letter wrapper punctuation
+                token = token.replace(/^[^\w]+|[^\w]+$/g, '').trim();
+
+                if (token.length >= 2 && /^[a-zA-Z\s\-]+$/.test(token)) {
+                    const lower = token.toLowerCase();
+                    if (!candidateMap.has(lower)) {
+                        candidateMap.set(lower, token.toLowerCase());
+                    }
+                }
+            }
+
+            const existingWordsBank = new Set((vocabBank || []).map(v => (v.word || '').toLowerCase()));
+            const newWords = [];
+            const existingWords = [];
+
+            for (let [lower, word] of candidateMap.entries()) {
+                if (existingWordsBank.has(lower)) {
+                    existingWords.push(word);
+                } else {
+                    newWords.push(word);
+                }
+            }
+
+            return { newWords, existingWords };
+        }
+
+        function onBulkVocabInput() {
+            const textarea = document.getElementById('textarea-bulk-vocab');
+            const counterBadge = document.getElementById('bulk-vocab-counter-badge');
+            const summaryText = document.getElementById('bulk-vocab-summary-text');
+            const chipsList = document.getElementById('bulk-vocab-chips-list');
+            const submitBtn = document.getElementById('btn-submit-bulk-vocab');
+
+            const text = textarea ? textarea.value : '';
+            const { newWords, existingWords } = parseBulkVocabInput(text);
+            const totalDetected = newWords.length + existingWords.length;
+
+            if (counterBadge) {
+                counterBadge.innerText = `${newWords.length} kata baru terdeteksi`;
+                counterBadge.className = newWords.length > 0 
+                    ? "text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40 font-bold"
+                    : "text-[11px] px-2.5 py-0.5 rounded-full bg-slate-950 text-slate-400 border border-slate-800 font-bold";
+            }
+
+            if (summaryText) {
+                if (totalDetected === 0) {
+                    summaryText.innerText = "Ketik atau tempel teks di atas.";
+                    summaryText.className = "text-[10px] text-slate-400";
+                } else {
+                    summaryText.innerHTML = `<strong>${newWords.length}</strong> baru, <strong>${existingWords.length}</strong> sudah ada di bank.`;
+                    summaryText.className = "text-[10px] text-slate-300";
+                }
+            }
+
+            if (chipsList) {
+                if (totalDetected === 0) {
+                    chipsList.innerHTML = `<span class="text-xs text-slate-500 font-mono italic">Belum ada kata terdeteksi...</span>`;
+                } else {
+                    const newChips = newWords.map(w => 
+                        `<span class="px-2 py-0.5 rounded-md bg-emerald-950/70 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-semibold flex items-center gap-1"><i class="fa-solid fa-plus text-[9px] text-emerald-400"></i> ${safeEscape(w)}</span>`
+                    ).join('');
+
+                    const existingChips = existingWords.map(w => 
+                        `<span class="px-2 py-0.5 rounded-md bg-slate-900 text-slate-400 border border-slate-800 text-xs font-mono line-through flex items-center gap-1 opacity-70" title="Sudah ada di bank kosakata (akan dilewati)"><i class="fa-solid fa-check text-[9px]"></i> ${safeEscape(w)}</span>`
+                    ).join('');
+
+                    chipsList.innerHTML = newChips + existingChips;
+                }
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = (newWords.length === 0);
+            }
+        }
+
+        function submitBulkVocabWords() {
+            const textarea = document.getElementById('textarea-bulk-vocab');
+            const text = textarea ? textarea.value : '';
+            const { newWords } = parseBulkVocabInput(text);
+
+            if (newWords.length === 0) {
+                showToast("Tidak ada kata baru yang valid untuk dimasukkan.", "info");
+                return;
+            }
+
+            const now = Date.now();
+            const addedItems = [];
+
+            for (let i = 0; i < newWords.length; i++) {
+                const word = newWords[i];
+                const newItem = {
+                    id: 'vocab_' + (now + i) + '_' + Math.random().toString(36).substr(2, 4),
+                    word: word,
+                    pos: 'noun',
+                    cefr: 'B2',
+                    lockStatus: 'locked',
+                    enrichmentStatus: 'queued', // 'queued' | 'analyzing' | 'done'
+                    registerLevel: 'formal',
+                    registerLabel: 'Formal Akademik',
+                    ieltsSuitability: {
+                        status: 'both',
+                        badgeText: '🌐 Writing & Speaking OK',
+                        badgeColor: 'emerald',
+                        description: 'Aman dan direkomendasikan untuk IELTS Writing Task 2 dan Speaking.'
+                    },
+                    highYieldContext: null,
+                    registerTrapAlert: null,
+                    coreMeaningB1: 'AI sedang mendiagnosa arti B1 dan konteks...',
+                    meaningId: `Sedang menganalisis arti dan konteks untuk ${word}...`,
+                    meaningEn: `Analyzing Cambridge definition and IELTS context for ${word}...`,
+                    visualFlow: '💡 → 🧠 → 🗣️',
+                    mentalImageExplanation: `AI sedang menyiapkan analogi mental untuk ${word}...`,
+                    collocationMatrix: null,
+                    nuanceCompare: null,
+                    ieltsUpgrade: null,
+                    usageWarning: null,
+                    quickRecap: null,
+                    naturalExamples: [],
+                    indonesianGuide: word.toUpperCase(),
+                    example: `Context sentence for ${word} is being analyzed by AI.`,
+                    dailyExamples: [],
+                    synonyms: [],
+                    antonyms: [],
+                    ipa: '',
+                    discoveryChallenge: {
+                        targetWord: word,
+                        contexts: [],
+                        guesses: [],
+                        attemptsCount: 0,
+                        unlockedAt: null
+                    },
+                    dateAdded: now + i,
+                    srInterval: 1,
+                    srNextReview: now + (1 * 86400000),
+                    srReviewCount: 0,
+                    feynmanLevel: 0,
+                    feynmanStatus: 'unlearned',
+                    feynmanLastExplanation: '',
+                    feynmanLastSentence: '',
+                    feynmanFeedback: null,
+                    consecutiveMasteryCount: 0,
+                    status: 'learning'
+                };
+
+                vocabBank.unshift(newItem);
+                addedItems.push(newItem);
+            }
+
+            saveVocabBank();
+            closeBulkVocabModal();
+
+            // Reward base XP for batch import (+10 XP per word)
+            const totalXP = newWords.length * 10;
+            addXP(totalXP);
+            SoundFX.play('levelup');
+            triggerConfetti();
+            showToast(`🎉 ${newWords.length} kata berhasil masuk ke Vocab Bank (+${totalXP} XP)! AI Worker mulai memperkaya data di latar belakang.`, "success");
+
+            // Kick off background enrichment worker
+            processVocabEnrichmentQueue();
+        }
+
+        function updateBatchWorkerUI(completed, total, currentWord) {
+            const barEl = document.getElementById('vocab-batch-worker-bar');
+            if (!barEl) return;
+
+            if (total === 0 || completed >= total) {
+                const countEl = document.getElementById('vocab-batch-worker-count');
+                const progressEl = document.getElementById('vocab-batch-worker-progress');
+                const currentWordEl = document.getElementById('vocab-batch-worker-current-word');
+                if (countEl) countEl.innerText = `${total}/${total} kata (100%)`;
+                if (progressEl) progressEl.style.width = `100%`;
+                if (currentWordEl) currentWordEl.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Semua kata selesai diperkaya AI!</span>`;
+
+                setTimeout(() => {
+                    if (!isVocabBatchWorkerRunning) {
+                        barEl.classList.add('hidden');
+                    }
+                }, 2500);
+                return;
+            }
+
+            barEl.classList.remove('hidden');
+            const countEl = document.getElementById('vocab-batch-worker-count');
+            const progressEl = document.getElementById('vocab-batch-worker-progress');
+            const currentWordEl = document.getElementById('vocab-batch-worker-current-word');
+
+            const pct = Math.round((completed / total) * 100);
+            if (countEl) countEl.innerText = `${completed}/${total} kata (${pct}%)`;
+            if (progressEl) progressEl.style.width = `${pct}%`;
+            if (currentWordEl) {
+                currentWordEl.innerHTML = currentWord 
+                    ? `Sedang memproses: <strong class="text-indigo-200">"${safeEscape(currentWord)}"</strong>` 
+                    : `Menyiapkan antrean berikutnya...`;
+            }
+        }
+
+        async function processVocabEnrichmentQueue() {
+            if (isVocabBatchWorkerRunning) return;
+
+            // Find all items needing enrichment
+            const queuedItems = (vocabBank || []).filter(v => v && (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing'));
+            if (queuedItems.length === 0) {
+                updateBatchWorkerUI(0, 0, null);
+                return;
+            }
+
+            isVocabBatchWorkerRunning = true;
+            const totalCount = queuedItems.length;
+            let completedCount = 0;
+
+            updateBatchWorkerUI(completedCount, totalCount, queuedItems[0]?.word);
+
+            for (let i = 0; i < queuedItems.length; i++) {
+                const item = queuedItems[i];
+                // Live lookup from vocabBank in case user edited/deleted
+                const liveItem = vocabBank.find(v => v.id === item.id);
+                if (!liveItem) {
+                    completedCount++;
+                    continue;
+                }
+
+                liveItem.enrichmentStatus = 'analyzing';
+                saveVocabBank();
+                renderVocabBank();
+                updateBatchWorkerUI(completedCount, totalCount, liveItem.word);
+
+                // If currently open card in modal is this item, update its status view
+                if (currentActiveVocabId === liveItem.id) {
+                    openVocabCard(liveItem.id);
+                }
+
+                try {
+                    const analysis = await analyzeVocabWithAI(liveItem.word);
+                    if (analysis && !analysis.isNonEnglish) {
+                        liveItem.word = analysis.correctedWord || liveItem.word;
+                        liveItem.pos = analysis.pos || liveItem.pos || 'noun';
+                        liveItem.cefr = analysis.cefr || liveItem.cefr || 'B2';
+                        liveItem.registerLevel = analysis.registerLevel || liveItem.registerLevel || 'formal';
+                        liveItem.registerLabel = analysis.registerLabel || liveItem.registerLabel || 'Formal';
+                        liveItem.ieltsSuitability = analysis.ieltsSuitability || liveItem.ieltsSuitability;
+                        liveItem.highYieldContext = analysis.highYieldContext !== undefined ? analysis.highYieldContext : liveItem.highYieldContext;
+                        liveItem.registerTrapAlert = analysis.registerTrapAlert !== undefined ? analysis.registerTrapAlert : liveItem.registerTrapAlert;
+                        liveItem.coreMeaningB1 = analysis.coreMeaningB1 || analysis.meaningEn || liveItem.coreMeaningB1;
+                        liveItem.meaningId = analysis.meaningId || liveItem.meaningId;
+                        liveItem.meaningEn = analysis.meaningEn || liveItem.meaningEn;
+                        liveItem.visualFlow = analysis.visualFlow || liveItem.visualFlow || '💡 → 🧠 → 🗣️';
+                        liveItem.mentalImageExplanation = analysis.mentalImageExplanation || analysis.childExplanation || liveItem.mentalImageExplanation;
+                        liveItem.collocationMatrix = analysis.collocationMatrix || liveItem.collocationMatrix;
+                        liveItem.nuanceCompare = analysis.nuanceCompare !== undefined ? analysis.nuanceCompare : liveItem.nuanceCompare;
+                        liveItem.ieltsUpgrade = analysis.ieltsUpgrade !== undefined ? analysis.ieltsUpgrade : liveItem.ieltsUpgrade;
+                        liveItem.usageWarning = analysis.usageWarning !== undefined ? analysis.usageWarning : liveItem.usageWarning;
+                        liveItem.quickRecap = analysis.quickRecap || liveItem.quickRecap;
+                        liveItem.naturalExamples = analysis.naturalExamples || liveItem.naturalExamples;
+                        liveItem.indonesianGuide = analysis.indonesianGuide || `${liveItem.word.toUpperCase()}`;
+                        liveItem.example = analysis.example || liveItem.example;
+                        liveItem.dailyExamples = analysis.dailyExamples || [];
+                        liveItem.synonyms = analysis.synonyms || [];
+                        liveItem.antonyms = analysis.antonyms || [];
+                        liveItem.ipa = analysis.ipa || '';
+
+                        // Set 3 contrasting context sentences for the Padlock Protocol
+                        liveItem.discoveryChallenge = {
+                            targetWord: liveItem.word,
+                            contexts: (Array.isArray(analysis.discoveryContexts) && analysis.discoveryContexts.length === 3)
+                                ? analysis.discoveryContexts
+                                : [
+                                    { domain: "Daily / General", sentence: analysis.example || `The concept of ${liveItem.word} is central to everyday life.` },
+                                    { domain: "Society / Observation", sentence: (analysis.naturalExamples && analysis.naturalExamples[0]) || `Experts notice how ${liveItem.word} affects modern society.` },
+                                    { domain: "Professional / Academic", sentence: (analysis.naturalExamples && analysis.naturalExamples[1]) || `Research shows that ${liveItem.word} plays a significant role in outcomes.` }
+                                ],
+                            guesses: liveItem.discoveryChallenge?.guesses || [],
+                            attemptsCount: liveItem.discoveryChallenge?.attemptsCount || 0,
+                            unlockedAt: null
+                        };
+
+                        liveItem.enrichmentStatus = 'done';
+                    } else {
+                        liveItem.enrichmentStatus = 'done';
+                    }
+                } catch (err) {
+                    console.warn(`Error enriching ${liveItem.word}:`, err);
+                    liveItem.enrichmentStatus = 'done';
+                }
+
+                completedCount++;
+                saveVocabBank();
+                renderVocabBank();
+                updateBatchWorkerUI(completedCount, totalCount, queuedItems[i + 1]?.word);
+
+                // If currently open card in modal is this item, refresh it with full unlocked or locked view!
+                if (currentActiveVocabId === liveItem.id) {
+                    openVocabCard(liveItem.id);
+                }
+
+                // Throttle pause (1200ms) between calls to prevent rate limit
+                if (i < queuedItems.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1200));
+                }
+            }
+
+            isVocabBatchWorkerRunning = false;
+            updateBatchWorkerUI(totalCount, totalCount, null);
+            SoundFX.play('levelup');
+            showToast(`✨ Semua ${totalCount} kata berhasil diperkaya oleh AI Worker!`, "success");
         }
