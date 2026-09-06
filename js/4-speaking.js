@@ -290,7 +290,7 @@ Format in Markdown:
             }
 
             try {
-                let resText = await callGeminiAPI(userPrompt, systemPrompt);
+                let resText = await callGeminiAPI(userPrompt, systemPrompt, null, { feature: 'speaking_topic_gen' });
 
                 if (!resText) {
                     if (mode === 'part1') {
@@ -857,9 +857,18 @@ You should say:
                     target.cefr = analysis.cefr || target.cefr || 'B2';
                     target.meaningId = analysis.meaningId || target.meaningId;
                     target.meaningEn = analysis.meaningEn || target.meaningEn;
+                    target.coreMeaningB1 = analysis.coreMeaningB1 || analysis.meaningEn || target.coreMeaningB1;
+                    target.visualFlow = analysis.visualFlow || target.visualFlow || '💡 → 🧠 → 🗣️';
+                    target.mentalImageExplanation = analysis.mentalImageExplanation || analysis.childExplanation || target.mentalImageExplanation;
+                    target.childExplanation = analysis.mentalImageExplanation || analysis.childExplanation || target.childExplanation;
+                    target.collocationMatrix = analysis.collocationMatrix || target.collocationMatrix;
+                    target.nuanceCompare = analysis.nuanceCompare !== undefined ? analysis.nuanceCompare : target.nuanceCompare;
+                    target.ieltsUpgrade = analysis.ieltsUpgrade !== undefined ? analysis.ieltsUpgrade : target.ieltsUpgrade;
+                    target.usageWarning = analysis.usageWarning !== undefined ? analysis.usageWarning : target.usageWarning;
+                    target.quickRecap = analysis.quickRecap || target.quickRecap;
+                    target.naturalExamples = analysis.naturalExamples || target.naturalExamples;
                     target.indonesianGuide = analysis.indonesianGuide || target.indonesianGuide;
                     target.example = analysis.example || target.example;
-                    target.childExplanation = analysis.childExplanation || target.childExplanation || '';
                     target.dailyExamples = analysis.dailyExamples || target.dailyExamples || [];
                     target.synonyms = analysis.synonyms || target.synonyms || [];
                     target.ipa = analysis.ipa || target.ipa || '';
@@ -868,44 +877,8 @@ You should say:
                     saveVocabBank();
 
                     // If modal card is currently open for this vocab, live-update DOM
-                    if (currentActiveVocabId === vocabId) {
-                        const wordEl = document.getElementById('vocab-card-word');
-                        const posEl = document.getElementById('vocab-card-pos');
-                        const cefrEl = document.getElementById('vocab-card-cefr');
-                        const ipaEl = document.getElementById('vocab-card-ipa');
-                        const mIdEl = document.getElementById('vocab-card-meaning-id');
-                        const mEnEl = document.getElementById('vocab-card-meaning-en');
-                        const guideEl = document.getElementById('vocab-card-indonesian-guide');
-                        const exEl = document.getElementById('vocab-card-example');
-                        const childEl = document.getElementById('vocab-card-child-explanation');
-                        const dailyEl = document.getElementById('vocab-card-daily-examples');
-                        const synContainer = document.getElementById('vocab-card-synonyms');
-
-                        if (wordEl) wordEl.innerText = target.word;
-                        if (posEl) posEl.innerText = target.pos;
-                        if (cefrEl) {
-                            cefrEl.innerText = target.cefr;
-                            cefrEl.className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${(target.cefr || 'b2').toLowerCase()}`;
-                        }
-                        if (ipaEl) ipaEl.innerText = target.ipa || '';
-                        if (mIdEl) mIdEl.innerText = target.meaningId || '';
-                        if (mEnEl) mEnEl.innerText = target.meaningEn || '';
-                        if (guideEl) guideEl.innerText = target.indonesianGuide || '';
-                        if (exEl) exEl.innerText = target.example || '';
-                        if (childEl) childEl.innerText = target.childExplanation || '';
-                        if (dailyEl && target.dailyExamples && target.dailyExamples.length > 0) {
-                            dailyEl.innerHTML = target.dailyExamples.map((dex, i) => `
-                                <div class="flex items-start gap-2 bg-teal-950/20 p-2 rounded-lg border border-teal-500/20">
-                                    <span class="text-[10px] font-mono text-teal-400 font-bold mt-0.5">${i+1}.</span>
-                                    <span class="text-xs text-teal-100">${dex}</span>
-                                </div>
-                            `).join('');
-                        }
-                        if (synContainer) {
-                            if (target.synonyms && target.synonyms.length > 0) {
-                                synContainer.innerHTML = target.synonyms.map(s => `<span class="text-xs font-mono bg-slate-950 text-indigo-300 px-2.5 py-1 rounded-lg border border-slate-800">${s}</span>`).join('');
-                            }
-                        }
+                    if (currentActiveVocabId === vocabId && typeof openVocabCard === 'function') {
+                        openVocabCard(vocabId);
                     }
                 }
             } catch (err) {
@@ -969,7 +942,7 @@ You should say:
                 if (!trimmed) return;
 
                 // Check if this is the Hero Score section
-                if (trimmed.includes('Skor Pelafalan') || trimmed.includes('Skor Resmi IELTS') || trimmed.includes('Official IELTS Speaking Band Score')) {
+                if (trimmed.includes('Skor Pelafalan') || trimmed.includes('Skor Resmi IELTS') || trimmed.includes('Official IELTS Speaking Band Score') || trimmed.includes('Pronunciation & Fluency Score')) {
                     const cardBorder = isRejected ? 'border-red-500/60 bg-red-950/20' : 'border-rose-500/40';
                     bandScoreHtml = `
                         ${rejectionBannerHtml}
@@ -996,15 +969,15 @@ You should say:
                 let bgClass = 'bg-slate-900/60';
                 let titleColor = 'text-slate-200';
 
-                if (title.includes('Transkripsi')) {
+                if (title.includes('Transkripsi') || title.includes('Transcription')) {
                     iconClass = 'fa-solid fa-microphone-lines text-sky-400';
                     borderClass = 'border-sky-500/30';
                     titleColor = 'text-sky-300';
-                } else if (title.includes('Struktur Kalimat') || title.includes('Tata Bahasa')) {
+                } else if (title.includes('Struktur Kalimat') || title.includes('Tata Bahasa') || title.includes('Spoken Grammar') || title.includes('Sentence Structure')) {
                     iconClass = 'fa-solid fa-code-compare text-emerald-400';
                     borderClass = 'border-emerald-500/30';
                     titleColor = 'text-emerald-300';
-                } else if (title.includes('Transformasi') || title.includes('Band 7.5') || title.includes('Bedah Kosakata')) {
+                } else if (title.includes('Transformasi') || title.includes('Band 7.5') || title.includes('Bedah Kosakata') || title.includes('Model Upgrade')) {
                     iconClass = 'fa-solid fa-rocket text-amber-400';
                     borderClass = 'border-amber-500/30';
                     titleColor = 'text-amber-300';
@@ -1016,7 +989,7 @@ You should say:
                     iconClass = 'fa-solid fa-star text-amber-400';
                     borderClass = 'border-amber-500/30';
                     titleColor = 'text-amber-300';
-                } else if (title.includes('Salah') || title.includes('Mispronounced') || title.includes('Fonetik') || title.includes('Lidah Indonesia')) {
+                } else if (title.includes('Salah') || title.includes('Mispronounced') || title.includes('Fonetik') || title.includes('Lidah Indonesia') || title.includes('Phonetic Breakdown') || title.includes('Pronunciation Tips')) {
                     iconClass = 'fa-solid fa-triangle-exclamation text-rose-400';
                     borderClass = 'border-rose-500/30';
                     titleColor = 'text-rose-300';
@@ -1255,98 +1228,100 @@ Jelaskan bahwa suara tidak terdengar jelas, dan STOP evaluasi.
   * Berikan PADANAN KATA INGGRIS SIMPEL: Bandingkan bunyi sulit dengan kata bahasa Inggris yang sangat umum (misal: bunyi vokal sama seperti di kata 'it' atau 'sit', bukan seperti 'ee' di 'eat').
 - Audit Akhiran: Periksa apakah akhiran +s/-es (/s/, /z/, /ɪz/) dan +ed (/t/, /d/, /ɪd/) terdengar jelas atau tertelan.
 
-WAJIB FORMAT OUTPUT DALAM STRUKTUR MARKDOWN BERIKUT:
+All diagnostic commentary, explanations, and advice MUST be written in clear, accessible, friendly B1-level English.
 
-# 📊 Skor Pelafalan & Kelancaran
-**[Skor dibulatkan ke kelipatan 5]%** — [1 kalimat padat ringkasan pencapaian]
-- **Target Aksen**: ${targetAccentName}
-- **Kesesuaian Aksen Terdengar**: [Review jujur apakah sudah mendekati target aksen atau masih kental ritme suku kata bahasa ibu Indonesia]
+MANDATORY MARKDOWN OUTPUT STRUCTURE:
 
-# 📝 Transkripsi Audio Anda
-"[Tuliskan kata demi kata persis apa yang Anda dengar langsung dari rekaman audio kandidat]"
+# 📊 Pronunciation & Fluency Score
+**[Score rounded to multiple of 5]%** — [1 concise sentence in B1 English summarizing performance]
+- **Target Accent**: ${targetAccentName}
+- **Accent Match Assessment**: [Honest B1 English review of vowel articulation and rhythm compared to target accent]
 
-# 🔍 Struktur Kalimat & Koreksi Tata Bahasa Lisan
-- **Kejelasan Struktur**: [Apakah ide kalimat tersampaikan dengan struktur yang jelas, atau masih rancu/terbata-bata?]
-- **Koreksi Tata Bahasa**:
-  * ❌ *"[Bagian kalimat asli yang salah/kurang pas]"*
-  * 💡 *"[Koreksi tata bahasa baku]"* — [Jelaskan aturan grammar yang dilanggar secara sederhana]
+# 📝 Audio Transcription
+"[Write word-for-word exactly what was heard from the candidate's audio recording]"
 
-# 🚀 Transformasi Kalimat Band 7.5+ & Bedah Kosakata
-- **Model Kalimat IELTS Band 7.5+**:
-  "[Tuliskan 1-2 kalimat model Band 7.5+ yang merekonstruksi ide kandidat. Sisipkan 1-3 kosakata level C1/C2 dan tandai dengan [VOCAB: kata]]"
+# 🔍 Spoken Grammar & Sentence Structure Feedback
+- **Structural Clarity**: [Comment in simple B1 English on whether the sentence flow was clear or fragmented]
+- **Grammar Corrections**:
+  * ❌ *"[Part of original sentence with error]"*
+  * 💡 *"[Grammatically accurate standard correction]"* — [Explain the rule simply in B1 English]
 
-- **Bedah Perubahan: Kenapa Diganti Begitu?**:
-  * 1️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti, misal: tenses lampau, register akademik, atau kolokasi alami]
-  * 2️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti]
-  * 3️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti]
+# 🚀 Band 7.5+ Model Upgrade & Vocabulary
+- **Band 7.5+ Model Upgrade**:
+  "[Write 1-2 exemplary Band 7.5+ sentences reconstructing the candidate's thought. Insert 1-3 C1/C2 words marked with [VOCAB: word]]"
 
-- **Kosakata Baru yang Disarankan**:
-  * [VOCAB: kata1] = [arti ringkas bahasa Indonesia]
-  * [VOCAB: kata2] = [arti ringkas bahasa Indonesia]
+- **Why We Upgraded It (Change Breakdown)**:
+  * 1️⃣ **[Original Phrase] ➔ [Upgraded Phrase]**: [Concrete explanation in simple B1 English, e.g. past tense, formal register, or native collocation]
+  * 2️⃣ **[Original Phrase] ➔ [Upgraded Phrase]**: [Concrete explanation in simple B1 English]
+  * 3️⃣ **[Original Phrase] ➔ [Upgraded Phrase]**: [Concrete explanation in simple B1 English]
 
-# 🔊 Bedah Pengucapan & Kata yang Kurang Tepat
-(Maksimal 3 kata paling krusial yang salah atau terdistorsi di rekaman. Jika pelafalan sudah sangat baik >=90%, tulis 'Pelafalan kata-kata kunci sudah sangat bersih dan jelas!'):
-- ❌ **"[Kata Salah]"**
-  - 👂 **Kamu Mengucapkan**: "[Bunyi keliru yang keluar]"
-  - 🗣️ **Cara Baca Lidah Indonesia**: **"[Transliterasi suku kata KAPITAL STRESS, misal: ar-TI-kyu-leit ↘]"**
-  - 🔍 **Padanan Kata Inggris Simpel**: [Sebutkan 1 kata Inggris umum yang punya bunyi vokal/konsonan sama persis, misal: bunyi 'i' sama seperti di kata 'it', bukan 'eat']
-  - 💡 **Panduan Posisi Mulut**: [Bukaan rahang dan posisi lidah konkret]
+- **New Vocabulary to Learn**:
+  * [VOCAB: word1] = [simple B1 English definition]
+  * [VOCAB: word2] = [simple B1 English definition]
 
-# 🛑 Audit Akhiran +S/-ES & +ED
-- **Akhiran +S/-ES**: [Apakah desis /s/, /z/, /ɪz/ terdengar tajam atau tertelan?]
-- **Akhiran +ED**: [Apakah letupan /t/, /d/, /ɪd/ terdengar jelas atau tertelan?]
-- 🗣️ **Drill Kilat**: [1 frasa pendek latihan]`;
+# 🔊 Phonetic Breakdown & Pronunciation Tips
+(Up to 3 most important words that were mispronounced. If pronunciation was >=90%, write 'Pronunciation of key words was very clear and accurate!'):
+- ❌ **"[Mispronounced Word]"**
+  - 👂 **What You Said**: "[How it sounded]"
+  - 🗣️ **Phonetic Breakdown**: **"[Syllable breakdown with CAPITAL stress, e.g. ar-TI-cu-late ↘]"**
+  - 🔍 **Simple English Word Match**: [Name 1 very common English word with the exact same sound, e.g. "short 'i' sound is identical to 'it', not 'eat'"]
+  - 💡 **Mouth & Tongue Position**: [Simple physical cue, e.g. "Relax your jaw and widen your smile slightly"]
+
+# 🛑 Word Endings Audit (-S/-ES & -ED)
+- **-S/-ES Endings**: [Whether /s/, /z/, /ɪz/ sounds were audible or dropped]
+- **-ED Endings**: [Whether /t/, /d/, /ɪd/ sounds were audible or dropped]
+- 🗣️ **Quick Speed Drill**: [1 short practice phrase]`;
 
             try {
-                const userQuery = `Halo AI Examiner, tolong dengarkan rekaman audio saya secara langsung. Berikan skor persentase kelipatan 5, review kesesuaian aksen ${targetAccentName}, transkripsi ucapan saya, cek struktur kalimat lisan dan koreksinya, model upgrade IELTS Band 7.5+ lengkap dengan penjelasan kenapa diganti begitu serta penanda [VOCAB: kata], dan bedah pengucapan kata yang salah dengan cara baca lidah Indonesia dan padanan kata simpel.`;
-                let evalResponse = await callGeminiAPI(userQuery, systemPrompt, audioBlob);
+                const userQuery = `Hello Examiner, please listen to my voice recording directly. Evaluate my speaking in clear, accessible B1 English. Provide a score rounded to the nearest 5%, review my accent accuracy for ${targetAccentName}, transcribe what I said, check spoken grammar and structure, provide a Band 7.5+ upgraded version with [VOCAB: word] tags explaining why each change was made, and break down any mispronounced words with simple English word matches and easy pronunciation tips in simple B1 English.`;
+                let evalResponse = await callGeminiAPI(userQuery, systemPrompt, audioBlob, { feature: 'speaking_examiner' });
 
                 if (!evalResponse) {
                     evalResponse = `
-# 📊 Skor Pelafalan & Kelancaran
-**75%** — Pelafalan cukup jelas dan komunikatif, namun memerlukan pemolesan pada akhiran kata dan pemilihan kosakata formal.
-- **Target Aksen**: ${targetAccentName}
-- **Kesesuaian Aksen Terdengar**: Artikulasi vokal cukup baik, namun irama suku kata masih cenderung datar ala penutur bahasa Indonesia.
+# 📊 Pronunciation & Fluency Score
+**75%** — Delivery is generally clear and communicative, but word endings and vocabulary register need polish.
+- **Target Accent**: ${targetAccentName}
+- **Accent Match**: Clear vowel articulation, but rhythm has occasional flat syllable timing.
 
-# 📝 Transkripsi Audio Anda
+# 📝 Your Spoken Audio Transcript
 "${activePromptText ? activePromptText.slice(0, 100) : 'I live in a small coastal city and the local park is very peaceful.'}"
 
-# 🔍 Struktur Kalimat & Koreksi Tata Bahasa Lisan
-- **Kejelasan Struktur**: Ide kalimat tersampaikan dengan baik, tetapi pilihan verba dan tenses masih bisa diperhalus.
-- **Koreksi Tata Bahasa**:
+# 🔍 Sentence Structure & Spoken Grammar Audit
+- **Structure Clarity**: Main ideas are communicated clearly, but verb tense and articles can be refined.
+- **Grammar Correction**:
   * ❌ *"I live in small coastal city"*
-  * 💡 *"I reside in a coastal community"* — Tambahkan artikel 'a' sebelum kata benda tunggal dan gunakan kata kerja yang lebih elegan.
+  * 💡 *"I reside in a coastal community"* — Add article 'a' before singular countable noun and use a more formal verb.
 
-# 🚀 Transformasi Kalimat Band 7.5+ & Bedah Kosakata
-- **Model Kalimat IELTS Band 7.5+**:
+# 🚀 Band 7.5+ Transformation & Lexical Upgrade
+- **Band 7.5+ IELTS Model Sentence**:
   "I currently [VOCAB: reside] in a [VOCAB: tranquil] coastal district where local residents frequently [VOCAB: unwind] in the park."
 
-- **Bedah Perubahan: Kenapa Diganti Begitu?**:
-  (1) Kata 'live' diganti dengan [VOCAB: reside] agar terdengar lebih formal dan bernilai akademik tinggi.
-  (2) Kata 'peaceful' diganti dengan [VOCAB: tranquil] karena memberikan nuansa ketenangan yang lebih kaya dan deskriptif.
-  (3) Frasa 'spend time' diganti dengan [VOCAB: unwind] untuk menunjukkan kemampuan menggunakan idiom santai namun berkelas tinggi.
+- **Why It Was Upgraded**:
+  (1) Replaced 'live' with [VOCAB: reside] for a more formal academic register.
+  (2) Replaced 'peaceful' with [VOCAB: tranquil] to provide richer, more descriptive vocabulary.
+  (3) Replaced 'spend time' with [VOCAB: unwind] to demonstrate natural idiomatic flexibility.
 
-- **Kosakata Baru yang Disarankan**:
-  - **reside** (verb): bertempat tinggal (formal)
-  - **tranquil** (adjective): tenang, damai, tenteram
-  - **unwind** (verb): melepaskan penat, bersantai
+- **Suggested Vocabulary**:
+  - **reside** (verb): to live in a particular place (formal)
+  - **tranquil** (adjective): calm, peaceful, and quiet
+  - **unwind** (verb): to relax after a period of work or tension
 
-# 🔊 Bedah Pengucapan & Kata yang Kurang Tepat
+# 🔊 Pronunciation & Mispronounced Words Breakdown
 - ❌ **"Peaceful"**
-  - 👂 **Kamu Mengucapkan**: "pes-ful"
-  - 🗣️ **Cara Baca Lidah Indonesia**: **"PII-s-ful ↘"**
-  - 🔍 **Padanan Kata Inggris Simpel**: Bunyi vokal 'ee' panjang sama persis seperti di kata 'see' atau 'tree', bukan seperti 'pet'.
-  - 💡 **Panduan Posisi Mulut**: Tarik sudut bibir ke samping seperti sedang tersenyum saat mengucap 'PII'.
+  - 👂 **You Said**: "pes-ful"
+  - 🗣️ **Phonetic Guide**: **"PII-s-ful ↘"**
+  - 🔍 **Simple English Word Matches**: The long 'ee' vowel sound is identical to 'see' or 'tree', not like 'pet'.
+  - 💡 **Mouth Position Tip**: Pull the corners of your lips slightly back as if smiling when saying 'PII'.
 - ❌ **"Residents"**
-  - 👂 **Kamu Mengucapkan**: "re-si-den"
-  - 🗣️ **Cara Baca Lidah Indonesia**: **"RE-zi-dents ↘"**
-  - 🔍 **Padanan Kata Inggris Simpel**: Bunyi huruf 's' tengah bergetar seperti suara lebah /z/ pada kata 'buzz'.
-  - 💡 **Panduan Posisi Mulut**: Getarkan pita suara saat mengucapkan 'zi' dan letupkan akhiran '-nts'.
+  - 👂 **You Said**: "re-si-den"
+  - 🗣️ **Phonetic Guide**: **"RE-zi-dents ↘"**
+  - 🔍 **Simple English Word Matches**: The middle 's' sounds like the buzzing /z/ in 'buzz'.
+  - 💡 **Mouth Position Tip**: Vibrate your vocal cords on 'zi' and make sure the final '-nts' cluster is audible.
 
-# 🛑 Audit Akhiran +S/-ES & +ED
-- **Akhiran +S/-ES**: Akhiran /s/ pada kata 'residents' dan 'parks' terdengar agak tertelan. Pastikan ada desis tajam di balik gigi depan.
-- **Akhiran +ED**: Relatif aman pada rekaman ini.
-- 🗣️ **Drill Kilat**: *"The resident**s** /s/ enjoy tranquil park**s** /s/."*
+# 🛑 Word Endings Audit (-S/-ES & -ED)
+- **-S/-ES Endings**: Terminal /s/ in 'residents' and 'parks' was slightly dropped. Make sure there is a clear hiss behind the front teeth.
+- **-ED Endings**: Well articulated in this recording.
+- 🗣️ **Quick Speed Drill**: *"The resident**s** /s/ enjoy tranquil park**s** /s/."*
 `;
                 }
 

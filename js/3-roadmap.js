@@ -257,27 +257,27 @@ Required Concept / Task: "${stagePromptData.writingPrompt || s.desc}".
   * Assign Band 6.5 - 7.5+.
   * You MUST write: '# 🚦 VERDICT: PASSED'
 
-YOUR RESPONSE MUST FOLLOW THIS EXACT STRUCTURE IN MARKDOWN (BAHASA INDONESIA):
+YOUR RESPONSE MUST FOLLOW THIS EXACT STRUCTURE IN MARKDOWN (CLEAR B1 ENGLISH):
 
 # 🚦 VERDICT: [PASSED or FAILED]
 
 # 📊 Estimated Band Score: Band [X.X]
 
-# 🔍 Analisis Kesalahan & Diagnosa L1 (Bahasa Indonesia Transfer)
-- **Akurasi Konsep Stage**: [Penjelasan apakah konsep target diterapkan dengan benar]
-- **Glitch & Kesalahan Tata Bahasa**: [Jelaskan secara spesifik kesalahan yang ditemukan atau tulis "Nol glitch terdeteksi"]
-- **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: [Jelaskan kebiasaan bahasa Indonesia mana yang memicu kesalahan ini, misal: menerjemahkan kata per kata, ketiadaan konjugasi '-s', atau ketiadaan tenses di bahasa ibu]
-- **Peningkatan Register Akademik**: [Saran kolokasi C1/C2 dan nominalization]
+# 🔍 Grammar Diagnostic & Feedback
+- **Stage Concept Accuracy**: [Explain in simple B1 English whether the target concept was applied correctly]
+- **Detected Glitches & Grammar Errors**: [Explain the specific grammar mistakes found, or write "Zero glitches detected"]
+- **Why This Mistake Happens**: [Explain simply in clear B1 English why learners make this mistake]
+- **Academic Register & Vocabulary**: [Simple suggestions for formal words and collocations]
 
-# 🛠️ Model Kalimat Perbaikan Band 7.5+ & Bedah Formula
-- **Model Kalimat Upgrade (Band 7.5+)**: [Tuliskan model kalimat versi Band 7.5+ yang ideal dan mengalir alami]
-- **Bedah Formula Sintaksis**: [Tuliskan rumus struktur kalimatnya, misal: 'Given that + [Noun Phrase], [Subject] + [Band 8 Verb Collocation] + [Object]']
+# 🛠️ Band 7.5+ Sentence Upgrade & Formula Breakdown
+- **Band 7.5+ Model Upgrade**: [Write an ideal, naturally flowing Band 7.5+ version of the sentence]
+- **Sentence Formula Breakdown**: [Provide the structural formula, e.g., 'Given that + [Noun Phrase], [Subject] + [Band 7.5 Verb] + [Object]']
 
-# 📚 Rekomendasi Belajar
-[Materi atau aturan grammar spesifik yang harus diperbaiki sebelum mencoba lagi]`;
+# 📚 Actionable Study Recommendations
+[1-2 clear, practical study tips on what to practice before trying again]`;
 
                 try {
-                    let aiResponse = await callGeminiAPI(`Stage: ${s.title}\nConcept Focus: ${stagePromptData.writingHint || s.desc}\nCandidate Sentence: "${userSentence}"`, systemPrompt);
+                    let aiResponse = await callGeminiAPI(`Stage: ${s.title}\nConcept Focus: ${stagePromptData.writingHint || s.desc}\nCandidate Sentence: "${userSentence}"`, systemPrompt, null, { feature: 'stage_quest' });
 
                     if (!aiResponse) {
                         // Strict offline intelligent heuristic analyzer fallback
@@ -590,25 +590,25 @@ Candidate writing task prompt:
   * Capped strictly at Band 5.5.
 - Only award Band 7.0+ if the paragraph demonstrates precise complex subordination, academic collocations, and seamless coherence.
 
-You MUST evaluate the candidate's paragraph and return a clear, structured diagnostic report in Markdown using EXACTLY these headings in Bahasa Indonesia:
+You MUST evaluate the candidate's paragraph and return a clear, structured diagnostic report in Markdown using EXACTLY these headings in clear, accessible B1 English:
 
 # 📊 Phase Band Score Estimate
 State the estimated IELTS Writing Band Score for this submission (e.g. **Band 5.5 (Needs Structural Upgrade)** or **Band 7.5 (Mastered)**).
 
-# ✅ Keunggulan Grammar yang Diterapkan (Strengths)
-List the specific grammar concepts from this phase that the candidate applied correctly and naturally. If none, write "Belum ada keunggulan dominan".
+# ✅ Your Key Grammar Strengths
+List the specific grammar concepts from this phase that the candidate applied correctly and naturally in simple B1 English.
 
-# ⚠️ Kelemahan & Diagnosa L1 Glitches (Weaknesses & Indonesian Bias)
-Identify grammar errors and explain the L1 Indonesian root habit behind them (e.g., "Glitches pada Stage 1-2: Missing Be Anchor karena bahasa Indonesia tidak mewajibkan to-be sebelum kata sifat"). Explicitly mention which Stage concept was missed.
+# ⚠️ Areas for Improvement & Detected Glitches
+Identify grammar mistakes and explain why they happen in simple B1 English. Explicitly mention which Stage concept was missed.
 
-# 🔄 Remediation Plan (Stage yang Wajib Diulang)
-Provide specific stage recommendations. Mention the exact stage IDs (e.g. stage1-1, stage1-2, stage2-3) that need revision. If all are flawless, state "Semua stage di fase ini telah dikuasai dengan sempurna!".
+# 🔄 Recommended Stages to Review
+Provide specific stage recommendations. Mention the exact stage IDs (e.g. stage1-1, stage1-2, stage2-3) that need revision. If all are mastered, state "All stages in this phase have been mastered flawlessly!".
 
-# 🚀 Model Paragraf Band 7.5+ & Bedah Formula
+# 🚀 Band 7.5+ Model Paragraph & Formula Breakdown
 Provide an exemplary Band 7.5+ model paragraph demonstrating all phase skills flawlessly, accompanied by a 2-point formula breakdown explaining why it scores Band 7.5+.`;
 
             try {
-                let aiResponse = await callGeminiAPI(`Prompt: ${data.essayPrompt}\n\nCandidate Paragraph:\n${essayText}`, systemPrompt);
+                let aiResponse = await callGeminiAPI(`Prompt: ${data.essayPrompt}\n\nCandidate Paragraph:\n${essayText}`, systemPrompt, null, { feature: 'mini_boss' });
 
                 if (!aiResponse) {
                     aiResponse = `
@@ -904,32 +904,32 @@ Perbaiki kalimat Anda berdasarkan panduan perbaikan di atas, lalu klik tombol Uj
         function generateOfflineGlitchAnalysis(sentence) {
             const input = sentence ? sentence.trim() : '';
             return `
-# 💡 1. WHY (Mengapa Konsep Ini Krusial di IELTS)
-Konsep tata bahasa ini sangat krusial untuk memastikan kalimat Anda dinilai objektif dan presisi oleh penguji IELTS. Kesalahan pada kesesuaian subjek-verba atau pasangan konjungsi langsung membatasi skor Grammatical Range & Accuracy (GRA) di batas maksimal Band 5.5.
+# 💡 1. WHY (Why This Concept Matters in IELTS)
+This grammatical concept is crucial to ensure your sentence is scored high for accuracy and clarity by the IELTS examiner. Errors in subject-verb agreement or conjunction pairs immediately cap your Grammatical Range & Accuracy (GRA) score at Band 5.5.
 
-# ⚙️ 2. HOW (Mekanisme Teknis & Aturan Baku)
-Setiap klausa independen wajib memiliki subjek dan verba aktif/pasif yang utuh. Bila menggunakan kata hubung subordinatif (*although, since, while*), jangan pernah memasangkan konjungsi koordinatif (*but, so*) di klausa utama untuk menghindari tabrakan gramatikal.
+# ⚙️ 2. HOW (Rules & Sentence Mechanics)
+Every independent clause must have a clear subject and complete verb. When using a subordinating conjunction (*although, since, while*), never place a coordinating conjunction (*but, so*) in the main clause to avoid a double conjunction clash.
 
-# 🎨 3. ANALOGI INTUITIF (Mental Model Dunia Nyata)
-**Satu Sakelar Lampu**: Menyalakan lampu hanya butuh satu sakelar yang terpasang di jalur kabel utama. Memasang dua sakelar yang saling memotong justru memicu korsleting listrik yang memutus arus.
+# 🎨 3. INTUITIVE ANALOGY (Real-World Mental Model)
+**One Light Switch**: Turning on a light only requires one switch on the main wire. Adding a second conflicting switch causes an electrical short circuit that cuts off the power.
 
-# 🐛 4. DIAGNOSIS FORENSIK GLITCH & L1 TRANSFER
-- **Glitch yang Terdeteksi**: Kalimat input mengandung kelemahan register informal atau struktur klausa yang belum seimbang ("${input.slice(0, 70)}...").
-- **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: Kecenderungan menerjemahkan pola bahasa lisan sehari-hari secara harafiah (*word-for-word translation*) tanpa mengikat tensis dan kolokasi akademik.
-- **Versi Upgrade Band 7.5+**:
+# 🐛 4. GLITCH DIAGNOSIS & NATIVE INTERFERENCE
+- **Detected Glitch**: The input sentence contains informal register or unbalanced clause structure ("${input.slice(0, 70)}...").
+- **Root Cause (Native Language Interference)**: A tendency to translate spoken word-for-word patterns without matching academic tenses and collocations.
+- **Band 7.5+ Upgraded Version**:
   > "Without fail, diligent candidates must [VOCAB: prioritize] their core competencies to [VOCAB: attain] distinguished academic outcomes."
-- **Bedah Perubahan: Kenapa Diganti Begitu?**:
-  * 1️⃣ **"Pola Kalimat Asli" ➔ "Without fail, candidates must..."**: Memperkuat adverbial stance di awal kalimat untuk memberikan penekanan formal yang alami bagi pembaca akademik.
-  * 2️⃣ **"Kosakata Umum" ➔ "[VOCAB: prioritize] ... [VOCAB: attain]"**: Menggantikan kata kerja sehari-hari menjadi pasangan kolokasi presisi tinggi standar C1/C2 IELTS.
-- **Kosakata Baru yang Disarankan**:
-  * [VOCAB: prioritize] = memprioritaskan / mengutamakan hal penting
-  * [VOCAB: attain] = mencapai / meraih hasil setelah usaha keras
-- **Bedah Formula Kalimat**:
+- **Why It Was Changed**:
+  * 1️⃣ **Original Pattern ➔ "Without fail, candidates must..."**: Strengthens adverbial stance at the beginning of the sentence to give a natural, formal academic tone.
+  * 2️⃣ **Common Vocabulary ➔ "[VOCAB: prioritize] ... [VOCAB: attain]"**: Upgrades everyday verbs into high-precision C1/C2 IELTS collocations.
+- **Suggested New Vocabulary**:
+  * [VOCAB: prioritize] = decide which things are most important
+  * [VOCAB: attain] = succeed in getting or achieving something after hard work
+- **Sentence Formula Blueprint**:
   [Adverbial Phrase of Certainty] + [Subject] + [Modal Auxiliary] + [Transitive Verb] + [Direct Object] + [Infinitive of Purpose]
 
-# 🚀 5. LATIHAN & RETRIEVAL DRILL AKTIF
-1. Perbaiki kesalahan subordinasi ganda berikut: "Although governments invest in public transit, but traffic congestion remains high."
-2. Transformasikan kalimat ini ke register akademik Band 7.5+: "Young people need to managing their savings well."
+# 🚀 5. ACTIVE RETRIEVAL PRACTICE
+1. Correct the double subordination error: "Although governments invest in public transit, but traffic congestion remains high."
+2. Transform this sentence into Band 7.5+ academic register: "Young people need to managing their savings well."
 `;
         }
 
@@ -993,11 +993,69 @@ Setiap klausa independen wajib memiliki subjek dan verba aktif/pasif yang utuh. 
             });
         }
 
-        // API Call to Gemini Engine with User's Configured Key & Model (Default: gemini-3.7-flash)
-        // Supports Text + Direct Native Multimodal Audio (Base64 Inline Data)
-        async function callGeminiAPI(userQuery, systemPrompt, audioBlob = null) {
+        // Feature Registry for Dynamic Thinking & Generation Configuration
+        const GEMINI_FEATURE_CONFIG = {
+            // Fitur MEDIUM (High reasoning & academic diagnostic)
+            'boss_arena':          { level: 'MEDIUM', budget25: 2048, temp: 0.2, maxTokens: 4096 },
+            'glitch_lab':          { level: 'MEDIUM', budget25: 2048, temp: 0.2, maxTokens: 4096 },
+            'mini_boss':           { level: 'MEDIUM', budget25: 2048, temp: 0.2, maxTokens: 3500 },
+            'speaking_examiner':   { level: 'MEDIUM', budget25: 2048, temp: 0.2, maxTokens: 4096 },
+            'synthesis_transform': { level: 'MEDIUM', budget25: 2048, temp: 0.3, maxTokens: 4096 },
+            'synthesis_insights':  { level: 'MEDIUM', budget25: 2048, temp: 0.2, maxTokens: 3500 },
+            'synthesis_speak1':    { level: 'MEDIUM', budget25: 2048, temp: 0.2, maxTokens: 3500 },
+            'synthesis_speak2':    { level: 'MEDIUM', budget25: 2048, temp: 0.2, maxTokens: 3500 },
+            'feynman_recall':      { level: 'MEDIUM', budget25: 2048, temp: 0.3, maxTokens: 3000 },
+
+            // Fitur LOW (Fast latency, pattern matching, responsive quizzes)
+            'pron_coach':          { level: 'LOW', budget25: 1024, temp: 0.1, maxTokens: 2048 },
+            'handwriting_ocr':     { level: 'LOW', budget25: 0,    temp: 0.1, maxTokens: 2048 },
+            'vocab_dict':          { level: 'LOW', budget25: 1024, temp: 0.2, maxTokens: 2048 },
+            'stage_quest':         { level: 'LOW', budget25: 1024, temp: 0.2, maxTokens: 2048 },
+            'glitch_drill':        { level: 'LOW', budget25: 1024, temp: 0.2, maxTokens: 1500 },
+            'fast_track_eval':     { level: 'LOW', budget25: 1024, temp: 0.2, maxTokens: 1500 },
+            'srs_drill':           { level: 'LOW', budget25: 0,    temp: 0.1, maxTokens: 1500 },
+            'affirmation_voice':   { level: 'LOW', budget25: 1024, temp: 0.3, maxTokens: 1500 },
+            'speaking_topic_gen':  { level: 'LOW', budget25: 1024, temp: 0.5, maxTokens: 1500 },
+            'fast_track_gen':      { level: 'LOW', budget25: 1024, temp: 0.5, maxTokens: 1024 },
+            'affirmation_gen':     { level: 'LOW', budget25: 1024, temp: 0.6, maxTokens: 1024 }
+        };
+
+        function buildGeminiGenerationConfig(model, featureKey, options = {}) {
+            const userGlobalThinking = localStorage.getItem('ielts_gemini_thinking_mode') || 'medium';
+            const cfg = GEMINI_FEATURE_CONFIG[featureKey] || { level: 'MEDIUM', budget25: 2048, temp: 0.2, maxTokens: 3000 };
+
+            const temp = (typeof options.temperature === 'number') ? options.temperature : cfg.temp;
+            const maxTokens = (typeof options.maxOutputTokens === 'number') ? options.maxOutputTokens : cfg.maxTokens;
+
+            const effectiveLevel = userGlobalThinking === 'low' ? 'LOW' : cfg.level;
+
+            const genConfig = {
+                temperature: temp,
+                maxOutputTokens: maxTokens
+            };
+
+            // Model-specific thinkingConfig protocol
+            if (model.includes('3.') || model.includes('gemini-3')) {
+                // Gemini 3.x uses enum string thinkingLevel: "LOW" | "MEDIUM"
+                genConfig.thinkingConfig = {
+                    thinkingLevel: effectiveLevel
+                };
+            } else if (model.includes('2.5')) {
+                // Gemini 2.5 uses integer thinkingBudget
+                const budget = effectiveLevel === 'LOW' ? (cfg.budget25 !== undefined ? cfg.budget25 : 1024) : 2048;
+                genConfig.thinkingConfig = {
+                    thinkingBudget: budget
+                };
+            }
+
+            return genConfig;
+        }
+
+        // API Call to Gemini Engine with User's Configured Key & Model (Default: gemini-3.8-flash)
+        // Supports Text + Direct Native Multimodal Audio (Base64 Inline Data) + Custom Options (Feature routing, OCR, etc.)
+        async function callGeminiAPI(userQuery, systemPrompt, audioBlob = null, options = {}) {
             const apiKey = localStorage.getItem('ielts_gemini_api_key') || '';
-            const model = localStorage.getItem('ielts_gemini_model') || 'gemini-3.7-flash';
+            const model = localStorage.getItem('ielts_gemini_model') || 'gemini-3.8-flash';
 
             if (!apiKey || apiKey.trim() === '') {
                 openApiKeyModal();
@@ -1008,6 +1066,13 @@ Setiap klausa independen wajib memiliki subjek dan verba aktif/pasif yang utuh. 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const parts = [];
+
+            // If options.inlineData is provided (e.g. OCR image), push it directly
+            if (options && options.inlineData) {
+                parts.push({
+                    inlineData: options.inlineData
+                });
+            }
 
             // If audioBlob provided, convert to base64 inlineData for Multimodal Audio Understanding
             if (audioBlob) {
@@ -1028,26 +1093,46 @@ Setiap klausa independen wajib memiliki subjek dan verba aktif/pasif yang utuh. 
 
             parts.push({ text: userQuery });
 
+            const featureKey = typeof options === 'string' ? options : (options?.feature || '');
+            const genConfig = buildGeminiGenerationConfig(model, featureKey, typeof options === 'object' ? options : {});
+
             const payload = {
                 contents: [{ parts: parts }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: genConfig
             };
 
             let attempts = 0;
+            let currentPayload = payload;
+
             while (attempts < 2) {
                 try {
                     const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify(currentPayload)
                     });
                     
                     if (!response.ok) {
                         const errBody = await response.text();
+                        
+                        // Robust Fallback: If HTTP 400 mentions thinkingConfig or invalid argument, retry without thinkingConfig
+                        if (response.status === 400 && currentPayload?.generationConfig?.thinkingConfig && (errBody.includes('thinking') || errBody.includes('Invalid argument'))) {
+                            console.warn("Model does not accept thinkingConfig, retrying without it:", errBody);
+                            const fallbackConfig = { ...currentPayload.generationConfig };
+                            delete fallbackConfig.thinkingConfig;
+                            currentPayload = {
+                                ...currentPayload,
+                                generationConfig: fallbackConfig
+                            };
+                            attempts++;
+                            continue;
+                        }
+
                         if (response.status === 400) {
                             throw new Error(`API Key tidak valid atau format permintaan salah (HTTP 400). Cek kembali API Key Anda.`);
                         } else if (response.status === 404) {
-                            throw new Error(`Model '${model}' tidak tersedia pada endpoint ini (HTTP 404). Silakan coba ganti model ke 'gemini-3.6-flash' atau 'gemini-3.5-flash' di pengaturan.`);
+                            throw new Error(`Model '${model}' tidak tersedia pada endpoint ini (HTTP 404). Silakan coba ganti model ke 'gemini-3.7-flash' atau 'gemini-3.6-flash' di pengaturan.`);
                         } else if (response.status === 429) {
                             throw new Error(`Rate limit terlampaui (HTTP 429). Mohon tunggu beberapa detik atau ganti model ke Gemini 3.6 Flash / 3.5 Flash Lite.`);
                         } else {
@@ -1079,37 +1164,37 @@ Setiap klausa independen wajib memiliki subjek dan verba aktif/pasif yang utuh. 
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Analyzing...`;
             btn.disabled = true;
 
-            const systemPrompt = `You are an elite, uncompromising Cambridge IELTS Senior Examiner and Linguistic Specialist for Indonesian learners.
+            const systemPrompt = `You are an elite Cambridge IELTS Senior Examiner and Linguistic Coach. Explain all feedback in clear, friendly, and accessible B1-level English so learners can easily understand.
 Analyze the candidate's input using this 5-Pillar Critical Framework:
 
-# 💡 1. WHY (Mengapa Konsep Ini Krusial di IELTS)
-Jelaskan MENGAPA konsep tata bahasa ini sangat krusial di IELTS Writing/Speaking, dan tunjukkan bagaimana konsep ini secara langsung menentukan skor Grammatical Range & Accuracy (GRA) dan Coherence & Cohesion (CC).
+# 💡 1. WHY (Why This Concept Matters in IELTS)
+Explain in simple B1 English WHY this grammar concept is essential in IELTS Writing/Speaking, and how it directly determines the Grammatical Range & Accuracy (GRA) and Coherence & Cohesion (CC) score.
 
-# ⚙️ 2. HOW (Mekanisme Teknis & Aturan Baku)
-Jelaskan CARA KERJA mekanika tata bahasanya langkah demi langkah secara sistematis tanpa jargon yang membingungkan.
+# ⚙️ 2. HOW (Mechanics & Standard Rules)
+Explain step-by-step HOW the grammar mechanics work in plain B1 English without confusing jargon.
 
-# 🎨 3. ANALOGI INTUITIF (Mental Model Dunia Nyata)
-Berikan 1 analogi dunia nyata yang sangat hidup dan mudah dibayangkan (Explain Like I'm 5 / ELI5) agar pengguna paham logikanya sampai ke alam bawah sadar.
+# 🎨 3. INTUITIVE ANALOGY (Real-World Mental Model)
+Provide 1 vivid everyday analogy (Explain Like I'm 5 / ELI5) so the learner intuitively grasps the underlying logic.
 
-# 🐛 4. DIAGNOSIS FORENSIK GLITCH & L1 TRANSFER
-- **Glitch yang Terdeteksi**: [Sebutkan kesalahan tata bahasa atau kelemahan register formal]
-- **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: [Bedah kebiasaan bahasa Indonesia mana yang memicu kesalahan ini, misal: menerjemahkan kata per kata, ketiadaan konjugasi, atau pola pikir kalimat lisan]
-- **Versi Upgrade Band 7.5+**:
-  > "[Tuliskan kalimat versi Band 7.5+ yang superior dan alami. Sisipkan 1-3 kosakata level C1/C2 dan tandai setiap kata baru dengan [VOCAB: kata]]"
-- **Bedah Perubahan: Kenapa Diganti Begitu?**:
-  * 1️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti, misal: bentuk tenses lampau, register akademik, atau kolokasi alami penutur asli]
-  * 2️⃣ **[Frasa Asli] ➔ [Frasa Upgrade]**: [Alasan konkret kenapa diganti]
-- **Kosakata Baru yang Disarankan**:
-  * [VOCAB: kata1] = [arti ringkas bahasa Indonesia]
-  * [VOCAB: kata2] = [arti ringkas bahasa Indonesia]
-- **Bedah Formula Kalimat**:
-  [Tuliskan rumus struktur kalimatnya, misal: '[Adverbial Phrase] + [Subject] + [Advanced Verb] + [Object]']
+# 🐛 4. GLITCH DIAGNOSTIC (Sentence Breakdown)
+- **Detected Glitches**: [Identify grammar errors or informal register]
+- **Why This Mistake Happens**: [Explain in simple B1 English why learners make this mistake]
+- **Band 7.5+ Model Upgrade**:
+  > "[Write an exemplary Band 7.5+ upgraded sentence. Insert 1-3 C1/C2 words and mark each new word with [VOCAB: word]]"
+- **Why We Changed It (Change Breakdown)**:
+  * 1️⃣ **[Original Phrase] ➔ [Upgraded Phrase]**: [Concrete reason in simple B1 English, e.g. past tense, formal register, or natural native collocation]
+  * 2️⃣ **[Original Phrase] ➔ [Upgraded Phrase]**: [Concrete reason in simple B1 English]
+- **Recommended Vocabulary**:
+  * [VOCAB: word1] = [simple B1 English definition]
+  * [VOCAB: word2] = [simple B1 English definition]
+- **Sentence Formula Breakdown**:
+  [Provide the structural formula, e.g. '[Adverbial Phrase] + [Subject] + [Advanced Verb] + [Object]']
 
-# 🚀 5. LATIHAN & RETRIEVAL DRILL AKTIF
-Berikan tepat 2 kalimat latihan interaktif untuk diperbaiki/ditransformasikan sekarang juga. Ajak pengguna mengetik jawabannya di Drill Arena di bawah!`;
+# 🚀 5. ACTIVE RETRIEVAL DRILLS
+Provide exactly 2 interactive practice sentences for the learner to transform and fix right now. Invite them to type their answers in the Drill Arena below!`;
 
             try {
-                let resText = await callGeminiAPI(input, systemPrompt);
+                let resText = await callGeminiAPI(input, systemPrompt, null, { feature: 'glitch_lab' });
                 if (!resText) {
                     resText = generateOfflineGlitchAnalysis(input);
                 }
@@ -1192,11 +1277,12 @@ Candidate Drill Submission:
 2. Point out ANY remaining glitches, missing articles, wrong prepositions, or informal phrasing.
 3. Show the Band 7.5+ Upgrade Model & formula for each item.
 4. Conclude with:
-   # 🏆 Drill Mastery Score: [e.g. 2/2 Sempurna / 1/2 Perlu Poles / 0/2 Gagal Total]
-   # 🚦 Status: [MASTERED (+50 XP) or NEEDS PRACTICE]`;
+   # 🏆 Drill Mastery Score: [e.g. 2/2 Perfect / 1/2 Needs Practice / 0/2 Retry]
+   # 🚦 Status: [MASTERED (+50 XP) or NEEDS PRACTICE]
+Write all feedback in clear, simple B1 English.`;
 
             try {
-                let gradeResponse = await callGeminiAPI(`Drill Submission:\n${drillAnswers}`, systemPrompt);
+                let gradeResponse = await callGeminiAPI(`Drill Submission:\n${drillAnswers}`, systemPrompt, null, { feature: 'glitch_drill' });
 
                 if (!gradeResponse) {
                     // Fallback evaluation
@@ -1360,40 +1446,40 @@ Required IELTS Minimum: 250 words.
 4. COHERENCE & LOGICAL PROGRESSION:
    - Every body paragraph must have a clear Central Topic Sentence + In-depth Explanation (Why) + Specific Example + Impact.
 
-Structure your comprehensive diagnostic report in Markdown using EXACTLY these headings in Bahasa Indonesia:
+Structure your comprehensive diagnostic report in Markdown using EXACTLY these headings in clear, accessible B1 English:
 
 # 🏆 Official IELTS Band Score Breakdown (Strict & Unfiltered)
-- **Task Response (TR)**: Band [X.X] — [Audit pemenuhan soal, kedalaman argumen, dan penalti jumlah kata jika <250 kata]
-- **Coherence & Cohesion (CC)**: Band [X.X] — [Audit alur paragraf, transisi logis, dan ketiadaan lompatan ide]
-- **Lexical Resource (LR)**: Band [X.X] — [Audit variasi kosakata C1/C2, ketepatan kolokasi, dan penalti kata klise]
-- **Grammatical Range & Accuracy (GRA)**: Band [X.X] — [Audit akurasi klausa kompleks, tenses, dan nominalization]
+- **Task Response (TR)**: Band [X.X] — [Audit of prompt fulfillment, depth of argument, and underlength penalty if <250 words]
+- **Coherence & Cohesion (CC)**: Band [X.X] — [Audit of paragraph progression, logical linking, and absence of logical leaps]
+- **Lexical Resource (LR)**: Band [X.X] — [Audit of C1/C2 vocabulary range, collocation precision, and penalty for cliché words]
+- **Grammatical Range & Accuracy (GRA)**: Band [X.X] — [Audit of complex clauses, tenses, and academic nominalization]
 - **Overall Estimated Band Score**: **Band [X.X]**
 
-# ⚔️ Diagnosa 14-Stage Roadmap Mastery & Akar Masalah L1
-(Periksa penguasaan 14 konsep grammar inti dari roadmap):
-- **Fondasi SVO & Be-Anchor (Stage 1-4)**: [Analisis akurasi kalimat dasar]
-- **Klausa Kompleks & Subordinasi (Stage 5-8)**: [Analisis variasi although, whereas, conditional, relative clauses]
-- **Passive Voice & Nominalization (Stage 9-12)**: [Analisis register akademik C1/C2]
-- **Akar Masalah L1 (Interferensi Bahasa Indonesia)**: [Jelaskan pola pikir bahasa Indonesia mana yang paling banyak merusak kealamian esai ini]
+# ⚔️ 14-Stage Grammar Assessment & Root Issues
+(Review mastery across key grammar concepts):
+- **SVO Foundation & Be-Anchor**: [Accuracy of foundational sentences]
+- **Complex Clauses & Subordination**: [Use of although, whereas, conditional, and relative clauses]
+- **Passive Voice & Nominalization**: [Use of academic formal register]
+- **Core Sentence Structure Issues**: [Explain the main grammatical habits holding this essay back]
 
-# 🛠️ Top 3 Glitch Repair Guide & Bedah Formula
-(Ambil 3 kalimat paling bermasalah dari esai kandidat dan transformasikan ke standar Band 7.5+):
-1. ❌ **Kalimat Asli**: "[Kutipan kalimat kandidat]"
-   - 💡 **Versi Band 7.5+**: "[Kalimat hasil rekonstruksi]"
-   - ⚙️ **Bedah Formula**: [Rumus sintaksisnya]
-2. ❌ **Kalimat Asli**: "[Kutipan kalimat kandidat]"
-   - 💡 **Versi Band 7.5+**: "[Kalimat hasil rekonstruksi]"
-   - ⚙️ **Bedah Formula**: [Rumus sintaksisnya]
-3. ❌ **Kalimat Asli**: "[Kutipan kalimat kandidat]"
-   - 💡 **Versi Band 7.5+**: "[Kalimat hasil rekonstruksi]"
-   - ⚙️ **Bedah Formula**: [Rumus sintaksisnya]
+# 🛠️ Top 3 Glitch Repair Guide & Formula Breakdown
+(Take 3 most problematic sentences from the essay and transform them into Band 7.5+ standards):
+1. ❌ **Original Sentence**: "[Quote candidate's sentence]"
+   - 💡 **Band 7.5+ Upgrade**: "[Reconstructed sentence]"
+   - ⚙️ **Formula Breakdown**: [Syntax formula explained in simple B1 English]
+2. ❌ **Original Sentence**: "[Quote candidate's sentence]"
+   - 💡 **Band 7.5+ Upgrade**: "[Reconstructed sentence]"
+   - ⚙️ **Formula Breakdown**: [Syntax formula explained in simple B1 English]
+3. ❌ **Original Sentence**: "[Quote candidate's sentence]"
+   - 💡 **Band 7.5+ Upgrade**: "[Reconstructed sentence]"
+   - ⚙️ **Formula Breakdown**: [Syntax formula explained in simple B1 English]
 
-# 🚀 Model Paragraf Band 7.5+ Upgrade
-[Tuliskan 1 model paragraf Body Paragraph Band 7.5+ yang luwes dan berbobot untuk menjawab topik ini]`;
+# 🚀 Band 7.5+ Model Body Paragraph
+[Write 1 high-scoring Band 7.5+ model body paragraph directly addressing this prompt]`;
 
             try {
                 const userQuery = `Prompt: ${prompt}\n\nCandidate Response:\n${essay}`;
-                let resText = await callGeminiAPI(userQuery, systemPrompt);
+                let resText = await callGeminiAPI(userQuery, systemPrompt, null, { feature: 'boss_arena' });
 
                 if (!resText) {
                     resText = `

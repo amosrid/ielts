@@ -415,20 +415,20 @@
                 if (btnText) btnText.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> AI Sedang Mengekstrak Intisari & Kosakata...`;
             }
 
-            const systemPrompt = `You are a world-class Cambridge IELTS Reading Examiner and Lexicographer.
+            const systemPrompt = `You are a world-class Cambridge IELTS Reading Examiner and Lexicographer. All summaries, meanings, and guides must be written in clear, accessible B1-level English (simple, direct, easy to understand).
 Your job is to read the provided English reading text (article/essay/research excerpt) and automatically extract:
 1. "title": A concise, engaging academic English title (max 10 words).
 2. "topic": IELTS topic category (e.g. "Technology & Automation", "Climate & Ecology", "Macroeconomics", "Education & Society", "Medicine & Health", "Urban Sociology").
-3. "summary": A clear 2-3 paragraph synthesis summary capturing the core thesis, supporting arguments, and conclusion in Bahasa Indonesia/English for cognitive retention.
+3. "summary": A clear 2-3 paragraph synthesis summary capturing the core thesis, supporting arguments, and conclusion in simple, accessible B1 English for cognitive retention.
 4. "extractedVocabs": An array of 6 to 10 high-yield CEFR C1/C2 Band 7.5-9.0 academic words, collocations, or formal expressions present in the text (or central to this topic).
 
 Each item in "extractedVocabs" MUST have:
 - "word": clean lemma/word/collocation (e.g. "inevitable", "double-edged sword", "substantiate", "mitigate")
 - "pos": part of speech ("verb", "noun", "adjective", "adverb", "phrase")
 - "cefr": "C1" or "C2" or "B2"
-- "meaningId": clear concise Indonesian meaning
+- "meaningId": clear, concise meaning in simple B1 English
 - "meaningEn": English definition
-- "indonesianGuide": syllable stress pronunciation guide ala lidah Indonesia (e.g. "MI-ti-geit ↘")
+- "indonesianGuide": syllable stress pronunciation guide (e.g. "MI-ti-geit ↘")
 - "ipa": phonetic transcription (e.g. "/ˈmɪt.ɪ.ɡeɪt/")
 - "contextSentence": the exact or adapted sentence from the text demonstrating its academic usage
 - "synonyms": array of 3-4 academic synonyms
@@ -458,7 +458,7 @@ Return ONLY a valid JSON object without markdown fences, code blocks, or backtic
                 const apiKey = (localStorage.getItem('ielts_gemini_api_key') || '').trim();
                 if (apiKey) {
                     try {
-                        const response = await callGeminiAPI(`Analyze this reading material and extract insights & academic vocabularies:\n\n${textToAnalyze.slice(0, 15000)}`, systemPrompt);
+                        const response = await callGeminiAPI(`Analyze this reading material and extract insights & academic vocabularies:\n\n${textToAnalyze.slice(0, 15000)}`, systemPrompt, null, { feature: 'synthesis_insights' });
                         result = extractJsonFromLLM(response);
                     } catch (apiErr) {
                         console.warn("Gemini extraction call failed, using heuristic fallback:", apiErr);
@@ -530,15 +530,15 @@ Return ONLY a valid JSON object without markdown fences, code blocks, or backtic
 
             const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 30);
             const summary = paragraphs.slice(0, 3).map(p => `• ${p.trim().slice(0, 200)}...`).join('\n\n') || 
-                `• Bahan bacaan ini menyoroti fenomena kompleks terkait ${topic.toLowerCase()}.\n• Penulis memaparkan bukti empiris dan implikasi jangka panjang terhadap kebijakan dan masyarakat.\n• Kesimpulan menekankan perlunya pendekatan adaptif dan terstruktur dalam menghadapi tantangan yang ada.`;
+                `• This reading material highlights key dynamics regarding ${topic.toLowerCase()}.\n• The author presents empirical evidence and long-term implications for policy and society.\n• The conclusion emphasizes the need for an adaptive, structured approach to meet current challenges.`;
 
             const samplePool = [
-                { word: 'inevitable', pos: 'adjective', cefr: 'C1', meaningId: 'Tak terelakkan, pasti terjadi.', meaningEn: 'Certain to happen; unavoidable.', indonesianGuide: 'in-E-vi-tə-bl ↘', ipa: '/ɪnˈev.ɪ.tə.bəl/', contextSentence: 'Structural transformation in the global workforce is inevitable.', synonyms: ['unavoidable', 'inescapable', 'fated'] },
-                { word: 'mitigate', pos: 'verb', cefr: 'C1', meaningId: 'Meringankan atau mengurangi keparahan/dampak buruk.', meaningEn: 'Make less severe, serious, or painful.', indonesianGuide: 'MI-ti-geit ↘', ipa: '/ˈmɪt.ɪ.ɡeɪt/', contextSentence: 'Policymakers must adopt robust frameworks to mitigate unintended consequences.', synonyms: ['alleviate', 'diminish', 'lessen'] },
-                { word: 'substantiate', pos: 'verb', cefr: 'C2', meaningId: 'Membuktikan kebenaran dengan fakta atau bukti konkret.', meaningEn: 'Provide evidence to support or prove the truth of.', indonesianGuide: 'səb-STÆN-sji-eit ↘', ipa: '/səbˈstæn.ʃi.eɪt/', contextSentence: 'Empirical data is essential to substantiate theoretical claims.', synonyms: ['validate', 'corroborate', 'verify'] },
-                { word: 'ubiquitous', pos: 'adjective', cefr: 'C2', meaningId: 'Hadir atau ditemukan di mana-mana.', meaningEn: 'Present, appearing, or found everywhere.', indonesianGuide: 'ju-BI-kwi-təs ↘', ipa: '/juːˈbɪk.wɪ.təs/', contextSentence: 'Digital connectivity has become ubiquitous across modern urban centers.', synonyms: ['omnipresent', 'pervasive', 'universal'] },
-                { word: 'detrimental', pos: 'adjective', cefr: 'C1', meaningId: 'Merugikan, berdampak buruk atau merusak.', meaningEn: 'Tending to cause harm or damage.', indonesianGuide: 'de-tri-MEN-tl ↘', ipa: '/ˌdet.rɪˈmen.təl/', contextSentence: 'Short-term exploitation often yields detrimental long-term outcomes.', synonyms: ['harmful', 'damaging', 'adverse'] },
-                { word: 'profound', pos: 'adjective', cefr: 'C1', meaningId: 'Sangat mendalam, berpengaruh besar.', meaningEn: 'Very great or intense; having deep insight.', indonesianGuide: 'prə-FAUND ↘', ipa: '/prəˈfaʊnd/', contextSentence: 'These innovations exert a profound impact on cognitive development.', synonyms: ['far-reaching', 'deep', 'significant'] }
+                { word: 'inevitable', pos: 'adjective', cefr: 'C1', meaningId: 'Certain to happen; unavoidable.', meaningEn: 'Certain to happen; unavoidable.', indonesianGuide: 'in-E-vi-tə-bl ↘', ipa: '/ɪnˈev.ɪ.tə.bəl/', contextSentence: 'Structural transformation in the global workforce is inevitable.', synonyms: ['unavoidable', 'inescapable', 'fated'] },
+                { word: 'mitigate', pos: 'verb', cefr: 'C1', meaningId: 'Make less severe, serious, or painful.', meaningEn: 'Make less severe, serious, or painful.', indonesianGuide: 'MI-ti-geit ↘', ipa: '/ˈmɪt.ɪ.ɡeɪt/', contextSentence: 'Policymakers must adopt robust frameworks to mitigate unintended consequences.', synonyms: ['alleviate', 'diminish', 'lessen'] },
+                { word: 'substantiate', pos: 'verb', cefr: 'C2', meaningId: 'Provide evidence to support or prove the truth of.', meaningEn: 'Provide evidence to support or prove the truth of.', indonesianGuide: 'səb-STÆN-sji-eit ↘', ipa: '/səbˈstæn.ʃi.eɪt/', contextSentence: 'Empirical data is essential to substantiate theoretical claims.', synonyms: ['validate', 'corroborate', 'verify'] },
+                { word: 'ubiquitous', pos: 'adjective', cefr: 'C2', meaningId: 'Present, appearing, or found everywhere.', meaningEn: 'Present, appearing, or found everywhere.', indonesianGuide: 'ju-BI-kwi-təs ↘', ipa: '/juːˈbɪk.wɪ.təs/', contextSentence: 'Digital connectivity has become ubiquitous across modern urban centers.', synonyms: ['omnipresent', 'pervasive', 'universal'] },
+                { word: 'detrimental', pos: 'adjective', cefr: 'C1', meaningId: 'Tending to cause harm or damage.', meaningEn: 'Tending to cause harm or damage.', indonesianGuide: 'de-tri-MEN-tl ↘', ipa: '/ˌdet.rɪˈmen.təl/', contextSentence: 'Short-term exploitation often yields detrimental long-term outcomes.', synonyms: ['harmful', 'damaging', 'adverse'] },
+                { word: 'profound', pos: 'adjective', cefr: 'C1', meaningId: 'Very great or intense; having deep insight.', meaningEn: 'Very great or intense; having deep insight.', indonesianGuide: 'prə-FAUND ↘', ipa: '/prəˈfaʊnd/', contextSentence: 'These innovations exert a profound impact on cognitive development.', synonyms: ['far-reaching', 'deep', 'significant'] }
             ];
 
             return {
@@ -856,6 +856,7 @@ Return ONLY the transcribed text without commentary.`;
 
                     try {
                         const transcribed = await callGeminiAPI("Transcribe the handwritten English essay from this image.", systemPrompt, null, {
+                            feature: 'handwriting_ocr',
                             inlineData: {
                                 data: base64Data,
                                 mimeType: file.type || 'image/jpeg'
@@ -915,7 +916,7 @@ TARGET VOCABULARIES FROM READING:
 ${(synthesisState.extractedVocabs || []).filter(v => v.selected).map(v => v.word).concat(synthesisState.capturedVocabs || []).join(', ') || 'None'}
 `;
 
-            const systemPrompt = `You are an extremely strict, uncompromising Cambridge Senior IELTS Examiner and Cognitive English Specialist.
+            const systemPrompt = `You are an extremely strict, uncompromising Cambridge Senior IELTS Examiner and Cognitive English Specialist. All your evaluations, explanations, and advice must be written in clear, accessible B1-level English (simple, direct, easy to understand). Upgraded sentences and models must meet authentic Band 7.5+ standards.
 
 STUDENT'S SOURCE READING MATERIAL CONTEXT:
 ${readingContext}
@@ -924,43 +925,43 @@ CRITICAL NON-NEGOTIABLE ANTI-HALLUCINATION & GIBBERISH GUARD:
 - If the student's text is gibberish (e.g. keyboard mash like "asdmlasmdklsam", non-English words, random spam, fewer than 10 coherent words, or completely nonsensical meaning):
   YOU MUST REJECT IT IMMEDIATELY! Do NOT fabricate or hallucinate an academic essay out of nowhere.
   Set "isInvalid": true.
-  Set "rejectionReason": "Teks ditolak karena mengandung kata-kata acak/tidak koheren yang tidak membentuk kalimat atau proposisi bahasa Inggris yang bermakna."
+  Set "rejectionReason": "Text rejected: contains random or incoherent words that do not form meaningful English sentences."
   Set "factualScore": "0%"
-  Set "factualCommentary": "Esai tidak valid sehingga tidak dapat dibandingkan dengan fakta bacaan."
+  Set "factualCommentary": "The essay is invalid and cannot be evaluated against the reading source."
   Set "tier1": raw text
-  Set "tier2": "[Teks Tidak Dapat Dikoreksi: Masukan Tidak Bermakna]"
-  Set "tier3": "[Upgrade Ditolak: AI menolak mengarang naskah untuk teks yang tidak valid]"
-  Set "grammarErrors": [{"error": raw text, "explanation": "Masukan ini tidak membentuk kalimat atau proposisi yang koheren.", "fix": "Tulis ulang esai dengan minimal 1-2 kalimat bahasa Inggris yang bermakna."}]
+  Set "tier2": "[Text Cannot Be Corrected: Incoherent Input]"
+  Set "tier3": "[Upgrade Rejected: AI will not generate text for invalid input]"
+  Set "grammarErrors": [{"error": raw text, "explanation": "This input does not form coherent sentences or propositions.", "fix": "Rewrite the essay with at least 1-2 meaningful English sentences."}]
   Set "lexicalUpgrades": []
   Set "speakingAnchors": []
 
 IF AND ONLY IF THE ESSAY IS VALID & COHERENT ENGLISH:
 1. "isInvalid": false
-2. "factualScore": e.g. "95% Selaras & Akurat" or "75% Ada Miskonsepsi Fakta"
-3. "factualCommentary": Concise, candid assessment in Bahasa Indonesia on whether the student accurately captured the core facts/arguments from the reading without distorting meaning.
+2. "factualScore": e.g. "95% Aligned & Accurate" or "75% Minor Factual Distortion"
+3. "factualCommentary": Concise, candid assessment in simple B1 English on whether the student accurately captured the core facts/arguments from the reading without distorting meaning.
 4. "usedVocabsAudit": Array of objects detailing target vocabs used:
    - "word": the target word
    - "isUsed": true/false
    - "isCorrectGrammar": true/false
-   - "comment": brief feedback in Bahasa Indonesia
+   - "comment": brief feedback in simple B1 English
 5. "tier1": The student's raw original text.
 6. "tier2": Grammatically corrected version (fixing grammatical errors, agreement, punctuation, and tense without changing the student's basic tone).
 7. "grammarErrors": Array of objects explaining what was wrong in Tier 1 and why:
    - "error": the mistake in original text
-   - "explanation": concise, candid reason in Bahasa Indonesia
+   - "explanation": concise, candid reason in simple B1 English
    - "fix": how to fix it
 8. "tier3": Upgraded version (${isIelts ? 'IELTS Band 7.5+ academic lexical precision, formal register, complex subordinate clauses, nominalization' : 'Natural, native-sounding idiomatic English with conversational flow'}).
 9. "lexicalUpgrades": Array of objects explaining the upgrades:
    - "original": original simple phrase
    - "upgrade": upgraded high-level phrase
-   - "rationale": why this elevates the score in Bahasa Indonesia
+   - "rationale": why this elevates the score in simple B1 English
 10. "speakingAnchors": Array of 3-4 powerful phrases from Tier 3 that the student should actively recall and use during their upcoming speaking drill.
 
 Return ONLY a valid JSON object (no markdown fences, no backticks, no code blocks):
 {
   "isInvalid": false,
   "rejectionReason": "",
-  "factualScore": "95% Selaras & Akurat",
+  "factualScore": "95% Aligned & Accurate",
   "factualCommentary": "...",
   "usedVocabsAudit": [
     {"word": "...", "isUsed": true, "isCorrectGrammar": true, "comment": "..."}
@@ -982,7 +983,7 @@ Return ONLY a valid JSON object (no markdown fences, no backticks, no code block
                 const apiKey = (localStorage.getItem('ielts_gemini_api_key') || '').trim();
                 if (apiKey) {
                     try {
-                        const response = await callGeminiAPI(`Analyze and transform this student essay against the source reading material:\n\n${rawText}`, systemPrompt);
+                        const response = await callGeminiAPI(`Analyze and transform this student essay against the source reading material:\n\n${rawText}`, systemPrompt, null, { feature: 'synthesis_transform' });
                         parsed = extractJsonFromLLM(response);
                     } catch (apiErr) {
                         console.warn("Gemini essay eval error, using local heuristic fallback:", apiErr);
@@ -994,23 +995,23 @@ Return ONLY a valid JSON object (no markdown fences, no backticks, no code block
                 if (!parsed || (!parsed.tier2 && !parsed.isInvalid)) {
                     parsed = {
                         isInvalid: false,
-                        factualScore: "95% Selaras dengan Bacaan",
-                        factualCommentary: `Esai Anda berhasil menyintesis ide pokok dari "${synthesisState.readingTitle || 'Bahan Bacaan'}" dengan runtut dan logis. Paraphrase yang digunakan mempertahankan integritas fakta tanpa distorsi makna.`,
+                        factualScore: "95% Aligned with Reading",
+                        factualCommentary: `Your essay successfully synthesizes the key ideas from "${synthesisState.readingTitle || 'Source Reading'}" in a logical order. The paraphrasing maintains factual integrity without distorting meaning.`,
                         usedVocabsAudit: (synthesisState.extractedVocabs || []).filter(v => v.selected).map(v => ({
                             word: v.word,
                             isUsed: rawText.toLowerCase().includes(v.word.toLowerCase()),
                             isCorrectGrammar: true,
-                            comment: rawText.toLowerCase().includes(v.word.toLowerCase()) ? "Digunakan dalam kalimat dengan kolokasi yang tepat." : "Belum sempat digunakan di esai ini."
+                            comment: rawText.toLowerCase().includes(v.word.toLowerCase()) ? "Used in sentence with appropriate collocation." : "Not used in this essay yet."
                         })),
                         tier1: rawText,
                         tier2: rawText.replace(/\bi\b/g, 'I').replace(/\bthe research team analyze\b/gi, 'the research team analyzes'),
                         grammarErrors: [
-                            { error: "Subject-Verb Concord & Clarity", explanation: "Pastikan subjek tunggal selalu berpasangan dengan kata kerja bentuk singular (V1+s/es).", fix: "Gunakan bentuk kata kerja yang konsisten dengan tenses." }
+                            { error: "Subject-Verb Concord & Clarity", explanation: "Ensure singular subjects always pair with singular verb forms (V1+s/es).", fix: "Use a verb form that matches the tense consistently." }
                         ],
                         tier3: `In retrospect, ${rawText.toLowerCase().startsWith('the') ? rawText : 'the assertion that ' + rawText.charAt(0).toLowerCase() + rawText.slice(1)} serves as a double-edged sword, demanding rigorous empirical substantiation to withstand critical scrutiny.`,
                         lexicalUpgrades: [
-                            { original: "make something less bad", upgrade: "mitigate adverse ramifications", rationale: "Menggunakan kosakata C1 yang secara presisi merepresentasikan terminologi akademik IELTS Task 2." },
-                            { original: "important thing", upgrade: "pivotal parameter", rationale: "Meningkatkan register leksikal ke tingkat formalitas alami Band 7.5+." }
+                            { original: "make something less bad", upgrade: "mitigate adverse ramifications", rationale: "Uses C1 academic vocabulary that precisely fits IELTS Task 2 formal register." },
+                            { original: "important thing", upgrade: "pivotal parameter", rationale: "Raises lexical register to Band 7.5+ natural academic formality." }
                         ],
                         speakingAnchors: ["In retrospect", "a double-edged sword", "substantiate empirical claims", "mitigate adverse impacts"]
                     };
@@ -1302,40 +1303,41 @@ Target Accent: ${targetAccent}
 
 🚨 CRITICAL INAUDIBLE / SILENCE GUARD:
 - If the audio is silent, unintelligible microphone noise, or volume is too low to understand:
-  * Set "transcript" to "[Audio hening / tidak terdengar jelas. Silakan rekam ulang.]"
+  * Set "transcript" to "[Silent audio / unintelligible recording. Please record again.]"
   * Set "fluencyTag" to "Band 2.0 Inaudible / No Audio"
   * DO NOT hallucinate words!
 
 🚨 RIGID SPOKEN BAND DESCRIPTOR CEILINGS:
-1. PENALTI RITME MONOTON (SYLLABLE-TIMED L1 FLATNESS):
-   - If the student speaks with flat Indonesian syllable timing without vowel reductions (schwa) or pitch contour: Capped strictly at Band 5.0 in Fluency and Pronunciation.
+1. MONOTONE RHYTHM PENALTY (SYLLABLE-TIMED FLATNESS):
+   - If the student speaks with flat syllable timing without vowel reductions (schwa) or pitch contour: Capped strictly at Band 5.0 in Fluency and Pronunciation.
 2. HESITATION / SEARCH PAUSES:
    - If there are mid-sentence search pauses >2 seconds or excessive 'um/uh': Capped at Band 4.5 Fluency.
 3. MUMBLE / READING PENALTY:
    - If speech is mumbled or sounds like mechanically reading a memorized essay: Capped at Band 4.5.
 
 CRITICAL EVALUATION RULES:
-1. Listen carefully to the audio and transcribe verbatim what the student actually spoke ("transcript").
-2. "fluencyTag": A strict, realistic status badge (e.g. "Band 3.5 Disjointed / Severe Pauses", "Band 4.5 Basic Hesitant Delivery", "Band 5.5 Moderate Flow", "Band 7.0 Fluent & Smooth").
-3. "evalNotes": 3 candid, objective bullet points in Bahasa Indonesia:
-   - Kecepatan & Kelancaran (Hesitation, pause lama, pengulangan kata)
-   - Akurasi Tata Bahasa Spontan (kesalahan grammar lisan vs tulisan)
-   - Karakter Aksen (${targetAccent} compliance, L1 Indonesian interference, vokal pendek, konsonan akhir tertelan)
-4. "upgradedScript": An elite, high-scoring speaking script (${isIelts ? 'Band 7.5+ in IELTS mode' : 'Natural Native Conversational in General mode'}) with thought chunking markers (/), stressed syllables in CAPS, and natural fillers ("Well, in all fairness...", "To put it into perspective...").
-5. "upgradedTips": 2 sharp, actionable tips on sentence stress, thought chunking, and intonation in Bahasa Indonesia.
+1. All feedback, evaluation notes, and tips MUST be written in clear, accessible B1-level English (simple, direct, easy to understand).
+2. Listen carefully to the audio and transcribe verbatim what the student actually spoke ("transcript").
+3. "fluencyTag": A strict, realistic status badge (e.g. "Band 3.5 Disjointed / Severe Pauses", "Band 4.5 Basic Hesitant Delivery", "Band 5.5 Moderate Flow", "Band 7.0 Fluent & Smooth").
+4. "evalNotes": 3 candid, objective bullet points in simple B1 English:
+   - Speed & Fluency (Hesitation, long pauses, word repetitions)
+   - Spontaneous Grammar Accuracy (spoken vs written grammar slips)
+   - Accent Character (${targetAccent} compliance, native language interference, clipped vowels, swallowed final consonants)
+5. "upgradedScript": An elite, high-scoring speaking script (${isIelts ? 'Band 7.5+ in IELTS mode' : 'Natural Native Conversational in General mode'}) with thought chunking markers (/), stressed syllables in CAPS, and natural fillers ("Well, in all fairness...", "To put it into perspective...").
+6. "upgradedTips": 2 sharp, actionable tips on sentence stress, thought chunking, and intonation in simple B1 English.
 
 Return ONLY a valid JSON object (no markdown fences, no backticks, no code blocks):
 {
   "transcript": "exact spoken English words",
   "fluencyTag": "Band 5.0 Basic Hesitant Delivery",
-  "evalNotes": "evaluation in Bahasa Indonesia",
+  "evalNotes": "evaluation in simple B1 English",
   "upgradedScript": "upgraded speaking script in English with / chunking and CAPS stress",
-  "upgradedTips": "intonation and chunking tips in Bahasa Indonesia"
+  "upgradedTips": "intonation and chunking tips in simple B1 English"
 }`;
 
             try {
                 const userPrompt = `Transcribe and evaluate this spontaneous speaking audio on "${synthesisState.readingTitle}".`;
-                const response = await callGeminiAPI(userPrompt, systemPrompt, synthesisState.speak1AudioBlob);
+                const response = await callGeminiAPI(userPrompt, systemPrompt, synthesisState.speak1AudioBlob, { feature: 'synthesis_speak1' });
                 const parsed = extractJsonFromLLM(response);
                 if (!parsed || !parsed.upgradedScript) throw new Error("Gagal menguraikan evaluasi speaking awal.");
 
@@ -1394,28 +1396,29 @@ Target Accent: ${targetAccent}
 
 🚨 CRITICAL INAUDIBLE / SILENCE GUARD:
 - If Attempt 2 audio is silent, inaudible, or heavily distorted:
-  * Set "band" to "Band 2.0", "cefr" to "A1", "respeakTranscript" to "[Audio hening / tidak jelas]".
+  * Set "band" to "Band 2.0", "cefr" to "A1", "respeakTranscript" to "[Silent audio / inaudible recording]".
   * DO NOT invent or hallucinate transcript.
 
 🚨 RIGID CALIBRATION & L1 STRESS PENALTY:
-- If Attempt 2 still suffers from Indonesian syllable-timed flat monotone delivery, misplaces syllable stress, or drops terminal consonant clusters (/t/, /d/, /ts/, /s/): Band Score is STRICTLY CAPPED at Band 5.0 - 5.5.
+- If Attempt 2 still suffers from flat monotone syllable timing, misplaced word stress, or dropped terminal consonant clusters (/t/, /d/, /ts/, /s/): Band Score is STRICTLY CAPPED at Band 5.0 - 5.5.
 - Only award Band 7.0+ if the student clearly adopts the stress-timed English rhythm, groups words into natural breath chunks, and articulates target vowels accurately according to ${targetAccent}.
 
 CRITICAL STRICT SCORING & PHONETIC AUDIT CRITERIA:
-1. Listen to Attempt 2 Audio Blob and transcribe it accurately ("respeakTranscript").
-2. "accentAudit": A structured, ruthless 3-part phonetic breakdown in Bahasa Indonesia:
-   - "detectedAccent": Diagnose how strong the Indonesian native phonotactic interference is.
+1. All explanations, audits, and summaries MUST be written in clear, accessible B1-level English (simple, direct, easy to understand).
+2. Listen to Attempt 2 Audio Blob and transcribe it accurately ("respeakTranscript").
+3. "accentAudit": A structured, ruthless 3-part phonetic breakdown in simple B1 English:
+   - "detectedAccent": Diagnose how strong native language phonotactic interference is.
    - "targetMismatch": Specific vowel/diphthong distortions against target accent (${targetAccent}), swallowed terminal consonants (/t/, /d/, /k/, /s/, /z/), or missed connected speech.
    - "vocalQuality": Objective assessment of pitch, monotone tendencies, robotic delivery, or hesitation strain.
-3. Realistic, calibrated Band & CEFR score:
+4. Realistic, calibrated Band & CEFR score:
    - If Attempt 2 was empty/unintelligible: Band 2.0 - 3.0 (A1)
    - If broken sentences, severe hesitation, heavy L1 distortion: Band 4.0 - 5.0 (B1)
    - If intelligible with noticeable slips, flat intonation, moderate pacing: Band 5.5 - 6.0 (B2)
    - If good flow, clear pronunciation, minor grammatical slips: Band 6.5 - 7.0 (B2+/C1)
    - If natural rhythm, sophisticated lexical uptake, precise ${targetAccent} articulation: Band 7.5+ (C1)
    DO NOT DEFAULT TO BAND 7.5! Grade with rigorous Cambridge standards.
-4. "fluencyDelta", "grammarDelta", "lexicalDelta": Honest percentage growth between Attempt 1 and Attempt 2 (e.g. "+15% Peningkatan Ritme", "+20% Akurasi Klausa"). If poor or no improvement: lower values like "+0%" or "+5%".
-5. "summary": A strict, no-nonsense executive summary in Bahasa Indonesia: 1 real objective strength + 2 critical weaknesses to eliminate immediately. NO fake praise.
+5. "fluencyDelta", "grammarDelta", "lexicalDelta": Honest percentage growth between Attempt 1 and Attempt 2 (e.g. "+15% Rhythm Improvement", "+20% Clause Accuracy"). If poor or no improvement: lower values like "+0%" or "+5%".
+6. "summary": A strict, no-nonsense executive summary in simple B1 English: 1 real objective strength + 2 critical weaknesses to eliminate immediately. NO fake praise.
 
 Return ONLY a valid JSON object (no markdown fences, no backticks, no code blocks):
 {
@@ -1424,18 +1427,18 @@ Return ONLY a valid JSON object (no markdown fences, no backticks, no code block
   "grammarDelta": "+15%",
   "lexicalDelta": "+25%",
   "accentAudit": {
-    "detectedAccent": "Aksen Lokal Indonesia L1 yang sangat kental dengan distorsi vokal murni.",
-    "targetMismatch": "Belum sesuai target ${targetAccent}; vokal masih pendek-pendek ala Indonesia dan konsonan akhir sering tertelan.",
-    "vocalQuality": "Cenderung datar, monoton, dan tertekan oleh keraguan saat berbicara."
+    "detectedAccent": "Noticeable native accent interference with pure vowel distortion.",
+    "targetMismatch": "Does not yet match target ${targetAccent}; vowels are clipped short and terminal consonants are frequently dropped.",
+    "vocalQuality": "Tends to sound flat, monotone, and strained by hesitation while speaking."
   },
   "band": "Band 5.5",
   "cefr": "CEFR B2",
-  "summary": "concluding feedback in Indonesian"
+  "summary": "concluding feedback in simple B1 English"
 }`;
 
             try {
                 const userPrompt = `Compare and grade Attempt 2 vs Attempt 1 for "${synthesisState.readingTitle}".`;
-                const response = await callGeminiAPI(userPrompt, systemPrompt, synthesisState.speak2AudioBlob);
+                const response = await callGeminiAPI(userPrompt, systemPrompt, synthesisState.speak2AudioBlob, { feature: 'synthesis_speak2' });
                 const parsed = extractJsonFromLLM(response);
                 if (!parsed || !parsed.band) throw new Error("Gagal menguraikan Final Report Card.");
 

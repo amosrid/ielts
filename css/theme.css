@@ -627,6 +627,7 @@ html.light-mode #sidebar-model-badge {
             color: #d97706 !important;
         }
         html.light-mode #modal-vocab-card .bg-slate-950\/90,
+        html.light-mode #modal-vocab-card .bg-slate-950,
         html.light-mode #modal-vocab-card .bg-slate-900,
         html.light-mode #modal-vocab-review .bg-slate-950,
         html.light-mode #quest-modal .bg-slate-950,
@@ -635,6 +636,7 @@ html.light-mode #sidebar-model-badge {
             border-color: #e2e8f0 !important;
         }
         html.light-mode #modal-vocab-card #vocab-card-word,
+        html.light-mode #modal-vocab-card #vocab-card-meaning-b1,
         html.light-mode #modal-vocab-review #review-card-word {
             color: #0f172a !important;
         }
@@ -971,3 +973,365 @@ html.light-mode .text-amber-200 { color: #92400e !important; }
         padding: 0.75rem !important;
     }
 }
+
+/* ============================================================
+   MODAL VOCAB CARD — High-Contrast Eye-Friendly Academy Tokens
+   60% Neutral Canvas / 30% Structural Card / 10% Semantic Accent
+   ============================================================ */
+
+/* Dark Mode Nuance & Warning Example Contrast */
+#vocab-card-contrast-word-a-example {
+    background-color: rgba(244, 63, 94, 0.12) !important;
+    border-left: 3px solid #f43f5e !important;
+    padding: 0.35rem 0.6rem !important;
+    border-radius: 0 0.375rem 0.375rem 0 !important;
+    color: #fda4af !important;
+    font-weight: 500;
+}
+#vocab-card-contrast-word-b-example {
+    background-color: rgba(16, 185, 129, 0.12) !important;
+    border-left: 3px solid #10b981 !important;
+    padding: 0.35rem 0.6rem !important;
+    border-radius: 0 0.375rem 0.375rem 0 !important;
+    color: #6ee7b7 !important;
+    font-weight: 500;
+}
+#vocab-card-warn-wrong-reason {
+    color: #fca5a5 !important;
+    font-weight: 500;
+}
+#vocab-card-warn-better-sentence {
+    color: #fde68a !important;
+}
+#vocab-card-warn-correct-sentence {
+    color: #6ee7b7 !important;
+}
+
+/* Light Mode Overrides for Vocab Modal */
+html.light-mode #modal-vocab-card {
+    background-color: rgba(15, 23, 42, 0.5) !important;
+}
+
+html.light-mode #modal-vocab-card > div {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Header & Text in Light Mode */
+html.light-mode #modal-vocab-card #vocab-card-word {
+    color: #0f172a !important;
+}
+html.light-mode #modal-vocab-card #vocab-card-pos {
+    color: #64748b !important;
+}
+html.light-mode #modal-vocab-card #vocab-card-ipa {
+    color: #047857 !important;
+}
+
+/* Audio Buttons in Light Mode */
+html.light-mode #modal-vocab-card button[onclick*="speakCurrentVocabWord"] {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #334155 !important;
+}
+html.light-mode #modal-vocab-card button[onclick*="speakCurrentVocabWord"]:hover {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+/* Tab Switcher in Light Mode */
+html.light-mode #modal-vocab-card .bg-slate-950:has(#btn-vocab-tab-quick),
+html.light-mode #modal-vocab-card div:has(> #btn-vocab-tab-quick) {
+    background-color: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+}
+html.light-mode #btn-vocab-tab-quick.bg-emerald-600,
+html.light-mode #btn-vocab-tab-deep.bg-emerald-600,
+html.light-mode #btn-vocab-tab-practice.bg-emerald-600 {
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+}
+html.light-mode #modal-vocab-card button[id^="btn-vocab-tab"]:not([class*="bg-"]) {
+    color: #64748b !important;
+}
+html.light-mode #modal-vocab-card button[id^="btn-vocab-tab"]:not([class*="bg-"]):hover {
+    color: #0f172a !important;
+    background-color: #e2e8f0 !important;
+}
+
+/* Standard Structural Cards in Light Mode */
+html.light-mode #modal-vocab-card .bg-slate-950,
+html.light-mode #modal-vocab-card .bg-slate-900,
+html.light-mode #modal-vocab-card .bg-slate-900\/90 {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* Headings and Icons in Light Mode */
+html.light-mode #modal-vocab-card .text-emerald-400 { color: #047857 !important; }
+html.light-mode #modal-vocab-card .text-amber-400 { color: #b45309 !important; }
+html.light-mode #modal-vocab-card .text-amber-300 { color: #92400e !important; }
+html.light-mode #modal-vocab-card .text-indigo-400 { color: #4338ca !important; }
+html.light-mode #modal-vocab-card .text-indigo-300 { color: #3730a3 !important; }
+html.light-mode #modal-vocab-card .text-cyan-400 { color: #0e7490 !important; }
+html.light-mode #modal-vocab-card .text-cyan-300 { color: #155e75 !important; }
+html.light-mode #modal-vocab-card .text-teal-400 { color: #0f766e !important; }
+html.light-mode #modal-vocab-card .text-teal-300 { color: #115e59 !important; }
+html.light-mode #modal-vocab-card .text-rose-400 { color: #be123c !important; }
+html.light-mode #modal-vocab-card .text-rose-300 { color: #9f1239 !important; }
+html.light-mode #modal-vocab-card .text-red-400 { color: #b91c1c !important; }
+html.light-mode #modal-vocab-card .text-slate-100,
+html.light-mode #modal-vocab-card .text-slate-200 { color: #0f172a !important; }
+html.light-mode #modal-vocab-card .text-slate-300 { color: #334155 !important; }
+html.light-mode #modal-vocab-card .text-slate-400 { color: #64748b !important; }
+
+/* -------------------------------------------------------------
+   NUANCE & JANGAN TERTUKAR (HIGH CONTRAST & CRISP READABILITY)
+   ------------------------------------------------------------- */
+html.light-mode #vocab-card-contrast-box {
+    background-color: #ffffff !important;
+    border-color: #fecdd3 !important;
+}
+html.light-mode #vocab-card-contrast-target {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    border-color: #fde68a !important;
+}
+
+/* Nuance Card A (Biasa/Umum - Soft Rose) */
+html.light-mode #vocab-card-contrast-card-a {
+    background-color: #fff1f2 !important;
+    border-color: #fecdd3 !important;
+}
+html.light-mode #vocab-card-contrast-word-a-label {
+    color: #9f1239 !important;
+}
+html.light-mode #vocab-card-contrast-word-a-desc {
+    color: #1e293b !important;
+    font-weight: 500 !important;
+}
+/* SPECIFIC FIX FOR USER SCREENSHOT 1: Contoh Kalimat A */
+html.light-mode #vocab-card-contrast-word-a-example {
+    background-color: #ffe4e6 !important;
+    border-left: 3px solid #e11d48 !important;
+    color: #881337 !important;
+    font-weight: 600 !important;
+    padding: 0.35rem 0.6rem !important;
+    border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+/* Nuance Card B (Spesifik/Akurat - Soft Emerald) */
+html.light-mode #vocab-card-contrast-card-b {
+    background-color: #ecfdf5 !important;
+    border-color: #a7f3d0 !important;
+}
+html.light-mode #vocab-card-contrast-word-b-label {
+    color: #065f46 !important;
+}
+html.light-mode #vocab-card-contrast-word-b-desc {
+    color: #0f172a !important;
+    font-weight: 500 !important;
+}
+/* SPECIFIC FIX FOR USER SCREENSHOT 1: Contoh Kalimat B */
+html.light-mode #vocab-card-contrast-word-b-example {
+    background-color: #d1fae5 !important;
+    border-left: 3px solid #059669 !important;
+    color: #064e3b !important;
+    font-weight: 600 !important;
+    padding: 0.35rem 0.6rem !important;
+    border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+/* Rumus Inti Pills */
+html.light-mode #vocab-card-contrast-formula {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* -------------------------------------------------------------
+   USAGE WARNING & REGISTER TRAP (SPECIFIC FIX FOR USER SCREENSHOT 2)
+   ------------------------------------------------------------- */
+html.light-mode #vocab-card-usage-warning-box {
+    background-color: #fff1f2 !important;
+    border-color: #fecdd3 !important;
+}
+html.light-mode #vocab-card-warning-tag {
+    background-color: #ffe4e6 !important;
+    color: #9f1239 !important;
+    border-color: #fca5a5 !important;
+    font-weight: 700 !important;
+}
+html.light-mode #vocab-card-usage-warning-text {
+    color: #1e293b !important;
+    font-weight: 500 !important;
+}
+
+/* Wrong Sentence Box */
+html.light-mode #vocab-card-warning-comparison > div:nth-child(1) {
+    background-color: #ffffff !important;
+    border-color: #fecdd3 !important;
+}
+html.light-mode #vocab-card-warn-wrong-label {
+    color: #b91c1c !important;
+}
+html.light-mode #vocab-card-warn-wrong-sentence {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+/* SPECIFIC FIX FOR USER SCREENSHOT 2: Alasan Kalimat Salah */
+html.light-mode #vocab-card-warn-wrong-reason {
+    color: #991b1b !important;
+    font-weight: 600 !important;
+}
+
+/* Better Alternative Box */
+html.light-mode #vocab-card-warning-comparison > div:nth-child(2) {
+    background-color: #ffffff !important;
+    border-color: #fed7aa !important;
+}
+html.light-mode #vocab-card-warn-better-sentence {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+/* Correct Box */
+html.light-mode #vocab-card-warning-comparison > div:nth-child(3) {
+    background-color: #ffffff !important;
+    border-color: #a7f3d0 !important;
+}
+html.light-mode #vocab-card-warn-correct-sentence {
+    color: #064e3b !important;
+    font-weight: 700 !important;
+}
+
+/* -------------------------------------------------------------
+   PILLS & BADGES (ELIMINATING MUDDY BROWN / MURKY BLOBS)
+   ------------------------------------------------------------- */
+/* Antonym pills */
+html.light-mode #vocab-card-antonyms span {
+    background-color: #fff1f2 !important;
+    color: #9f1239 !important;
+    border-color: #fecdd3 !important;
+    font-weight: 600 !important;
+}
+/* Synonym pills */
+html.light-mode #vocab-card-synonyms span {
+    background-color: #eef2ff !important;
+    color: #3730a3 !important;
+    border-color: #c7d2fe !important;
+    font-weight: 600 !important;
+}
+/* High-Yield Topics */
+html.light-mode #vocab-card-high-yield-box {
+    background-color: #fffbeb !important;
+    border-color: #fde68a !important;
+}
+html.light-mode #vocab-card-high-yield-topics span {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    border-color: #fcd34d !important;
+    font-weight: 600 !important;
+}
+html.light-mode #vocab-card-high-yield-structure {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+html.light-mode #vocab-card-academic-structure-text {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+}
+
+/* Sentence Upgrade Box */
+html.light-mode #vocab-card-upgrade-box {
+    background-color: #ffffff !important;
+    border-color: #fde68a !important;
+}
+html.light-mode #vocab-card-upgrade-box > div.space-y-1\.5 > div:nth-child(1) {
+    background-color: #fff1f2 !important;
+    border-color: #fecdd3 !important;
+}
+html.light-mode #vocab-card-upgrade-basic {
+    color: #881337 !important;
+    font-weight: 600 !important;
+}
+html.light-mode #vocab-card-upgrade-box > div.space-y-1\.5 > div:nth-child(2) {
+    background-color: #ecfdf5 !important;
+    border-color: #a7f3d0 !important;
+}
+html.light-mode #vocab-card-upgrade-advanced {
+    color: #064e3b !important;
+    font-weight: 700 !important;
+}
+
+/* Tab 1 Quick Recap & Visual Flow */
+html.light-mode #vocab-card-visual-flow-container {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+html.light-mode #vocab-card-golden-chunk {
+    background-color: #eef2ff !important;
+    color: #3730a3 !important;
+    border-color: #c7d2fe !important;
+    font-weight: 700 !important;
+}
+html.light-mode #vocab-card-indonesian-guide {
+    background-color: #fffbeb !important;
+    color: #92400e !important;
+    border-color: #fde68a !important;
+    font-weight: 700 !important;
+}
+html.light-mode #vocab-card-quick-recap-box {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+}
+html.light-mode #vocab-card-recap-visual span {
+    color: #0f172a !important;
+}
+html.light-mode #vocab-card-quick-recap {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+/* Practice Tab External AI Buttons */
+html.light-mode #modal-vocab-card button[onclick*="openExternalAI('chatgpt')"] {
+    background-color: #ffffff !important;
+    color: #065f46 !important;
+    border-color: #a7f3d0 !important;
+}
+html.light-mode #modal-vocab-card button[onclick*="openExternalAI('claude')"] {
+    background-color: #ffffff !important;
+    color: #92400e !important;
+    border-color: #fde68a !important;
+}
+html.light-mode #modal-vocab-card button[onclick*="openExternalAI('gemini')"] {
+    background-color: #ffffff !important;
+    color: #1d4ed8 !important;
+    border-color: #bfdbfe !important;
+}
+html.light-mode #modal-vocab-card button[onclick*="openExternalAI('copy')"] {
+    background-color: #ffffff !important;
+    color: #334155 !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* Practice Tab Feynman Box in Light Mode */
+html.light-mode #vocab-feynman-container {
+    background-color: #ffffff !important;
+    border-color: #ccfbf1 !important;
+}
+html.light-mode #vocab-feynman-container textarea {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* Modal Footer in Light Mode */
+html.light-mode #btn-card-mastered {
+    background-color: #f1f5f9 !important;
+    color: #0f766e !important;
+    border-color: #cbd5e1 !important;
+}
+

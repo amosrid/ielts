@@ -12,6 +12,39 @@
         let vocabAudioBlob = null;
         let vocabRecMediaRecorder = null;
         let vocabLiveTeachingHistory = [];
+        let currentVocabModalTab = 'quick';
+
+        function switchVocabModalTab(tab) {
+            currentVocabModalTab = tab || 'quick';
+            const btnQuick = document.getElementById('btn-vocab-tab-quick');
+            const btnDeep = document.getElementById('btn-vocab-tab-deep');
+            const btnPractice = document.getElementById('btn-vocab-tab-practice');
+
+            const tabQuick = document.getElementById('vocab-tab-quick');
+            const tabDeep = document.getElementById('vocab-tab-deep');
+            const tabPractice = document.getElementById('vocab-tab-practice');
+
+            const inactiveClass = "flex-1 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white cursor-pointer lowercase";
+
+            if (btnQuick) btnQuick.className = inactiveClass;
+            if (btnDeep) btnDeep.className = inactiveClass;
+            if (btnPractice) btnPractice.className = inactiveClass;
+
+            if (tabQuick) tabQuick.classList.add('hidden');
+            if (tabDeep) tabDeep.classList.add('hidden');
+            if (tabPractice) tabPractice.classList.add('hidden');
+
+            if (currentVocabModalTab === 'quick') {
+                if (btnQuick) btnQuick.className = "flex-1 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-sm cursor-pointer lowercase";
+                if (tabQuick) tabQuick.classList.remove('hidden');
+            } else if (currentVocabModalTab === 'deep') {
+                if (btnDeep) btnDeep.className = "flex-1 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-1.5 bg-indigo-600 text-white shadow-sm cursor-pointer lowercase";
+                if (tabDeep) tabDeep.classList.remove('hidden');
+            } else if (currentVocabModalTab === 'practice') {
+                if (btnPractice) btnPractice.className = "flex-1 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-1.5 bg-teal-600 text-white shadow-sm cursor-pointer lowercase";
+                if (tabPractice) tabPractice.classList.remove('hidden');
+            }
+        }
 
 function loadVocabBank() {
             try {
@@ -498,11 +531,21 @@ function loadVocabBank() {
                     targetEntry.registerTrapAlert = analysis.registerTrapAlert !== undefined ? analysis.registerTrapAlert : (targetEntry.registerTrapAlert || null);
                     targetEntry.meaningId = analysis.meaningId || targetEntry.meaningId;
                     targetEntry.meaningEn = analysis.meaningEn || targetEntry.meaningEn;
+                    targetEntry.coreMeaningB1 = analysis.coreMeaningB1 || targetEntry.coreMeaningB1 || analysis.meaningEn;
+                    targetEntry.visualFlow = analysis.visualFlow || targetEntry.visualFlow || '💡 → 🧠 → 🗣️';
+                    targetEntry.mentalImageExplanation = analysis.mentalImageExplanation || analysis.childExplanation || targetEntry.mentalImageExplanation || '';
+                    targetEntry.collocationMatrix = analysis.collocationMatrix || targetEntry.collocationMatrix || null;
+                    targetEntry.nuanceCompare = analysis.nuanceCompare !== undefined ? analysis.nuanceCompare : targetEntry.nuanceCompare;
+                    targetEntry.ieltsUpgrade = analysis.ieltsUpgrade !== undefined ? analysis.ieltsUpgrade : targetEntry.ieltsUpgrade;
+                    targetEntry.usageWarning = analysis.usageWarning !== undefined ? analysis.usageWarning : targetEntry.usageWarning;
+                    targetEntry.quickRecap = analysis.quickRecap || targetEntry.quickRecap || null;
+                    targetEntry.naturalExamples = analysis.naturalExamples || targetEntry.naturalExamples || [];
                     targetEntry.indonesianGuide = analysis.indonesianGuide || `${finalWord.toUpperCase()}`;
                     targetEntry.example = analysis.example || targetEntry.example;
-                    targetEntry.childExplanation = analysis.childExplanation || targetEntry.childExplanation || '';
+                    targetEntry.childExplanation = analysis.mentalImageExplanation || analysis.childExplanation || targetEntry.childExplanation || '';
                     targetEntry.dailyExamples = analysis.dailyExamples || targetEntry.dailyExamples || [];
                     targetEntry.synonyms = analysis.synonyms || targetEntry.synonyms || [];
+                    targetEntry.antonyms = analysis.antonyms || targetEntry.antonyms || [];
                     targetEntry.ipa = analysis.ipa || targetEntry.ipa || '';
                     saveVocabBank();
                     if (input) input.value = '';
@@ -529,13 +572,23 @@ function loadVocabBank() {
                     },
                     highYieldContext: analysis.highYieldContext || null,
                     registerTrapAlert: analysis.registerTrapAlert || null,
+                    coreMeaningB1: analysis.coreMeaningB1 || analysis.meaningEn || 'Simple, direct English meaning.',
                     meaningId: analysis.meaningId || 'Arti kata bahasa Inggris',
                     meaningEn: analysis.meaningEn || 'English definition',
+                    visualFlow: analysis.visualFlow || '💡 → 🧠 → 🗣️',
+                    mentalImageExplanation: analysis.mentalImageExplanation || analysis.childExplanation || `Konsep sederhana untuk ${finalWord}.`,
+                    collocationMatrix: analysis.collocationMatrix || null,
+                    nuanceCompare: analysis.nuanceCompare || null,
+                    ieltsUpgrade: analysis.ieltsUpgrade || null,
+                    usageWarning: analysis.usageWarning || analysis.registerTrapAlert || null,
+                    quickRecap: analysis.quickRecap || null,
+                    naturalExamples: analysis.naturalExamples || [],
                     indonesianGuide: analysis.indonesianGuide || `${finalWord.toUpperCase()}`,
                     example: analysis.example || `Academic context sentence using ${finalWord}.`,
-                    childExplanation: analysis.childExplanation || `Konsep sederhana untuk ${finalWord}.`,
+                    childExplanation: analysis.mentalImageExplanation || analysis.childExplanation || `Konsep sederhana untuk ${finalWord}.`,
                     dailyExamples: analysis.dailyExamples || [],
                     synonyms: analysis.synonyms || [],
+                    antonyms: analysis.antonyms || [],
                     ipa: analysis.ipa || '',
                     dateAdded: Date.now(),
                     srInterval: 1,
@@ -576,41 +629,54 @@ function loadVocabBank() {
             const targetAccent = localStorage.getItem('ielts_target_accent') || 'british_rp';
             const accentName = targetAccent === 'british_rp' ? 'British RP (Received Pronunciation — Non-rhotic, crisp T, pure vowels)' : (targetAccent === 'general_american' ? 'General American (Rhotic r, flap T, open vowels)' : (targetAccent === 'australian' ? 'Australian English' : 'Neutral Academic'));
 
-            const systemPrompt = `You are an expert Cambridge Lexicographer, Cognitive Tutor, and English Phonetics Specialist for Indonesian IELTS learners.
+            const systemPrompt = `You are an expert Cambridge Lexicographer, Cognitive Tutor, and English Phonetics Specialist teaching vocabulary to B1-level learners preparing for everyday life, academic study, and IELTS.
 Target Accent: ${accentName}
 
+CRITICAL TEACHING RULES:
+1. "coreMeaningB1": Give the simplest, clearest meaning in B1-level English. Do NOT begin with complicated dictionary jargon. The learner must understand it in 3 seconds.
+2. "meaningId": Clear, concise definition in simple B1 English.
+3. "visualFlow": A punchy progressive emoji transformation showing state change or mental model (e.g. "💨 → 🌫️ → ☁️ → nothing" for dissipate, "🧱 → 🏗️ → 🏛️" for establish, "🌧️ → 🛡️ → ☀️" for mitigate).
+4. "mentalImageExplanation": A simple visual analogy or memory trick grounded in TANGIBLE EVERYDAY PHYSICAL OBJECTS (max 2 short sentences). Never define with abstract synonyms.
+5. "collocationMatrix": High-frequency natural chunks split into:
+   - "starChunk": The #1 most natural chunk to memorize (e.g. "gradually dissipate", "establish a relationship").
+   - "verbPlusNoun": Array of 2-3 collocations (e.g. ["dissipate heat", "dissipate tension"]).
+   - "nounPlusVerb": Array of 2-3 collocations (e.g. ["fog dissipates", "anger dissipates"]).
+6. CONDITIONAL SKIPPING RULE - "nuanceCompare":
+   - If the word is commonly confused with another word (e.g. dissipate vs disappear, affect vs impair, increase vs influx):
+     Provide: { 
+       "compareWith": "otherWord", 
+       "compareNuance": "Clear definition and nuance of the otherWord", 
+       "targetNuance": "Clear definition and nuance of the targetWord", 
+       "compareFormula": "otherWord → result", 
+       "targetFormula": "targetWord → gradual process",
+       "compareExample": "Short natural example using otherWord",
+       "targetExample": "Short natural example using targetWord",
+       "wordA_nuance": "OtherWord definition (for backward compatibility)", 
+       "wordB_nuance": "TargetWord definition (for backward compatibility)" 
+     }
+   - CRITICAL: If the word does NOT have a common confusing counterpart, return null! (DILARANG mengarang perbandingan palsu).
+7. CONDITIONAL SKIPPING RULE - "ieltsUpgrade":
+   - Provide a natural Band 7.5+ upgrade: { "basicSentence": "Common basic sentence", "upgradedSentence": "Band 7.5+ sentence using this word", "targetModule": "Writing Task 2 & Speaking Part 3" }
+   - CRITICAL: If this word is not suitable or natural for IELTS, return null (do not force it).
+8. CONDITIONAL SKIPPING RULE - "usageWarning":
+   - Tell about important situations where learners should NOT use this word or common learner mistakes.
+   - Can be an object: { "rule": "Don't use it like ...", "wrongSentence": "...", "explanation": "...", "betterAlternative": "...", "correctSentence": "..." } or simple string warning. If no trap, return null.
+9. "quickRecap": Punchy 1-line recap formula: "WORD = simple meaning • Golden Chunk: ..."
+10. "naturalExamples": Array of 3 natural examples (from simple everyday to 1 academic/IELTS sentence), each with an inline B1 meaning explanation:
+   [{ "en": "Example sentence 1", "meaningB1": "Simple explanation of sentence meaning" }, ...]
+11. "indonesianGuide": 100% HURUF ALFABET INDONESIA (A-Z) TANPA SIMBOL IPA! Suku kata ditekan KAPITAL + asosiasi kata Indonesia.
+12. "ipa": Official Cambridge IPA symbol.
+
 CRITICAL PRE-ANALYSIS:
-1. Is the submitted word a valid English word, OR a close misspelling/typo of an English word?
-   - If misspelling (e.g. "eliminare" -> "eliminate"): set "correctedWord" to correct spelling, "isNonEnglish": false, and analyze the corrected word.
-   - If valid: set "correctedWord" to input, "isNonEnglish": false.
-2. Is the submitted word NOT English at all?
-   - Set "isNonEnglish": true, "rejectionReason": "Kata '${word}' bukan kata bahasa Inggris.", and empty others.
+- If misspelling: set "correctedWord" to correct spelling, "isNonEnglish": false.
+- If not English: set "isNonEnglish": true, "rejectionReason": "The word entered is not a valid English word.", and empty others.
 
-REGISTER & IELTS SUITABILITY CLASSIFICATION (CRITICAL FOR IELTS LEARNERS):
+REGISTER CLASSIFICATION:
 - "registerLevel": One of ["casual", "semi_formal", "formal", "written_academic"]
-  * "casual": Slang, informal, everyday idioms (e.g. "hang out", "kids", "awesome", "a bunch of", "wanna").
-  * "semi_formal": Neutral everyday professional/conversational (e.g. "significant", "convenient", "reliable", "perspective", "essential").
-  * "formal": High-level academic & formal language (e.g. "substantiate", "mitigate", "ubiquitous", "deterioration", "prevalent").
-  * "written_academic": Highly formal/written-only academic words (e.g. "aforementioned", "notwithstanding", "subsequent", "thus").
-- "registerLabel": Indonesian human-readable label: "Casual / Santai" | "Agak Formal / Netral" | "Formal Akademik" | "Tulisan Resmi (Written Only)".
-- "ieltsSuitability": An object containing:
-  * "status": "both" | "speaking_only" | "writing_only" | "non_ielts"
-  * "badgeText": "🌐 Writing & Speaking OK" | "🎙️ Speaking Only (Haram di Writing)" | "📝 Writing Only (Jarang Lisan)" | "☕ Sehari-hari Saja (Bukan IELTS)"
-  * "badgeColor": "emerald" (for both) | "sky" (for speaking_only) | "purple" (for writing_only) | "amber" (for non_ielts)
-  * "description": A sharp 1-2 sentence explanation in Bahasa Indonesia about exactly where this word is suitable and where it is forbidden.
-- "highYieldContext": If this word frequently appears in specific IELTS modules or themes (e.g. "🔥 High-Yield: Sering dipakai di IELTS Writing Task 2 (Topik Lingkungan & Sains)" or "🔥 High-Yield: Khas untuk Speaking Part 1 (Topik Daily Routine & Hobbies)"), return that string. If it is a generic/regular word with no special high-frequency theme, return null.
-- "registerTrapAlert": If there is a common dangerous trap for Indonesian students (e.g. for 'kids': "⚠️ JEBAKAN REGISTER: Jangan gunakan 'kids' di Writing Task 2! Gunakan 'children' atau 'adolescents' agar Lexical Resource tidak dipotong ke Band 5.5." or for 'indubitably': "⚠️ JEBAKAN REGISTER: Terlalu kaku untuk percakapan lisan santai!"), return that warning. If safe, return null.
-
-PHONETIC & EXPLANATION GUIDELINES (TARGET ACCENT: ${accentName}):
-- "indonesianGuide": 100% HURUF ALFABET INDONESIA (A-Z) TANPA SIMBOL IPA! Wajib menyertakan bedah suku kata demi suku kata yang ditekan dengan HURUF BESAR (KAPITAL) dan tanda intonasi ↗ ↘ serta asosiasi bunyi kata Indonesia di dalam kurung.
-  * Format: "EJAAN-GLOBAL ↘ (suku1: seperti '...', SUKU_KAPITAL: ditekan kuat / stress, suku3: ...)"
-  * Contoh establish: "es-TAB-lisy ↘ (es: seperti 'es batu', TAB: ditekan kuat, lisy: akhiri desis lembut /sh/)"
-  * Contoh ubiquitous: "yu-BI-kwi-tes ↘ (yu: seperti 'you', BI: ditekan kuat, kwi: seperti 'quick', tes: akhiri vokal santai)"
-  * Contoh ridiculous: "ri-DI-kyu-les ↘ (ri: 'ri' cepat, DI: ditekan kuat seperti 'titik', kyu: seperti 'kios/Q', les: berima 'poles')"
-  * Sesuai Target Aksen: ${accentName}.
-- "ipa": Official Cambridge IPA phonetics symbol (e.g. "/luːz/", "/ˈɒb.vi.əs/").
-- "childExplanation": A tangible physical analogy written in ULTRA-SIMPLE EVERYDAY ENGLISH that even a 7-year-old child or a beginner language learner can understand in 3 seconds. Ground the concept using concrete everyday physical objects (e.g. asking a tailor to fit pants to your exact waist instead of buying loose baggy ones, melting an ice cube in the sun, a phone charger, pouring water into a full cup). DILARANG mendefinisikan kata menggunakan kata kamus abstrak lain (e.g. do not use 'specifically customized' to explain 'tailored')! Keep it visual, tangible, and max 2 short sentences.
-- "dailyExamples": Array of 2 realistic daily/casual conversation sentences using this word.
+- "registerLabel": "Casual / Informal" | "Neutral / Semi-Formal" | "Formal Academic" | "Official Written Only"
+- "ieltsSuitability": { "status": "both | speaking_only | writing_only | non_ielts", "badgeText": "...", "badgeColor": "emerald | sky | purple | amber", "description": "..." }
+- "highYieldContext": High-frequency IELTS theme or null.
+- "registerTrapAlert": Warning string or null.
 
 Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 {
@@ -619,31 +685,67 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
   "rejectionReason": null,
   "pos": "verb | noun | adjective | adverb",
   "cefr": "A1 | A2 | B1 | B2 | C1 | C2",
-  "registerLevel": "casual | semi_formal | formal | written_academic",
+  "registerLevel": "formal",
   "registerLabel": "Formal Akademik",
   "ieltsSuitability": {
-    "status": "both | speaking_only | writing_only | non_ielts",
+    "status": "both",
     "badgeText": "🌐 Writing & Speaking OK",
-    "badgeColor": "emerald | sky | purple | amber",
-    "description": "Sangat direkomendasikan untuk esai Writing Task 2 dan diskusi Speaking Part 3."
+    "badgeColor": "emerald",
+    "description": "Highly recommended for Writing Task 2 essays and Speaking Part 3 discussions."
   },
-  "highYieldContext": "🔥 High-Yield: Sering dipakai di IELTS Writing Task 2 (Topik: Lingkungan & Sains)",
+  "highYieldContext": "Environment, Science, & Society",
+  "ieltsTopics": ["health", "technology", "environment", "conflict resolution"],
+  "academicStructure": "The tension between both countries gradually dissipated following bilateral discussions.",
   "registerTrapAlert": null,
-  "meaningId": "Arti bahasa Indonesia yang akurat dan ringkas",
-  "meaningEn": "Clear concise English academic definition",
-  "indonesianGuide": "Ejaan global dengan KAPITAL STRESS + bedah suku kata asosiasi kata Indonesia",
+  "coreMeaningB1": "Simple, direct B1 English definition",
+  "meaningId": "Simple, concise English definition (B1)",
+  "meaningEn": "Concise academic English definition",
+  "visualFlow": "💨 → 🌫️ → ☁️ → nothing",
+  "mentalImageExplanation": "Everyday physical analogy explanation",
+  "childExplanation": "Everyday physical analogy explanation",
+  "indonesianGuide": "EJAAN-GLOBAL ↘ (SUKU_KAPITAL ditekan kuat)",
   "ipa": "/.../",
-  "example": "Contoh kalimat bernuansa akademik IELTS",
-  "childExplanation": "Simple English analogy (ELI5)",
-  "dailyExamples": [
-    "Contoh kalimat percakapan sehari-hari 1",
-    "Contoh kalimat percakapan sehari-hari 2"
+  "collocationMatrix": {
+    "starChunk": "gradually dissipate",
+    "verbPlusNoun": ["dissipate heat", "dissipate tension"],
+    "nounPlusVerb": ["fog dissipates", "anger dissipates"]
+  },
+  "nuanceCompare": {
+    "compareWith": "disappear",
+    "compareNuance": "Simply no longer visible or present at all (Result / Instan)",
+    "targetNuance": "Disappear gradually by spreading out or becoming weaker (Process / Bertahap)",
+    "compareFormula": "disappear → result",
+    "targetFormula": "dissipate → gradual process",
+    "compareExample": "The fog disappeared.",
+    "targetExample": "The fog gradually dissipated as the sun rose.",
+    "wordA_nuance": "Disappear = simply no longer visible (Result)",
+    "wordB_nuance": "Dissipate = fade away slowly by spreading out (Process)"
+  },
+  "ieltsUpgrade": {
+    "basicSentence": "The tension slowly went away.",
+    "upgradedSentence": "The tension gradually dissipated.",
+    "targetModule": "Writing Task 2 & Speaking Part 3"
+  },
+  "usageWarning": {
+    "rule": "Don't use for solid physical objects like keys or wallets.",
+    "wrongSentence": "I dissipated my car keys yesterday.",
+    "explanation": "Dissipate is for gases, emotions, heat, or crowds, not solid items.",
+    "betterAlternative": "I lost or misplaced my car keys yesterday.",
+    "correctSentence": "The thick smoke slowly dissipated through the open window."
+  },
+  "quickRecap": "DISSIPATE = gradually fade away / become weaker",
+  "naturalExamples": [
+    { "en": "The thick fog gradually dissipated as the sun rose.", "meaningB1": "The fog slowly disappeared." },
+    { "en": "Her anger eventually dissipated after they talked.", "meaningB1": "Her anger slowly became weaker." },
+    { "en": "The crowd began to dissipate after the concert.", "meaningB1": "People gradually left the venue." }
   ],
-  "synonyms": ["synonym1", "synonym2", "synonym3"]
+  "example": "The tension between both countries gradually dissipated after bilateral discussions.",
+  "synonyms": ["disperse", "fade away", "vanish"],
+  "antonyms": ["accumulate", "concentrate", "gather"]
 }`;
             const userPrompt = `Analyze the word: "${word}"`;
 
-            const response = await callGeminiAPI(userPrompt, systemPrompt);
+            const response = await callGeminiAPI(userPrompt, systemPrompt, null, { feature: 'vocab_dict' });
             if (!response) {
                 throw new Error("Tidak menerima respon dari Gemini AI. Pastikan Gemini API Key sudah terhubung.");
             }
@@ -660,6 +762,84 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             SoundFX.play('click');
             const starterPack = [
                 {
+                    id: 'vocab_seed_dissipate',
+                    word: 'dissipate',
+                    pos: 'verb',
+                    cefr: 'C1',
+                    registerLevel: 'formal',
+                    registerLabel: 'Formal Akademik',
+                    ieltsSuitability: {
+                        status: 'both',
+                        badgeText: '🌐 Writing & Speaking OK',
+                        badgeColor: 'emerald',
+                        description: 'Kosakata C1 presisi tinggi untuk menggambarkan memudarnya gas, emosi, energi, atau ketegangan.'
+                    },
+                    highYieldContext: '🔥 High-Yield: Sering dipakai di IELTS Writing Task 2 (Topik Lingkungan, Sains, & Konflik)',
+                    ieltsTopics: ['health', 'technology', 'social problems', 'environment', 'conflict resolution'],
+                    academicStructure: 'The diplomatic tension gradually dissipated following bilateral discussions between both administrations.',
+                    registerTrapAlert: null,
+                    coreMeaningB1: 'To gradually disappear, spread out, or become weaker until very little is left.',
+                    meaningId: 'Menghilang secara bertahap / memudar perlahan hingga habis.',
+                    meaningEn: 'To disappear gradually, become weaker, or cause to do so.',
+                    visualFlow: '💨 → 🌫️ → ☁️ → nothing',
+                    mentalImageExplanation: 'Imagine smoke in the air: it doesn\'t vanish in one second; it spreads out, fades, and dissipates until nothing is left.',
+                    collocationMatrix: {
+                        starChunk: 'gradually dissipate',
+                        verbPlusNoun: ['dissipate heat', 'dissipate tension', 'dissipate energy'],
+                        nounPlusVerb: ['fog dissipates', 'anger dissipates', 'tension dissipates']
+                    },
+                    nuanceCompare: {
+                        compareWith: 'disappear',
+                        compareNuance: 'Simply no longer be visible or present at all (Result / Instan).',
+                        targetNuance: 'Disappear gradually by spreading out or becoming weaker (Process / Bertahap).',
+                        compareExample: 'The fog disappeared.',
+                        targetExample: 'The fog gradually dissipated as the sun rose.',
+                        compareFormula: 'disappear → result',
+                        targetFormula: 'dissipate → gradual process',
+                        wordA_nuance: 'Disappear = simply no longer visible (The Result / Instan)',
+                        wordB_nuance: 'Dissipate = fade away slowly by spreading out (The Process / Bertahap)'
+                    },
+                    ieltsUpgrade: {
+                        basicSentence: 'The tension slowly went away after the meeting.',
+                        upgradedSentence: 'The tension gradually dissipated following constructive dialogue.',
+                        targetModule: 'Writing Task 2 & Speaking Part 3'
+                    },
+                    usageWarning: {
+                        rule: 'Don\'t use \'dissipate\' for solid physical objects like keys, wallets, or phones.',
+                        wrongSentence: 'I dissipated my car keys yesterday.',
+                        explanation: 'Dissipate means spreading out or fading away into thin air, not misplacing a solid physical object.',
+                        betterAlternative: 'I misplaced my car keys yesterday.',
+                        correctSentence: 'The thick cloud of smoke slowly dissipated through the open window.'
+                    },
+                    quickRecap: 'DISSIPATE = gradually fade away / become weaker',
+                    naturalExamples: [
+                        { en: 'The thick morning fog gradually dissipated as the sun rose.', meaningB1: 'The fog slowly disappeared.' },
+                        { en: 'Her anger eventually dissipated after they apologized.', meaningB1: 'Her anger slowly became weaker.' },
+                        { en: 'The crowd began to dissipate once the concert concluded.', meaningB1: 'People gradually walked away.' }
+                    ],
+                    indonesianGuide: "DIS-i-peit ↘ (DIS: ditekan kuat / stress, i: pendek santai, peit: berima 'pahit')",
+                    ipa: '/ˈdɪs.ɪ.peɪt/',
+                    example: 'Diplomatic negotiations helped dissipate political tension in the region.',
+                    childExplanation: 'Imagine smoke from a candle. It spreads out thin, floats away, and disappears. That is dissipate.',
+                    dailyExamples: [
+                        'The smell of cooking quickly dissipated through the window.',
+                        'Any doubts in the room dissipated after his clear explanation.'
+                    ],
+                    synonyms: ['disperse', 'fade away', 'evaporate', 'scatter'],
+                    antonyms: ['accumulate', 'concentrate', 'gather'],
+                    dateAdded: Date.now(),
+                    srInterval: 1,
+                    srNextReview: Date.now(),
+                    srReviewCount: 0,
+                    feynmanLevel: 0,
+                    feynmanStatus: 'unlearned',
+                    feynmanLastExplanation: '',
+                    feynmanLastSentence: '',
+                    feynmanFeedback: null,
+                    consecutiveMasteryCount: 0,
+                    status: 'learning'
+                },
+                {
                     id: 'vocab_seed_1',
                     word: 'establish',
                     pos: 'verb',
@@ -673,27 +853,68 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                         description: 'Sangat direkomendasikan di Writing Task 2 dan Speaking Part 3 untuk menyatakan pembentukan aturan, institusi, atau pembuktian fakta.'
                     },
                     highYieldContext: '🔥 High-Yield: Sering dipakai di Writing Task 2 (Topik: Kebijakan Pemerintah & Regulasi)',
+                    ieltsTopics: ['government policy', 'education', 'economics', 'international relations'],
+                    academicStructure: 'The government established comprehensive environmental regulations to mitigate industrial pollution.',
                     registerTrapAlert: null,
+                    coreMeaningB1: 'To start or build something that is meant to last for a long time; or to prove something is true.',
                     meaningId: 'Mendirikan, membentuk, atau membuktikan kebenaran suatu hal secara permanen.',
                     meaningEn: 'To set up on a firm or permanent basis; to prove or demonstrate.',
+                    visualFlow: '🧱 → 🏗️ → 🏛️',
+                    mentalImageExplanation: 'Imagine building a brick house with concrete foundations so strong the wind cannot move it.',
+                    collocationMatrix: {
+                        starChunk: 'establish a system',
+                        verbPlusNoun: ['establish rules', 'establish a relationship', 'establish the truth'],
+                        nounPlusVerb: ['authorities establish', 'researchers establish']
+                    },
+                    nuanceCompare: {
+                        compareWith: 'build',
+                        compareNuance: 'Physical construction of structures using bricks, wood, or stones (Material / Fisik).',
+                        targetNuance: 'Setting up formal institutions, lasting rules, relations, or proving truths (Formal / Konseptual).',
+                        compareExample: 'They built a new wooden bridge.',
+                        targetExample: 'They established a diplomatic relationship.',
+                        compareFormula: 'build → physical structure',
+                        targetFormula: 'establish → lasting institutional setup',
+                        wordA_nuance: 'Build = physical construction (bricks, wood)',
+                        wordB_nuance: 'Establish = institutional, formal, or lasting setup (laws, systems, reputation)'
+                    },
+                    ieltsUpgrade: {
+                        basicSentence: 'The government made new rules to stop pollution.',
+                        upgradedSentence: 'The government established comprehensive environmental regulations.',
+                        targetModule: 'Writing Task 2'
+                    },
+                    usageWarning: {
+                        rule: 'Don\'t use \'establish\' for small, temporary, or informal items.',
+                        wrongSentence: 'We established a tent in the backyard for the afternoon.',
+                        explanation: 'Establish implies permanent or formal foundations, not temporary pitching of a tent.',
+                        betterAlternative: 'We pitched a tent in the backyard for the afternoon.',
+                        correctSentence: 'The foundation established a new scholarship program for underprivileged students.'
+                    },
+                    quickRecap: 'ESTABLISH = start something permanent & lasting',
+                    naturalExamples: [
+                        { en: 'The university was established in 1950.', meaningB1: 'The school was founded a long time ago.' },
+                        { en: 'They quickly established a positive working relationship.', meaningB1: 'They formed a strong connection.' },
+                        { en: 'Medical studies established a clear link between diet and health.', meaningB1: 'Scientists proved the relationship.' }
+                    ],
                     indonesianGuide: "es-TAB-lisy ↘ (es: seperti 'es batu', TAB: ditekan kuat / stress, lisy: akhiri desis lembut /sh/)",
                     ipa: '/ɪˈstæb.lɪʃ/',
                     example: 'The government sought to establish new environmental standards.',
-                    childExplanation: 'Imagine you build a toy castle with super strong, heavy blocks so the wind can never knock it down. That is "establish" — to build or prove something so firmly that it stays for a long time.',
+                    childExplanation: 'Imagine you build a toy castle with super strong blocks so the wind never knocks it down.',
                     dailyExamples: [
                         'They established a nice friendship during their vacation.',
-                        'The doctor established a daily workout routine for him.'
+                        'The committee established strict guidelines for the competition.'
                     ],
-                    synonyms: ['found', 'institute', 'demonstrate', 'set up'],
-                    dateAdded: Date.now(),
-                    srInterval: 1,
-                    srNextReview: Date.now(),
-                    srReviewCount: 0,
-                    feynmanLevel: 0,
-                    feynmanStatus: 'unlearned',
-                    feynmanLastExplanation: '',
-                    feynmanFeedback: null,
-                    consecutiveMasteryCount: 0,
+                    synonyms: ['found', 'institute', 'create', 'set up'],
+                    antonyms: ['destroy', 'abolish', 'dismantle'],
+                    dateAdded: Date.now() - 86400000 * 2,
+                    srInterval: 2,
+                    srNextReview: Date.now() + 86400000,
+                    srReviewCount: 1,
+                    feynmanLevel: 1,
+                    feynmanStatus: 'practiced',
+                    feynmanLastExplanation: 'Establish artinya membuat sesuatu yang resmi dan tahan lama, seperti aturan atau gedung kampus.',
+                    feynmanLastSentence: 'The city established a new recycling policy.',
+                    feynmanFeedback: 'Penjelasan analogi sangat baik dan akurat!',
+                    consecutiveMasteryCount: 1,
                     status: 'learning'
                 },
                 {
@@ -710,18 +931,44 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                         description: 'Wajib dikuasai untuk menggantikan kata klise "everywhere". Cocok di Writing Task 2 dan Speaking Part 3.'
                     },
                     highYieldContext: '🔥 High-Yield: Sering dipakai di IELTS Writing Task 2 (Topik: Teknologi, AI, & Media Sosial)',
-                    registerTrapAlert: '⚠️ JEBAKAN REGISTER: Jangan gunakan di percakapan super santai warung kopi (terdengar terlalu puitis/akademik). Gunakan "everywhere".',
+                    registerTrapAlert: '⚠️ JEBAKAN REGISTER: Jangan gunakan di percakapan super santai warung kopi. Gunakan "everywhere".',
+                    coreMeaningB1: 'Appearing or present everywhere at the same time.',
                     meaningId: 'Ada di mana-mana pada waktu yang sama; sangat lazim ditemui.',
                     meaningEn: 'Present, appearing, or found everywhere.',
+                    visualFlow: '📱 📱 📱 → everywhere!',
+                    mentalImageExplanation: 'Imagine sunshine or air: no matter which corner you turn, it is right there surrounding you.',
+                    collocationMatrix: {
+                        starChunk: 'become ubiquitous',
+                        verbPlusNoun: ['ubiquitous presence', 'ubiquitous technology', 'ubiquitous access'],
+                        nounPlusVerb: ['smartphones are ubiquitous', 'devices become ubiquitous']
+                    },
+                    nuanceCompare: {
+                        compareWith: 'common',
+                        wordA_nuance: 'Common = happens often or many people have it (B1 neutral)',
+                        wordB_nuance: 'Ubiquitous = literally everywhere you look (C1 dramatic academic)'
+                    },
+                    ieltsUpgrade: {
+                        basicSentence: 'Mobile phones are everywhere in modern life.',
+                        upgradedSentence: 'Smartphones have become ubiquitous across all demographics.',
+                        targetModule: 'Writing Task 2 & Speaking Part 3'
+                    },
+                    usageWarning: 'Too formal for casual street banter with friends.',
+                    quickRecap: 'UBIQUITOUS = found everywhere • Golden Chunk: become ubiquitous',
+                    naturalExamples: [
+                        { en: 'Smartphones have become ubiquitous in modern society.', meaningB1: 'Almost everybody carries a phone now.' },
+                        { en: 'Plastic waste is ubiquitous in urban environments.', meaningB1: 'Plastic trash can be seen everywhere.' },
+                        { en: 'Fast-food chains are now ubiquitous in major cities.', meaningB1: 'Fast food outlets are on almost every street.' }
+                    ],
                     indonesianGuide: "yu-BI-kwi-tes ↘ (yu: seperti 'you', BI: ditekan kuat / stress, kwi: seperti 'quick', tes: akhiri vokal santai)",
                     ipa: '/juːˈbɪk.wɪ.təs/',
                     example: 'Smartphones have become ubiquitous in modern society.',
-                    childExplanation: 'Imagine fresh air or bright sunshine — no matter where you walk or travel, it is right there around you. That is "ubiquitous" — appearing or found everywhere at the same time.',
+                    childExplanation: 'Imagine fresh air — everywhere you walk or run, it is right there with you.',
                     dailyExamples: [
                         'Coffee shops are ubiquitous in downtown Jakarta.',
                         'Plastic bags are ubiquitous, but we must reduce them.'
                     ],
                     synonyms: ['omnipresent', 'pervasive', 'everywhere', 'universal'],
+                    antonyms: ['rare', 'scarce', 'uncommon'],
                     dateAdded: Date.now(),
                     srInterval: 1,
                     srNextReview: Date.now(),
@@ -729,6 +976,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     feynmanLevel: 0,
                     feynmanStatus: 'unlearned',
                     feynmanLastExplanation: '',
+                    feynmanLastSentence: '',
                     feynmanFeedback: null,
                     consecutiveMasteryCount: 0,
                     status: 'learning'
@@ -748,17 +996,43 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     },
                     highYieldContext: '🔥 High-Yield: Esai Task 2 Topik Lingkungan, Perubahan Iklim & Krisis Finansial',
                     registerTrapAlert: null,
+                    coreMeaningB1: 'To make something harmful, painful, or bad less severe or serious.',
                     meaningId: 'Meringankan, meredakan, atau mengurangi keparahan/dampak buruk.',
                     meaningEn: 'Make less severe, serious, or painful.',
+                    visualFlow: '🌧️ → 🛡️ → ☀️',
+                    mentalImageExplanation: 'Imagine holding up a sturdy umbrella during heavy rain: the rain is still falling, but you mitigate getting soaked.',
+                    collocationMatrix: {
+                        starChunk: 'mitigate the impact',
+                        verbPlusNoun: ['mitigate risks', 'mitigate climate change', 'mitigate the effects'],
+                        nounPlusVerb: ['measures mitigate', 'policies mitigate']
+                    },
+                    nuanceCompare: {
+                        compareWith: 'stop',
+                        wordA_nuance: 'Stop = end something completely (100% eliminated)',
+                        wordB_nuance: 'Mitigate = reduce the severity/damage of something that is already happening'
+                    },
+                    ieltsUpgrade: {
+                        basicSentence: 'We need to make climate change effects smaller.',
+                        upgradedSentence: 'Urgent policies are required to mitigate the severe consequences of global warming.',
+                        targetModule: 'Writing Task 2'
+                    },
+                    usageWarning: 'Do not use for positive things (e.g., do not say \'mitigate happiness\'). Only use for negative impacts or risks.',
+                    quickRecap: 'MITIGATE = make less severe • Golden Chunk: mitigate the impact',
+                    naturalExamples: [
+                        { en: 'Planting trees helps mitigate air pollution in the city.', meaningB1: 'Trees reduce the bad effects of dirty air.' },
+                        { en: 'Wearing a seatbelt mitigates the risk of serious injury.', meaningB1: 'Seatbelts make dangerous crashes less harmful.' },
+                        { en: 'The government introduced subsidies to mitigate poverty.', meaningB1: 'Financial aid helped lessen hardship.' }
+                    ],
                     indonesianGuide: "MI-ti-geit ↘ (MI: ditekan kuat / stress, ti: vokal 'i' pendek tajam, geit: berima 'gate/kaget')",
                     ipa: '/ˈmɪt.ɪ.ɡeɪt/',
                     example: 'Renewable energy projects help mitigate the severe impacts of climate change.',
-                    childExplanation: 'Imagine you fall down and scrape your knee, and your mom puts a cool soothing bandage on it so the sting hurts much less. That is "mitigate" — to make a harmful situation less severe.',
+                    childExplanation: 'Imagine you fall and scrape your knee, and your mom puts cool ointment on it so it hurts much less.',
                     dailyExamples: [
                         'Drinking plenty of water helped mitigate his headache.',
                         'Wearing a helmet mitigates the risk of head injury.'
                     ],
                     synonyms: ['alleviate', 'reduce', 'diminish', 'lessen'],
+                    antonyms: ['aggravate', 'worsen', 'exacerbate'],
                     dateAdded: Date.now(),
                     srInterval: 1,
                     srNextReview: Date.now(),
@@ -766,85 +1040,11 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                     feynmanLevel: 0,
                     feynmanStatus: 'unlearned',
                     feynmanLastExplanation: '',
+                    feynmanLastSentence: '',
                     feynmanFeedback: null,
                     consecutiveMasteryCount: 0,
                     status: 'learning'
-                },
-                {
-                    id: 'vocab_seed_4',
-                    word: 'coherent',
-                    pos: 'adjective',
-                    cefr: 'B2',
-                    registerLevel: 'formal',
-                    registerLabel: 'Formal Akademik',
-                    ieltsSuitability: {
-                        status: 'both',
-                        badgeText: '🌐 Writing & Speaking OK',
-                        badgeColor: 'emerald',
-                        description: 'Sangat bagus untuk menjelaskan struktur argumen, ide ilmiah, dan alur penalaran.'
-                    },
-                    highYieldContext: '🔥 High-Yield: Pembahasan Academic Writing & Critical Thinking',
-                    registerTrapAlert: null,
-                    meaningId: 'Tersusun secara logis, runtut, dan mudah dipahami dalam esai.',
-                    meaningEn: 'Logical, consistent, and clearly articulated.',
-                    indonesianGuide: "ko-HI-rent ↘ (ko: 'ko' bulat, HI: ditekan kuat / stress, rent: akhiri 'r' lembut /rent/)",
-                    ipa: '/kəʊˈhɪə.rənt/',
-                    example: 'Candidates must construct a coherent argument to achieve Band 7+ in Task 2.',
-                    childExplanation: 'Imagine a bedtime story told in neat order from start to finish so it makes complete sense, rather than scrambled sentences that confuse everyone. That is "coherent" — clear, logical, and easy to follow.',
-                    dailyExamples: [
-                        'He was so tired that he could not form a coherent sentence.',
-                        'The team presented a coherent strategy for the new project.'
-                    ],
-                    synonyms: ['logical', 'lucid', 'well-structured', 'rational'],
-                    dateAdded: Date.now(),
-                    srInterval: 1,
-                    srNextReview: Date.now(),
-                    srReviewCount: 0,
-                    feynmanLevel: 0,
-                    feynmanStatus: 'unlearned',
-                    feynmanLastExplanation: '',
-                    feynmanFeedback: null,
-                    consecutiveMasteryCount: 0,
-                    status: 'learning'
-                },
-                {
-                    id: 'vocab_seed_5',
-                    word: 'substantiate',
-                    pos: 'verb',
-                    cefr: 'C2',
-                    registerLevel: 'written_academic',
-                    registerLabel: 'Tulisan Resmi (Written High-Academic)',
-                    ieltsSuitability: {
-                        status: 'writing_only',
-                        badgeText: '📝 Writing Ready (Jarang Lisan)',
-                        badgeColor: 'purple',
-                        description: 'Sangat disukai penguji di Writing Task 2 untuk menyatakan pembuktian tesis ilmiah. Jarang diucapkan lisan kecuali di seminar/sidang formal.'
-                    },
-                    highYieldContext: '🔥 High-Yield: Menulis Body Paragraph Task 2 untuk mengaitkan bukti empiris dengan klaim',
-                    registerTrapAlert: '⚠️ JEBAKAN REGISTER: Terlalu berat dan kaku untuk Speaking Part 1 / percakapan santai. Gunakan "back up with proof" atau "prove" saat berbicara lisan santai.',
-                    meaningId: 'Memperkuat atau membuktikan suatu klaim/pendapat dengan bukti nyata.',
-                    meaningEn: 'To provide evidence to support or prove the truth of something.',
-                    indonesianGuide: "seb-STAN-syi-yeit ↘ (seb: seperti 'sebab', STAN: ditekan kuat / stress, syi: desis 'sy', yeit: berima 'eight')",
-                    ipa: '/səbˈstæn.ʃi.eɪt/',
-                    example: 'Writers must substantiate their central thesis with empirical data.',
-                    childExplanation: 'Imagine you tell your friends that you have a giant pet robot dinosaur at home; you must bring real photos to school to prove it is true. Providing solid proof to back up your words is "substantiate".',
-                    dailyExamples: [
-                        'You need receipts to substantiate your travel expenses.',
-                        'Can you substantiate your claim with actual numbers?'
-                    ],
-                    synonyms: ['validate', 'corroborate', 'verify', 'authenticate'],
-                    dateAdded: Date.now(),
-                    srInterval: 1,
-                    srNextReview: Date.now(),
-                    srReviewCount: 0,
-                    feynmanLevel: 0,
-                    feynmanStatus: 'unlearned',
-                    feynmanLastExplanation: '',
-                    feynmanFeedback: null,
-                    consecutiveMasteryCount: 0,
-                    status: 'learning'
-                }
-            ];
+                }            ];
 
             vocabBank = starterPack;
             saveVocabBank();
@@ -856,7 +1056,6 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
         // IeltsGo v6.0 — VOCAB CARD MASTER MODAL ENGINE
         // =========================================================================
         function openVocabCard(vocabId) {
-            SoundFX.play('click');
             const vocab = vocabBank.find(v => v.id === vocabId);
             if (!vocab) return;
 
@@ -867,69 +1066,403 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 enrichVocabCardInBackground(vocab.id, vocab.word);
             }
 
-            // Populate Card Elements
-            document.getElementById('vocab-card-word').innerText = vocab.word;
-            document.getElementById('vocab-card-pos').innerText = vocab.pos || '';
-            
+            // Always switch to Tab 1 (Quick Essence) by default
+            switchVocabModalTab('quick');
+
+            // Header Elements
+            const wordEl = document.getElementById('vocab-card-word');
+            const posEl = document.getElementById('vocab-card-pos');
             const cefrBadge = document.getElementById('vocab-card-cefr');
+            const ipaEl = document.getElementById('vocab-card-ipa');
+
+            if (wordEl) wordEl.innerText = vocab.word;
+            if (posEl) posEl.innerText = vocab.pos || '';
             if (cefrBadge) {
-                cefrBadge.innerText = vocab.cefr;
+                cefrBadge.innerText = vocab.cefr || 'B2';
                 cefrBadge.className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${(vocab.cefr || 'b2').toLowerCase()}`;
             }
+            if (ipaEl) ipaEl.innerText = vocab.ipa || '';
 
-            // Target Accent Badge in Card
+            // Target Accent Badge
             const targetAccentKey = localStorage.getItem('ielts_target_accent') || 'british_rp';
             const accentBadgeNames = {
-                'british_rp': '🇬🇧 Target: British RP',
-                'general_american': '🇺🇸 Target: General American',
-                'australian': '🇦🇺 Target: Australian',
-                'neutral_academic': '🌐 Target: Neutral Academic'
+                'british_rp': '🇬🇧 British RP',
+                'general_american': '🇺🇸 General American',
+                'australian': '🇦🇺 Australian',
+                'neutral_academic': '🌐 Neutral Academic'
             };
             const accentBadgeEl = document.getElementById('vocab-card-accent-badge');
             if (accentBadgeEl) {
-                accentBadgeEl.innerText = accentBadgeNames[targetAccentKey] || '🇬🇧 Target: British RP';
+                accentBadgeEl.innerText = accentBadgeNames[targetAccentKey] || '🇬🇧 British RP';
             }
 
-            document.getElementById('vocab-card-ipa').innerText = vocab.ipa || '';
-            document.getElementById('vocab-card-meaning-id').innerText = vocab.meaningId || '';
-            document.getElementById('vocab-card-meaning-en').innerText = vocab.meaningEn || '';
-            document.getElementById('vocab-card-indonesian-guide').innerText = vocab.indonesianGuide || `${vocab.word.toUpperCase()}`;
-            document.getElementById('vocab-card-example').innerText = vocab.example || '';
+            // ================= TAB 1: QUICK ESSENCE =================
+            // A. B1 Core Meaning & Indonesian Translation
+            const meaningB1El = document.getElementById('vocab-card-meaning-b1');
+            const meaningIdEl = document.getElementById('vocab-card-meaning-id');
+            if (meaningB1El) {
+                meaningB1El.innerText = vocab.coreMeaningB1 || vocab.meaningEn || 'Simple English definition is being prepared...';
+            }
+            if (meaningIdEl) {
+                // User preference: 100% English immersion, no Indonesian translation so learner thinks in English
+                meaningIdEl.classList.add('hidden');
+                meaningIdEl.innerText = '';
+            }
 
-            // ELI5 Child Explanation
+            // B. Mental Image & Visual Flow Emoji
+            const visualFlowEl = document.getElementById('vocab-card-visual-flow');
             const childEl = document.getElementById('vocab-card-child-explanation');
+            if (visualFlowEl) {
+                visualFlowEl.innerText = vocab.visualFlow || '💡 → 🧠 → 🗣️';
+            }
             if (childEl) {
-                childEl.innerText = vocab.childExplanation || `Bayangkan sebuah analogi sederhana untuk ${vocab.word} yang mudah dipahami anak kecil.`;
+                childEl.innerText = vocab.mentalImageExplanation || vocab.childExplanation || `Bayangkan sebuah analogi sederhana untuk ${vocab.word} yang mudah dipahami.`;
             }
 
-            // Daily Conversation Examples
-            const dailyContainer = document.getElementById('vocab-card-daily-examples');
-            if (dailyContainer) {
-                if (vocab.dailyExamples && vocab.dailyExamples.length > 0) {
-                    dailyContainer.innerHTML = vocab.dailyExamples.map((dex, i) => `
-                        <div class="flex items-start gap-2 bg-slate-50 dark:bg-teal-950/20 p-2 rounded-lg border border-teal-200 dark:border-teal-500/20">
-                            <span class="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-bold mt-0.5">${i+1}.</span>
-                            <span class="text-xs text-slate-800 dark:text-teal-100 font-medium">${dex}</span>
+            // C. Golden Chunk & Cara Baca Lidah Indonesia
+            const goldenChunkEl = document.getElementById('vocab-card-golden-chunk');
+            const guideEl = document.getElementById('vocab-card-indonesian-guide');
+            const goldenChunkText = vocab.collocationMatrix?.starChunk || vocab.goldenChunk || (vocab.synonyms && vocab.synonyms[0] ? `Chunk: ${vocab.synonyms[0]}` : vocab.word);
+            if (goldenChunkEl) {
+                goldenChunkEl.innerText = `⭐ ${goldenChunkText}`;
+            }
+            if (guideEl) {
+                guideEl.innerText = vocab.indonesianGuide || vocab.word.toUpperCase();
+            }
+
+            // D. Natural Examples (Graduated with Inline B1 Meaning)
+            const quickExContainer = document.getElementById('vocab-card-quick-examples');
+            if (quickExContainer) {
+                if (vocab.naturalExamples && vocab.naturalExamples.length > 0) {
+                    quickExContainer.innerHTML = vocab.naturalExamples.map((ex, i) => `
+                        <div class="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800 space-y-1">
+                            <div class="flex items-start gap-2">
+                                <span class="text-[10px] font-mono font-bold text-teal-400 mt-0.5">${i+1}.</span>
+                                <span class="text-xs text-slate-100 font-medium">${ex.en || ex}</span>
+                            </div>
+                            ${ex.meaningB1 ? `<div class="text-[11px] font-mono text-slate-400 pl-4 border-l-2 border-teal-500/30 italic">Meaning: ${ex.meaningB1}</div>` : ''}
                         </div>
                     `).join('');
+                } else if (vocab.dailyExamples && vocab.dailyExamples.length > 0) {
+                    quickExContainer.innerHTML = vocab.dailyExamples.map((dex, i) => `
+                        <div class="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                            <span class="text-[10px] font-mono font-bold text-teal-400 mt-0.5">${i+1}.</span>
+                            <span class="text-xs text-slate-100 font-medium">${dex}</span>
+                        </div>
+                    `).join('');
+                } else if (vocab.example) {
+                    quickExContainer.innerHTML = `
+                        <div class="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800">
+                            <span class="text-xs text-slate-200 italic font-medium">${vocab.example}</span>
+                        </div>
+                    `;
                 } else {
-                    dailyContainer.innerHTML = `<div class="text-xs text-slate-400 italic">Contoh percakapan santai sedang disiapkan AI...</div>`;
+                    quickExContainer.innerHTML = `<div class="text-xs text-slate-400 italic">Contoh percakapan alami sedang disiapkan AI...</div>`;
                 }
             }
 
-            // Synonyms
+            // E. Quick Recap Formula (Tab 1 Memory Lock)
+            const recapBox = document.getElementById('vocab-card-quick-recap-box');
+            const recapVisual = document.getElementById('vocab-card-recap-visual');
+            const recapText = document.getElementById('vocab-card-quick-recap');
+            const recapChunks = document.getElementById('vocab-card-recap-chunks');
+            if (recapBox) {
+                const wordUpper = (vocab.word || '').toUpperCase();
+                const visual = vocab.visualFlow || '💨 → 🌫️ → ☁️ → nothing';
+
+                if (recapVisual) {
+                    recapVisual.innerHTML = `<i class="fa-solid fa-brain text-pink-400"></i> <span class="text-slate-300">Visual Flow:</span> <span class="font-bold text-amber-200">${visual}</span>`;
+                }
+                if (recapText) {
+                    if (vocab.quickRecap) {
+                        recapText.innerText = `⚡ ${vocab.quickRecap.replace(/^[⚡\s]*/, '')}`;
+                    } else {
+                        const coreDef = vocab.coreMeaningB1 || vocab.meaningId || 'gradually fade away';
+                        recapText.innerText = `⚡ ${wordUpper} = ${coreDef}`;
+                    }
+                }
+                if (recapChunks) {
+                    const star = vocab.collocationMatrix?.starChunk || vocab.goldenChunk || '';
+                    const vns = vocab.collocationMatrix?.verbPlusNoun || [];
+                    const nvs = vocab.collocationMatrix?.nounPlusVerb || [];
+                    const allChunks = [star, ...vns, ...nvs].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).slice(0, 4);
+                    if (allChunks.length > 0) {
+                        recapChunks.innerHTML = `<span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold self-center mr-1">Best Chunks:</span>` +
+                            allChunks.map(c => `<span class="bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-500/30 px-2 py-0.5 rounded text-[10px] font-mono font-medium">⭐ ${c}</span>`).join(' ');
+                    } else {
+                        recapChunks.innerHTML = '';
+                    }
+                }
+            }
+
+            // ================= TAB 2: IELTS DEEP MASTERY =================
+            // A. Contrast / Jangan Tertukar (CONDITIONAL SKIPPING: Hidden if null)
+            const contrastBox = document.getElementById('vocab-card-contrast-box');
+            const contrastTarget = document.getElementById('vocab-card-contrast-target');
+            const contrastText = document.getElementById('vocab-card-contrast-text');
+            const contrastWordALabel = document.getElementById('vocab-card-contrast-word-a-label');
+            const contrastWordADesc = document.getElementById('vocab-card-contrast-word-a-desc');
+            const contrastWordAEx = document.getElementById('vocab-card-contrast-word-a-example');
+            const contrastWordBLabel = document.getElementById('vocab-card-contrast-word-b-label');
+            const contrastWordBDesc = document.getElementById('vocab-card-contrast-word-b-desc');
+            const contrastWordBEx = document.getElementById('vocab-card-contrast-word-b-example');
+            const contrastFormulaTags = document.getElementById('vocab-card-contrast-formula-tags');
+
+            if (vocab.nuanceCompare && vocab.nuanceCompare.compareWith) {
+                if (contrastBox) contrastBox.classList.remove('hidden');
+                const compareWithWord = vocab.nuanceCompare.compareWith;
+                const targetWord = vocab.word;
+                if (contrastTarget) contrastTarget.innerText = `${targetWord} vs ${compareWithWord}`;
+
+                let compareDesc = '';
+                let targetDesc = '';
+                const rawA = vocab.nuanceCompare.compareNuance || vocab.nuanceCompare.wordA_nuance || '';
+                const rawB = vocab.nuanceCompare.targetNuance || vocab.nuanceCompare.wordB_nuance || '';
+
+                const cleanPrefix = (str, word) => {
+                    if (!str) return '';
+                    const reg = new RegExp(`^\\s*${word}\\s*[:=-]\\s*`, 'i');
+                    return str.replace(reg, '').trim();
+                };
+
+                const targetRegex = new RegExp(`\\b${targetWord}\\b`, 'i');
+                const compareRegex = new RegExp(`\\b${compareWithWord}\\b`, 'i');
+
+                if (rawA && targetRegex.test(rawA.split(/[:=-]/)[0] || '')) {
+                    targetDesc = cleanPrefix(rawA, targetWord);
+                    compareDesc = cleanPrefix(rawB, compareWithWord);
+                } else if (rawB && targetRegex.test(rawB.split(/[:=-]/)[0] || '')) {
+                    targetDesc = cleanPrefix(rawB, targetWord);
+                    compareDesc = cleanPrefix(rawA, compareWithWord);
+                } else {
+                    compareDesc = cleanPrefix(rawA, compareWithWord);
+                    targetDesc = cleanPrefix(rawB, targetWord);
+                }
+
+                if (contrastWordALabel) contrastWordALabel.innerText = `${compareWithWord.toUpperCase()} (Biasa / Umum)`;
+                if (contrastWordADesc) contrastWordADesc.innerText = compareDesc || `Penggunaan umum atau hasil yang lebih luas.`;
+                if (contrastWordAEx) {
+                    if (vocab.nuanceCompare.compareExample) {
+                        contrastWordAEx.classList.remove('hidden');
+                        contrastWordAEx.innerText = `Contoh: "${vocab.nuanceCompare.compareExample}"`;
+                    } else {
+                        contrastWordAEx.classList.add('hidden');
+                    }
+                }
+
+                if (contrastWordBLabel) contrastWordBLabel.innerText = `${targetWord.toUpperCase()} (Spesifik / Akurat)`;
+                if (contrastWordBDesc) contrastWordBDesc.innerText = targetDesc || `Penggunaan presisi tingkat tinggi untuk topik spesifik.`;
+                if (contrastWordBEx) {
+                    if (vocab.nuanceCompare.targetExample) {
+                        contrastWordBEx.classList.remove('hidden');
+                        contrastWordBEx.innerText = `Contoh: "${vocab.nuanceCompare.targetExample}"`;
+                    } else {
+                        contrastWordBEx.classList.add('hidden');
+                    }
+                }
+
+                // Formula tags (e.g. disappear -> result vs dissipate -> gradual process)
+                if (contrastFormulaTags) {
+                    const formulaA = vocab.nuanceCompare.compareFormula || `${compareWithWord} → Result / Umum`;
+                    const formulaB = vocab.nuanceCompare.targetFormula || `${targetWord} → Gradual Process / Spesifik`;
+                    contrastFormulaTags.innerHTML = `
+                        <span class="px-2.5 py-0.5 rounded-md bg-rose-100 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-500/30 font-semibold">${formulaA}</span>
+                        <span class="text-slate-400 font-bold text-xs">vs</span>
+                        <span class="px-2.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30 font-semibold">${formulaB}</span>
+                    `;
+                }
+
+                if (contrastText) {
+                    contrastText.innerHTML = `
+                        <div class="text-rose-300 font-medium"><strong>• ${compareWithWord}:</strong> ${compareDesc}</div>
+                        <div class="text-emerald-300 font-semibold"><strong>• ${targetWord}:</strong> ${targetDesc}</div>
+                    `;
+                }
+            } else {
+                if (contrastBox) contrastBox.classList.add('hidden');
+            }
+
+            // B. Full Collocations Matrix
+            const collocVerbNoun = document.getElementById('vocab-card-colloc-verb-noun');
+            const collocNounVerb = document.getElementById('vocab-card-colloc-noun-verb');
+            if (vocab.collocationMatrix) {
+                if (collocVerbNoun) {
+                    const vn = vocab.collocationMatrix.verbPlusNoun || [];
+                    collocVerbNoun.innerHTML = vn.length > 0 ? vn.map(c => `<span class="text-xs font-mono bg-indigo-50/70 dark:bg-slate-950 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/30 font-medium">${c}</span>`).join('') : `<span class="text-xs text-slate-500 font-mono">-</span>`;
+                }
+                if (collocNounVerb) {
+                    const nv = vocab.collocationMatrix.nounPlusVerb || [];
+                    collocNounVerb.innerHTML = nv.length > 0 ? nv.map(c => `<span class="text-xs font-mono bg-indigo-50/70 dark:bg-slate-950 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/30 font-medium">${c}</span>`).join('') : `<span class="text-xs text-slate-500 font-mono">-</span>`;
+                }
+            } else {
+                if (collocVerbNoun) {
+                    collocVerbNoun.innerHTML = (vocab.synonyms || []).slice(0, 2).map(s => `<span class="text-xs font-mono bg-indigo-50/70 dark:bg-slate-950 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/30">${s}</span>`).join('') || '<span class="text-xs text-slate-500 font-mono">-</span>';
+                }
+                if (collocNounVerb) {
+                    collocNounVerb.innerHTML = (vocab.synonyms || []).slice(2, 4).map(s => `<span class="text-xs font-mono bg-indigo-50/70 dark:bg-slate-950 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/30">${s}</span>`).join('') || '<span class="text-xs text-slate-500 font-mono">-</span>';
+                }
+            }
+
+            // C. Band 7.5+ IELTS Sentence Upgrade (CONDITIONAL SKIPPING: Hidden if null)
+            const upgradeBox = document.getElementById('vocab-card-upgrade-box');
+            const upgradeModule = document.getElementById('vocab-card-upgrade-module');
+            const upgradeBasic = document.getElementById('vocab-card-upgrade-basic');
+            const upgradeAdvanced = document.getElementById('vocab-card-upgrade-advanced');
+            if (vocab.ieltsUpgrade && vocab.ieltsUpgrade.upgradedSentence) {
+                if (upgradeBox) upgradeBox.classList.remove('hidden');
+                if (upgradeModule) upgradeModule.innerText = vocab.ieltsUpgrade.targetModule || 'Writing Task 2';
+                if (upgradeBasic) upgradeBasic.innerText = vocab.ieltsUpgrade.basicSentence || '';
+                if (upgradeAdvanced) upgradeAdvanced.innerText = vocab.ieltsUpgrade.upgradedSentence || '';
+            } else {
+                if (upgradeBox) upgradeBox.classList.add('hidden');
+            }
+
+            // D. Usage Warning & Register Trap (CONDITIONAL SKIPPING: Hidden if null)
+            const usageWarningBox = document.getElementById('vocab-card-usage-warning-box');
+            const usageWarningText = document.getElementById('vocab-card-usage-warning-text');
+            const warningComparison = document.getElementById('vocab-card-warning-comparison');
+            const warnWrongSentence = document.getElementById('vocab-card-warn-wrong-sentence');
+            const warnWrongReason = document.getElementById('vocab-card-warn-wrong-reason');
+            const warnBetterSentence = document.getElementById('vocab-card-warn-better-sentence');
+            const warnCorrectSentence = document.getElementById('vocab-card-warn-correct-sentence');
+
+            const warningMsg = vocab.usageWarning || vocab.registerTrapAlert;
+            if (warningMsg) {
+                if (usageWarningBox) usageWarningBox.classList.remove('hidden');
+
+                if (typeof warningMsg === 'object' && warningMsg.wrongSentence) {
+                    if (usageWarningText) usageWarningText.innerText = warningMsg.rule || warningMsg.warning || 'Perhatikan batasan penggunaan kata ini dalam konteks formal:';
+                    if (warningComparison) warningComparison.classList.remove('hidden');
+                    if (warnWrongSentence) warnWrongSentence.innerText = warningMsg.wrongSentence;
+                    if (warnWrongReason) warnWrongReason.innerText = warningMsg.explanation ? `(Alasan: ${warningMsg.explanation})` : '';
+                    if (warnBetterSentence) warnBetterSentence.innerText = warningMsg.betterAlternative || '';
+                    if (warnCorrectSentence) warnCorrectSentence.innerText = warningMsg.correctSentence || '';
+                } else {
+                    if (usageWarningText) usageWarningText.innerText = typeof warningMsg === 'string' ? warningMsg : JSON.stringify(warningMsg);
+                    if (warningComparison) warningComparison.classList.add('hidden');
+                }
+            } else {
+                if (usageWarningBox) usageWarningBox.classList.add('hidden');
+            }
+
+            // E. Register Badges & High-Yield Themes
+            const regBadge = document.getElementById('vocab-badge-register');
+            const ieltsBadge = document.getElementById('vocab-badge-ielts');
+            const regDesc = document.getElementById('vocab-card-register-desc');
+            const highYieldBox = document.getElementById('vocab-card-high-yield-box');
+            const highYieldText = document.getElementById('vocab-card-high-yield-text');
+            const highYieldTopics = document.getElementById('vocab-card-high-yield-topics');
+            const highYieldStructure = document.getElementById('vocab-card-high-yield-structure');
+            const academicStructureText = document.getElementById('vocab-card-academic-structure-text');
+
+            const regLabel = vocab.registerLabel || (vocab.registerLevel === 'casual' ? '🔴 Casual / Santai' : (vocab.registerLevel === 'semi_formal' ? '🟡 Agak Formal / Netral' : (vocab.registerLevel === 'written_academic' ? '🟣 Tulisan Resmi' : '🟢 Formal Akademik')));
+            if (regBadge) {
+                regBadge.innerText = regLabel;
+                regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full " + (vocab.registerLevel === 'casual' ? 'bg-amber-950 text-amber-300 border border-amber-500/40' : (vocab.registerLevel === 'semi_formal' ? 'bg-sky-950 text-sky-300 border border-sky-500/40' : 'bg-emerald-950 text-emerald-300 border border-emerald-500/40'));
+            }
+
+            const ieltsInfo = vocab.ieltsSuitability || {
+                status: 'both',
+                badgeText: '🌐 Writing & Speaking OK',
+                description: 'Aman dan direkomendasikan untuk IELTS Writing Task 2 dan Speaking.'
+            };
+            if (ieltsBadge) {
+                ieltsBadge.innerText = ieltsInfo.badgeText || '🌐 Writing & Speaking OK';
+                ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40";
+            }
+            if (regDesc) {
+                regDesc.innerText = ieltsInfo.description || 'Kosa kata berkualitas untuk meningkatkan Lexical Resource.';
+            }
+
+            if (highYieldBox && highYieldText) {
+                if (vocab.highYieldContext || vocab.ieltsTopics || vocab.academicStructure) {
+                    highYieldBox.classList.remove('hidden');
+
+                    if (highYieldTopics) {
+                        let topics = [];
+                        if (Array.isArray(vocab.ieltsTopics) && vocab.ieltsTopics.length > 0) {
+                            topics = vocab.ieltsTopics;
+                        } else if (typeof vocab.highYieldContext === 'string') {
+                            const cleaned = vocab.highYieldContext.replace(/^[🔥\s]*High-Yield:?[^:]*:\s*/i, '').replace(/\([^)]*\)/g, '');
+                            if (cleaned.includes(',')) {
+                                topics = cleaned.split(',').map(t => t.trim().replace(/^&\s*/, '')).filter(Boolean);
+                            }
+                        }
+                        if (topics.length > 0) {
+                            highYieldTopics.classList.remove('hidden');
+                            highYieldTopics.innerHTML = topics.map(t => `<span class="bg-amber-100/80 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-300/80 dark:border-amber-500/30 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold">📌 ${t.replace(/^&\s*/, '')}</span>`).join('');
+                        } else {
+                            highYieldTopics.classList.add('hidden');
+                        }
+                    }
+
+                    // Avoid duplicate string display when badges are already present
+                    if (highYieldTopics && !highYieldTopics.classList.contains('hidden') && highYieldTopics.children.length > 0) {
+                        highYieldText.classList.add('hidden');
+                    } else {
+                        highYieldText.classList.remove('hidden');
+                        highYieldText.innerText = typeof vocab.highYieldContext === 'string' ? vocab.highYieldContext : 'Sangat berguna untuk IELTS Writing Task 2 pada topik-topik relevan.';
+                    }
+
+                    if (highYieldStructure && academicStructureText) {
+                        const structure = vocab.academicStructure || (vocab.ieltsUpgrade && vocab.ieltsUpgrade.upgradedSentence ? `"${vocab.ieltsUpgrade.upgradedSentence}"` : null);
+                        if (structure) {
+                            highYieldStructure.classList.remove('hidden');
+                            academicStructureText.innerText = structure;
+                        } else {
+                            highYieldStructure.classList.add('hidden');
+                        }
+                    }
+                } else {
+                    highYieldBox.classList.add('hidden');
+                    highYieldText.innerText = '';
+                }
+            }
+
+            // F. Synonyms & Antonyms in Essence Tab
             const synContainer = document.getElementById('vocab-card-synonyms');
             if (synContainer) {
                 if (vocab.synonyms && vocab.synonyms.length > 0) {
                     synContainer.innerHTML = vocab.synonyms.map(s => 
-                        `<span class="text-xs font-mono bg-slate-950 text-indigo-300 px-2.5 py-1 rounded-lg border border-slate-800">${s}</span>`
+                        `<span class="text-xs font-mono bg-indigo-50 dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 px-2.5 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-500/20 font-medium">${s}</span>`
                     ).join('');
                 } else {
                     synContainer.innerHTML = `<span class="text-xs text-slate-500 font-mono">-</span>`;
                 }
             }
 
-            // Feynman Status Badge
+            const antContainer = document.getElementById('vocab-card-antonyms');
+            if (antContainer) {
+                if (vocab.antonyms && vocab.antonyms.length > 0) {
+                    antContainer.innerHTML = vocab.antonyms.map(a => 
+                        `<span class="text-xs font-mono bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 px-2.5 py-0.5 rounded-lg border border-rose-200 dark:border-rose-500/30 font-medium">${a}</span>`
+                    ).join('');
+                } else {
+                    antContainer.innerHTML = `<span class="text-xs text-slate-500 font-mono">-</span>`;
+                }
+            }
+
+            // G. Audio & Pronunciation States Reset
+            const deepEvalResult = document.getElementById('vocab-deep-eval-result');
+            if (deepEvalResult) {
+                deepEvalResult.classList.add('hidden');
+                deepEvalResult.innerHTML = '';
+            }
+            const recTimer = document.getElementById('vocab-rec-timer');
+            if (recTimer) recTimer.innerText = '';
+            const recStatus = document.getElementById('vocab-rec-status');
+            if (recStatus) recStatus.innerText = 'Siap Merekam';
+            const btnRecStart = document.getElementById('btn-vocab-rec-start');
+            if (btnRecStart) btnRecStart.classList.remove('hidden');
+            const btnRecStop = document.getElementById('btn-vocab-rec-stop');
+            if (btnRecStop) btnRecStop.classList.add('hidden');
+            const audioPreview = document.getElementById('vocab-audio-preview');
+            if (audioPreview) {
+                audioPreview.classList.add('hidden');
+                audioPreview.src = '';
+            }
+
+            // ================= FIXED BOTTOM: PRACTICE HUB (FEYNMAN LAB) =================
             const feynmanBadge = document.getElementById('vocab-feynman-status-badge');
             if (feynmanBadge) {
                 const now = Date.now();
@@ -949,12 +1482,10 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 }
             }
 
-            // Populate Feynman inputs & feedback (v8.0)
             const feynmanInput = document.getElementById('input-feynman-explanation');
             if (feynmanInput) {
                 feynmanInput.value = vocab.feynmanLastExplanation || '';
             }
-
             const feynmanSentenceInput = document.getElementById('input-feynman-sentence');
             if (feynmanSentenceInput) {
                 feynmanSentenceInput.value = vocab.feynmanLastSentence || '';
@@ -977,94 +1508,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             const fastTrackResult = document.getElementById('vocab-fasttrack-result-box');
             if (fastTrackResult) fastTrackResult.classList.add('hidden');
 
-            // Reset Pronunciation & Deep Eval states
-            const deepEvalResult = document.getElementById('vocab-deep-eval-result');
-            if (deepEvalResult) {
-                deepEvalResult.classList.add('hidden');
-                deepEvalResult.innerHTML = '';
-            }
-            const recTimer = document.getElementById('vocab-rec-timer');
-            if (recTimer) recTimer.innerText = '';
-            const recStatus = document.getElementById('vocab-rec-status');
-            if (recStatus) recStatus.innerText = 'Siap Merekam';
-            const btnRecStart = document.getElementById('btn-vocab-rec-start');
-            if (btnRecStart) btnRecStart.classList.remove('hidden');
-            const btnRecStop = document.getElementById('btn-vocab-rec-stop');
-            if (btnRecStop) btnRecStop.classList.add('hidden');
-            const audioPreview = document.getElementById('vocab-audio-preview');
-            if (audioPreview) {
-                audioPreview.classList.add('hidden');
-                audioPreview.src = '';
-            }
-
-            // Register & IELTS Context Suitability (v7.1)
-            const regBadge = document.getElementById('vocab-badge-register');
-            const ieltsBadge = document.getElementById('vocab-badge-ielts');
-            const regDesc = document.getElementById('vocab-card-register-desc');
-            const highYieldBox = document.getElementById('vocab-card-high-yield-box');
-            const highYieldText = document.getElementById('vocab-card-high-yield-text');
-            const trapBox = document.getElementById('vocab-card-trap-box');
-            const trapText = document.getElementById('vocab-card-trap-text');
-
-            const regLabel = vocab.registerLabel || (vocab.registerLevel === 'casual' ? '🔴 Casual / Santai' : (vocab.registerLevel === 'semi_formal' ? '🟡 Agak Formal / Netral' : (vocab.registerLevel === 'written_academic' ? '🟣 Tulisan Resmi (Written)' : '🟢 Formal Akademik')));
-            if (regBadge) {
-                regBadge.innerText = regLabel;
-                if (vocab.registerLevel === 'casual') {
-                    regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/40";
-                } else if (vocab.registerLevel === 'semi_formal') {
-                    regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-500/40";
-                } else if (vocab.registerLevel === 'written_academic') {
-                    regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-300 border border-purple-500/40";
-                } else {
-                    regBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40";
-                }
-            }
-
-            const ieltsInfo = vocab.ieltsSuitability || {
-                status: 'both',
-                badgeText: '🌐 Writing & Speaking OK',
-                badgeColor: 'emerald',
-                description: 'Aman dan direkomendasikan untuk IELTS Writing Task 2 dan Speaking.'
-            };
-
-            if (ieltsBadge) {
-                ieltsBadge.innerText = ieltsInfo.badgeText || '🌐 Writing & Speaking OK';
-                if (ieltsInfo.badgeColor === 'purple' || ieltsInfo.status === 'writing_only') {
-                    ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-300 border border-purple-500/40";
-                } else if (ieltsInfo.badgeColor === 'sky' || ieltsInfo.status === 'speaking_only') {
-                    ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-500/40";
-                } else if (ieltsInfo.badgeColor === 'amber' || ieltsInfo.status === 'non_ielts') {
-                    ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/40";
-                } else {
-                    ieltsBadge.className = "text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40";
-                }
-            }
-
-            if (regDesc) {
-                regDesc.innerText = ieltsInfo.description || (vocab.registerLevel === 'casual' ? 'Kata santai/informal — cocok untuk Speaking Part 1 atau obrolan sehari-hari, namun hindari di Writing Task 2.' : 'Kosa kata register formal/akademis yang siap meningkatkan nilai Lexical Resource di IELTS.');
-            }
-
-            if (highYieldBox && highYieldText) {
-                if (vocab.highYieldContext) {
-                    highYieldBox.classList.remove('hidden');
-                    highYieldText.innerText = vocab.highYieldContext;
-                } else {
-                    highYieldBox.classList.add('hidden');
-                    highYieldText.innerText = '';
-                }
-            }
-
-            if (trapBox && trapText) {
-                if (vocab.registerTrapAlert) {
-                    trapBox.classList.remove('hidden');
-                    trapText.innerText = vocab.registerTrapAlert;
-                } else {
-                    trapBox.classList.add('hidden');
-                    trapText.innerText = '';
-                }
-            }
-
-            // Mastered Button state
+            // Mastered Button State
             const masteredBtn = document.getElementById('btn-card-mastered');
             if (masteredBtn) {
                 if (vocab.status === 'mastered') {
@@ -1175,7 +1619,18 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 vocab.meaningEn = analysis.meaningEn || vocab.meaningEn;
                 vocab.indonesianGuide = analysis.indonesianGuide || vocab.indonesianGuide;
                 vocab.example = analysis.example || vocab.example;
+                vocab.coreMeaningB1 = analysis.coreMeaningB1 || analysis.meaningEn || vocab.coreMeaningB1;
+                vocab.visualFlow = analysis.visualFlow || vocab.visualFlow || '💡 → 🧠 → 🗣️';
+                vocab.mentalImageExplanation = analysis.mentalImageExplanation || analysis.childExplanation || vocab.mentalImageExplanation;
+                vocab.childExplanation = analysis.mentalImageExplanation || analysis.childExplanation || vocab.childExplanation;
+                vocab.collocationMatrix = analysis.collocationMatrix || vocab.collocationMatrix;
+                vocab.nuanceCompare = analysis.nuanceCompare !== undefined ? analysis.nuanceCompare : vocab.nuanceCompare;
+                vocab.ieltsUpgrade = analysis.ieltsUpgrade !== undefined ? analysis.ieltsUpgrade : vocab.ieltsUpgrade;
+                vocab.usageWarning = analysis.usageWarning !== undefined ? analysis.usageWarning : vocab.usageWarning;
+                vocab.quickRecap = analysis.quickRecap || vocab.quickRecap;
+                vocab.naturalExamples = analysis.naturalExamples || vocab.naturalExamples;
                 vocab.synonyms = analysis.synonyms || vocab.synonyms;
+                vocab.antonyms = analysis.antonyms || vocab.antonyms || [];
                 vocab.ipa = analysis.ipa || vocab.ipa;
                 saveVocabBank();
                 openVocabCard(vocab.id);
@@ -1192,7 +1647,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
         }
 
         // =========================================================================
-        // IeltsGo v6.3.3 — DIRECT GEMINI AI AUDIO PHONETIC & PRONUNCIATION COACH (100% BAHASA INDONESIA)
+        // IeltsGo v7.3 — DIRECT GEMINI AI AUDIO PHONETIC & PRONUNCIATION COACH (CLEAR B1 ENGLISH)
         // =========================================================================
         let vocabPronRecTimerInterval = null;
         let vocabPronRecDuration = 0;
@@ -1311,141 +1766,109 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 
             const targetAccent = localStorage.getItem('ielts_target_accent') || 'british_rp';
 
-            const systemPrompt = `Anda adalah Pelatih Fonetik yang AKURAT dan JUJUR terhadap keterbatasan diri sendiri.
-Prioritas utama Anda: KEJUJURAN & AKURASI, bukan kesan "tegas" atau "expert".
-Lebih baik terdengar sederhana tapi benar, daripada detail tapi mengarang.
+            const systemPrompt = `You are a direct, honest, and supportive AI Pronunciation & Phonetic Coach for English vocabulary learners. All explanations, coaching advice, and phonetic tips MUST be written strictly in clear, accessible B1-level English (simple, friendly, and easy to understand).
 
-Tugas: menilai pelafalan SATU KATA TARGET: "${vocab.word}"
+Your top priority: HONESTY & ACCURACY, not sounding overly academic or strict.
+It is far better to be simple and accurate than overly technical and fabricated.
 
-Data Kata Target:
-- Kata: "${vocab.word}"
-- Transkripsi IPA Resmi: ${vocab.ipa || '-'}
-- Panduan Pelafalan Indonesia: ${vocab.indonesianGuide || '-'}
-- Target Aksen: ${targetAccent}
+Task: Evaluate the pronunciation of ONE TARGET WORD: "${vocab.word}"
 
-============================================
-🚨 ATURAN #1 — CEK KUALITAS AUDIO DULU
-============================================
-Jika audio hening, noise dominan, atau terlalu lemah untuk didengar jelas:
-- Skor: 0%
-- Tulis: "[Audio tidak terdeteksi jelas. Coba rekam lebih dekat ke mikrofon.]"
-- STOP, jangan lanjut ke section lain.
+Target Word Data:
+- Word: "${vocab.word}"
+- Official IPA: ${vocab.ipa || '-'}
+- Pronunciation Guide: ${vocab.indonesianGuide || '-'}
+- Target Accent: ${targetAccent}
 
 ============================================
-🚨 ATURAN #2 — BATASAN KEMAMPUAN ANDA (WAJIB DIPATUHI)
+🚨 RULE #1 — CHECK AUDIO QUALITY FIRST
 ============================================
-Anda TIDAK memiliki kemampuan mengukur sinyal akustik secara literal
-(formant, spektrogram, frekuensi getar pita suara). Anda menilai berdasarkan
-pola bunyi yang terdengar secara umum, bukan pengukuran presisi.
-
-Karena itu:
-- Skor Anda adalah ESTIMASI KASAR, bukan pengukuran ilmiah presisi.
-- BULATKAN skor ke kelipatan 5 (contoh: 55%, 70%, 85% — BUKAN 73% atau 84%).
-  Ini penting supaya skor tidak terkesan presisi palsu.
-- GUNAKAN SKALA INI SECARA KONSISTEN setiap kali menilai (supaya skor bisa
-  dibandingkan antar rekaman dari waktu ke waktu):
-  * 90-100%: Tidak ada kesalahan yang terdengar. Setara penutur mahir.
-  * 75-89%: Bisa dipahami dengan sangat jelas. Ada 1-2 detail kecil
-    (stress/vokal minor) yang bisa dihaluskan, tapi TIDAK mengganggu
-    pemahaman sama sekali.
-  * 55-74%: Kata masih bisa dikenali/dipahami, tapi ada kesalahan yang
-    cukup jelas terdengar (stress salah, konsonan hilang, vokal meleset)
-    yang membuatnya terdengar "asing"/tidak natural.
-  * 30-54%: Kata sulit dikenali tanpa konteks. Ada kesalahan signifikan
-    (misal suku kata hilang, urutan bunyi berantakan).
-  * 0-29%: Kata nyaris tidak bisa dikenali sebagai kata target, atau
-    audio tidak jelas.
-  Gunakan deskripsi ini sebagai JANGKAR, bukan aturan matematis kaku —
-  tetap nilai berdasarkan apa yang benar-benar terdengar.
-- JANGAN memberi "Prediksi Band IELTS" dari satu kata. Band speaking IELTS
-  dinilai dari performa bicara panjang, bukan dari 1 kata terisolasi.
-  Jika diminta, katakan ini tidak valid dinilai dari 1 kata saja.
-- Jika Anda tidak yakin terhadap detail tertentu (misal transisi antar-fonem
-  yang halus), katakan "kurang terdengar jelas di rekaman ini" — JANGAN
-  mengarang deskripsi teknis presisi yang sebenarnya tidak bisa Anda pastikan.
+If audio is silent, background noise dominates, or speech is too faint to hear clearly:
+- Score: 0%
+- Write: "[Audio not clearly detected. Please record closer to the microphone.]"
+- STOP, do not proceed to other sections.
 
 ============================================
-🚨 ATURAN #3 — PANJANG OUTPUT MENGIKUTI SKOR (3 TINGKAT)
+🚨 RULE #2 — LIMITS OF YOUR ABILITY (STRICTLY OBSERVE)
 ============================================
-Sesuaikan panjang output dengan tingkat masalah yang BENAR-BENAR ada:
-- Jika skor 90-100% (lihat skala di Aturan #2): pujian singkat + skor.
-  Tidak perlu section "Yang Perlu Diperbaiki" — memang sudah tidak ada
-  kesalahan nyata yang terdengar.
-- Jika skor 75-89%: pelafalan sudah SANGAT BAIK dan mudah dipahami, TAPI
-  tetap tampilkan 1 catatan HALUS di bagian "Yang Perlu Disempurnakan"
-  (bukan "Yang Perlu Diperbaiki" — beda nada, karena ini bukan kesalahan
-  besar, cuma polesan terakhir menuju sempurna). Jelaskan detail spesifik
-  apa yang membedakan ini dari skor 90-100%, supaya pelajar tahu target
-  konkret untuk naik level, bukan cuma "sudah bagus, lanjut".
-- Jika skor <75%: TAMPILKAN SEMUA masalah yang
-  benar-benar terdengar, tapi URUTKAN berdasarkan PRIORITAS —
-  dari yang PALING mempengaruhi kejelasan/pemahaman pendengar,
-  ke yang paling minor.
-  - JANGAN daftar masalah kosmetik/sepele yang hampir tidak berpengaruh
-    hanya supaya listnya panjang.
-  - Beri label tingkat kepentingan tiap poin (Prioritas 1, 2, 3, dst)
-    supaya pelajar tahu mana yang harus dibenahi DULUAN, tapi tetap
-    tahu apa saja yang menyusul.
-  - Maksimal 3 poin. Jika ada lebih dari 3 masalah kecil, gabungkan
-    yang paling mirip atau buang yang paling tidak signifikan.
+You do NOT measure acoustic signals literally (formants, spectrograms, vocal cord frequencies). You evaluate based on general audible sound patterns.
+
+Therefore:
+- Your score is a REALISTIC ESTIMATE, not a precision measurement.
+- ROUND the score to the nearest multiple of 5 (e.g. 55%, 70%, 85% — NOT 73% or 84%).
+  This is important so the score does not suggest false precision.
+- USE THIS SCALE CONSISTENTLY every time you evaluate:
+  * 90-100%: No audible errors heard. Native-like clarity.
+  * 75-89%: Understood very clearly. 1-2 minor details (stress/vowel nuance) can be polished, but do NOT impede comprehension.
+  * 55-74%: Word is recognizable, but has noticeable errors (incorrect stress, dropped consonant, distorted vowel) making it sound unnatural.
+  * 30-54%: Word is difficult to recognize without context. Significant errors (missing syllables, scrambled sounds).
+  * 0-29%: Word is barely recognizable as the target word, or audio is unintelligible.
+  Use these descriptions as an ANCHOR.
+- DO NOT provide an "IELTS Speaking Band Prediction" from an isolated word.
+- If you are unsure about fine details, say "not clearly audible in this recording" — do NOT invent fake technical details.
 
 ============================================
-FORMAT OUTPUT (Markdown, Bahasa Indonesia)
+🚨 RULE #3 — OUTPUT DEPTH FOLLOWS SCORE (3 TIERS)
 ============================================
-
-### Skor
-**[Skor dibulatkan ke kelipatan 5]%** — [1 kalimat pendek: apa artinya skor ini]
-
-### Yang Perlu Disempurnakan (hanya jika skor 75-89%)
-[1 catatan halus dan spesifik: detail apa yang menahan skor ini dari 90-100%.
-Nada ringan/apresiatif, bukan seperti mengoreksi kesalahan besar.]
-
-### Yang Perlu Diperbaiki (hanya jika skor <75%)
-Urutkan dari paling penting. Maksimal 3 poin.
-
-1. **[Prioritas 1 — masalah paling mempengaruhi kejelasan]**
-   [1-2 kalimat: apa masalahnya + kenapa ini terjadi, bahasa sederhana]
-
-2. **[Prioritas 2 — jika ada]**
-   [1-2 kalimat]
-
-3. **[Prioritas 3 — jika ada, dan hanya jika benar-benar signifikan]**
-   [1-2 kalimat]
-
-### Cara Membaca
-**IPA Resmi**: \`${vocab.ipa || '-'}\` — [sebutkan bunyi kunci yang perlu diperhatikan, misal konsonan/vokal yang sering salah]
-
-**Padanan Kata Inggris Simpel** (kata umum yang pasti sudah familiar):
-Untuk tiap bunyi kunci yang penting/sering salah, sebutkan 1 kata Inggris
-SANGAT UMUM yang punya bunyi sama persis di bagian itu.
-Contoh: "Bunyi 'i' pendek di suku kata pertama sama seperti di kata 'it' atau
-'sit' — bukan seperti 'ee' di 'eat'."
-- HANYA pakai kata yang benar-benar umum dan pasti dikenal (get, see, it, so,
-  cat, book, run, dll) — jangan pakai kata jarang/sulit sebagai pembanding.
-- Ini prioritaskan untuk bunyi yang TIDAK punya padanan bagus di Bahasa
-  Indonesia (misal vokal pendek/panjang Inggris yang tidak dibedakan
-  dalam Bahasa Indonesia).
-
-**Versi Lidah Indonesia** (huruf A-Z, tanpa simbol IPA):
-**[Transliterasi dengan CAPS untuk suku kata bertekanan]**
-Contoh: es-TAB-lish (bukan ES-tab-lish)
-[Jika ada bunyi yang tidak ada padanan persis di Bahasa Indonesia, JANGAN
-memaksakan kesamaan yang sebenarnya tidak identik — cukup rujuk ke bagian
-"Padanan Kata Inggris Simpel" di atas untuk bunyi itu]
-
-### Latihan
-\`[Ucapkan 3x]: [kata]-[kata]-[kata]\`
+Adapt output length to the actual issues heard:
+- If score 90-100%: brief praise + score.
+  No "Areas to Improve" section needed — no real audible errors exist.
+- If score 75-89%: pronunciation is already VERY GOOD and clear, BUT
+  provide 1 subtle note in "Fine-Tuning" (not "Areas to Improve" — keep an encouraging, appreciative tone). Explain the specific detail that separates this from 90-100%, giving the learner a concrete target.
+- If score <75%: SHOW ALL issues heard, but RANK by PRIORITY —
+  from what MOST affects clarity/comprehension to minor slips.
+  - Do NOT list trivial cosmetic issues just to make the list long.
+  - Label priority (Priority 1, 2, 3).
+  - Maximum 3 points.
 
 ============================================
-CATATAN INTERNAL (jangan tampilkan ke user)
+FORMAT OUTPUT (Markdown, Simple B1 English)
+Write all explanations, coaching advice, and phonetic tips in simple, clear, friendly B1-level English.
 ============================================
-Ingat: tujuan sistem ini membantu belajar, bukan mengesankan pengguna dengan
-detail teknis. Skor yang jujur + masalah yang di-rank jelas > skor presisi
-palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
+
+### Score
+**[Score rounded to multiple of 5]%** — [1 short sentence in simple B1 English: what this score means]
+
+### Fine-Tuning (only if score is 75-89%)
+[1 gentle, encouraging, and specific tip in simple B1 English: what detail separates this from 90-100%.]
+
+### Areas to Improve (only if score <75%)
+Ranked by importance. Maximum 3 points in simple B1 English.
+
+1. **[Priority 1 — main issue affecting clarity]**
+   [1-2 sentences: what happened and how to fix it in simple B1 English]
+
+2. **[Priority 2 — if any]**
+   [1-2 sentences]
+
+3. **[Priority 3 — if significant]**
+   [1-2 sentences]
+
+### How to Pronounce
+**Official IPA**: \`${vocab.ipa || '-'}\` — [key vowel or consonant sound to focus on]
+
+**Simple English Word Matches** (common everyday words with identical sound):
+For each key sound that is important or commonly mispronounced, provide 1 VERY COMMON everyday English word that shares the exact same sound in that part.
+Example: "The short 'i' sound in the first syllable sounds like 'it' or 'sit' — not like 'ee' in 'eat'."
+- ONLY use extremely common, widely known words (get, see, it, so, cat, book, run, etc.) as reference words.
+- Prioritize sounds that are easily mispronounced.
+
+**Phonetic Guide** (capital letters = stressed syllable):
+**[Transliteration with CAPS for stressed syllables]**
+Example: es-TAB-lish (not ES-tab-lish)
+
+### Practice Drill
+\`[Say 3x]: [word]-[word]-[word]\`
+
+============================================
+INTERNAL MANDATE (do not display to user)
+============================================
+Write all explanations and feedback strictly in simple, clear B1-level English.
+============================================
+Remember: the goal of this system is to help the learner improve, not impress them with technical jargon. An honest score + clearly ranked issues > fake precision + long lists of fabricated flaws.`;
 
             try {
-                const userQuery = `Dengarkan rekaman audio saya saat mengucapkan kata "${vocab.word}". Berikan evaluasi fonetik yang akurat dan jujur, skor kelipatan 5, hal yang perlu disempurnakan/diperbaiki berdasarkan prioritas, dan padanan kata Inggris simpel sesuai instruksi.`;
-                const response = await callGeminiAPI(userQuery, systemPrompt, vocabAudioBlob);
+                const userQuery = `Listen to my voice recording pronouncing the word "${vocab.word}". Provide an honest, accurate phonetic evaluation, a score rounded to the nearest 5%, fine-tuning tips or prioritized areas to improve, and simple English word matches according to your instructions. Write all feedback in clear, simple B1 English.`;
+                const response = await callGeminiAPI(userQuery, systemPrompt, vocabAudioBlob, { feature: 'pron_coach' });
 
                 if (resultBox) {
                     resultBox.innerHTML = renderVocabPronEvalCard(response || "Evaluasi selesai.", vocab, targetAccent);
@@ -1494,6 +1917,21 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                 `;
             }
 
+            // 1.5 Extract Heard Word Transkripsi
+            let heardWord = '';
+            let isWordMatch = true;
+            const heardMatch = raw.match(/###\s*Kata yang Terdengar[\s\S]*?\n\**["“']?([^"”'\n\*\—]+)["”']?\**([\s\S]*?)(?=\n###|\n\n|$)/i);
+            if (heardMatch && heardMatch[1]) {
+                heardWord = heardMatch[1].trim();
+                const matchTag = (heardMatch[2] || '').toLowerCase();
+                if (matchTag.includes('berbeda') || matchTag.includes('tidak sesuai') || matchTag.includes('salah')) {
+                    isWordMatch = false;
+                }
+            }
+            if (raw.toLowerCase().includes('kata salah') || raw.toLowerCase().includes('tidak sesuai target') || raw.toLowerCase().includes('bukan kata target')) {
+                isWordMatch = false;
+            }
+
             // 2. Extract Score & Summary
             let score = 70;
             const scoreMatch = raw.match(/\*\*(\d+)%\*\*/i) || raw.match(/(\d+)%/);
@@ -1503,7 +1941,7 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
 
             // Extract Score Summary Sentence
             let scoreSummary = "Pelafalan telah didiagnosis oleh AI.";
-            const scoreLineMatch = raw.match(/###\s*Skor[\s\S]*?\n\*\*.*?\*\*[\s—\-]*(.*?)(?=\n###|\n\n|$)/i);
+            const scoreLineMatch = raw.match(/###\s*(?:Score|Skor)[\s\S]*?\n\*\*.*?\*\*[\s—\-]*(.*?)(?=\n###|\n\n|$)/i);
             if (scoreLineMatch && scoreLineMatch[1] && scoreLineMatch[1].trim()) {
                 scoreSummary = scoreLineMatch[1].replace(/^[—\-\:\s]+/, '').trim();
             }
@@ -1534,7 +1972,11 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                 scoreTextCol = 'text-amber-400';
                 progressCol = 'bg-amber-500';
             } else {
-                tierBadge = `<span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-500/40 flex items-center gap-1"><i class="fa-solid fa-circle-xmark text-rose-400"></i> 🚨 Sulit Dikenali (Drill Ulang)</span>`;
+                if (!isWordMatch || score <= 20) {
+                    tierBadge = `<span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-500/50 flex items-center gap-1 animate-pulse"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i> ❌ Kata Tidak Sesuai Target</span>`;
+                } else {
+                    tierBadge = `<span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-500/40 flex items-center gap-1"><i class="fa-solid fa-circle-xmark text-rose-400"></i> 🚨 Sulit Dikenali (Drill Ulang)</span>`;
+                }
                 themeBorder = 'border-rose-500/50';
                 themeBg = 'from-rose-950/30 via-slate-900 to-slate-950';
                 scoreTextCol = 'text-rose-400';
@@ -1543,14 +1985,14 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
 
             // 3. Extract "Yang Perlu Disempurnakan" (75-89%) or "Yang Perlu Diperbaiki" (<75%)
             let polishHtml = '';
-            const polishMatch = raw.match(/###\s*Yang Perlu Disempurnakan([\s\S]*?)(?=###|$)/i);
+            const polishMatch = raw.match(/###\s*(?:Fine-Tuning|Yang Perlu Disempurnakan)([\s\S]*?)(?=###|$)/i);
             if (polishMatch && polishMatch[1] && polishMatch[1].trim() && !polishMatch[1].includes('skip') && !polishMatch[1].includes('hanya jika')) {
                 const polishText = polishMatch[1].trim().replace(/^\s*[\-\*]\s*/gim, '');
                 if (polishText) {
                     polishHtml = `
                         <div class="p-3.5 rounded-2xl bg-sky-950/30 border border-sky-500/30 space-y-1.5 shadow-sm">
                             <div class="text-[11px] font-mono font-bold text-sky-400 uppercase flex items-center gap-1.5">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> Polesan Akhir Menuju Skor 90%+:
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Fine-Tuning Towards 90%+:
                             </div>
                             <div class="text-xs text-sky-100 font-sans leading-relaxed pl-1">
                                 ${renderMiniChatMarkdown(polishText)}
@@ -1561,7 +2003,7 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
             }
 
             let issuesHtml = '';
-            const fixMatch = raw.match(/###\s*Yang Perlu Diperbaiki([\s\S]*?)(?=###|$)/i);
+            const fixMatch = raw.match(/###\s*(?:Areas to Improve|Yang Perlu Diperbaiki)([\s\S]*?)(?=###|$)/i);
             if (fixMatch && fixMatch[1] && fixMatch[1].trim() && !fixMatch[1].includes('skip') && !fixMatch[1].includes('hanya jika')) {
                 const fixText = fixMatch[1].trim();
                 // Split by numbered items: 1., 2., 3.
@@ -1572,8 +2014,8 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                         if (!cleanItem || cleanItem.includes('hanya jika')) return '';
                         
                         // Extract Title and Content
-                        const titleMatch = cleanItem.match(/^\d+\.\s*\**\[?(Prioritas\s*\d+[^\]\n\*]*)\]?\**\s*([\s\S]*)/i);
-                        let pLabel = 'Prioritas Perbaikan';
+                        const titleMatch = cleanItem.match(/^\d+\.\s*\**\[?((?:Prioritas|Priority)\s*\d+[^\]\n\*]*)\]?\**\s*([\s\S]*)/i);
+                        let pLabel = 'Priority Improvement';
                         let pContent = cleanItem;
                         let pBadgeColor = 'bg-amber-950 text-amber-300 border-amber-500/40';
 
@@ -1582,9 +2024,9 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                             pContent = titleMatch[2].trim();
                         }
 
-                        if (pLabel.includes('Prioritas 1') || pLabel.includes('1')) {
+                        if (pLabel.includes('Prioritas 1') || pLabel.includes('Priority 1') || pLabel.includes('1')) {
                             pBadgeColor = 'bg-rose-950/90 text-rose-300 border-rose-500/50';
-                        } else if (pLabel.includes('Prioritas 2') || pLabel.includes('2')) {
+                        } else if (pLabel.includes('Prioritas 2') || pLabel.includes('Priority 2') || pLabel.includes('2')) {
                             pBadgeColor = 'bg-amber-950/90 text-amber-300 border-amber-500/50';
                         } else {
                             pBadgeColor = 'bg-blue-950/90 text-blue-300 border-blue-500/50';
@@ -1608,7 +2050,7 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                         issuesHtml = `
                             <div class="space-y-2">
                                 <div class="text-[11px] font-mono font-bold text-amber-400 uppercase flex items-center gap-1.5">
-                                    <i class="fa-solid fa-list-check"></i> Daftar Prioritas Perbaikan:
+                                    <i class="fa-solid fa-list-check"></i> Priority Improvement Checklist:
                                 </div>
                                 <div class="space-y-2">
                                     ${parsedItems}
@@ -1624,24 +2066,24 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
             let anchorWordsHtml = '';
             let indonesianGuideText = vocab.indonesianGuide || '';
 
-            const caraMembacaMatch = raw.match(/###\s*Cara Membaca([\s\S]*?)(?=###|$)/i);
+            const caraMembacaMatch = raw.match(/###\s*(?:How to Pronounce|Cara Membaca)([\s\S]*?)(?=###|$)/i);
             if (caraMembacaMatch && caraMembacaMatch[1]) {
                 const cmSection = caraMembacaMatch[1];
                 
                 // Extract IPA line
-                const ipaLineMatch = cmSection.match(/\*\*IPA\s*Resmi\*\*\s*:\s*`?([^`\n]+)`?/i);
+                const ipaLineMatch = cmSection.match(/\*\*(?:Official\s*IPA|IPA\s*Resmi)\*\*\s*:\s*`?([^`\n]+)`?/i);
                 if (ipaLineMatch && ipaLineMatch[1]) {
                     ipaText = ipaLineMatch[1].trim();
                 }
 
                 // Extract Indonesian Transliteration
-                const indoMatch = cmSection.match(/\*\*Versi Lidah Indonesia\*\*[\s\S]*?:\s*\n*([\s\S]*?)(?=\n\n|\n###|$)/i);
+                const indoMatch = cmSection.match(/\*\*(?:Phonetic\s*Guide|Versi\s*Lidah\s*Indonesia)\*\*[\s\S]*?:\s*\n*([\s\S]*?)(?=\n\n|\n###|$)/i);
                 if (indoMatch && indoMatch[1]) {
                     indonesianGuideText = indoMatch[1].trim();
                 }
 
                 // Extract Anchor Words list
-                const anchorMatch = cmSection.match(/\*\*Padanan Kata Inggris Simpel\*\*[\s\S]*?:\s*\n*([\s\S]*?)(?=\*\*Versi|\n###|$)/i);
+                const anchorMatch = cmSection.match(/\*\*(?:Simple\s*English\s*Word\s*Matches|Padanan\s*Kata\s*Inggris\s*Simpel)\*\*[\s\S]*?:\s*\n*([\s\S]*?)(?=\*\*|\n###|$)/i);
                 if (anchorMatch && anchorMatch[1]) {
                     const rawAnchorLines = anchorMatch[1].trim().split('\n').map(l => l.trim()).filter(Boolean);
                     const parsedAnchorPills = rawAnchorLines.map(line => {
@@ -1673,7 +2115,7 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                         anchorWordsHtml = `
                             <div class="space-y-1.5 pt-1">
                                 <div class="text-[11px] font-mono font-bold text-cyan-400 uppercase flex items-center gap-1.5">
-                                    <i class="fa-solid fa-anchor"></i> Padanan Kata Inggris Simpel (Klik Chip untuk Dengar):
+                                    <i class="fa-solid fa-anchor"></i> Simple English Word Matches (Click Chip to Listen):
                                 </div>
                                 <div class="space-y-1.5">
                                     ${parsedAnchorPills}
@@ -1700,6 +2142,20 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
 
             return `
                 <div class="space-y-3.5 pt-1">
+                    <!-- 0. Heard Word Ear Transkripsi Verification Banner -->
+                    ${heardWord ? `
+                    <div class="p-3 rounded-2xl bg-slate-950 border ${isWordMatch ? 'border-emerald-500/30' : 'border-rose-500/50 bg-rose-950/20'} flex items-center justify-between flex-wrap gap-2 text-xs font-mono shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-ear-listen ${isWordMatch ? 'text-emerald-400' : 'text-rose-400'} text-sm"></i>
+                            <span class="text-slate-400">Kata Terdengar:</span>
+                            <span class="font-bold text-white bg-slate-900 px-2.5 py-0.5 rounded-lg border border-slate-700">${heardWord}</span>
+                        </div>
+                        <span class="text-[10px] px-2.5 py-0.5 rounded-full border font-bold ${isWordMatch ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-rose-950 text-rose-300 border-rose-500/50'}">
+                            ${isWordMatch ? '✅ Sesuai Target' : '❌ Kata Berbeda / Salah'}
+                        </span>
+                    </div>
+                    ` : ''}
+
                     <!-- 1. Hero Score & Progress Card -->
                     <div class="p-4 rounded-2xl bg-gradient-to-r ${themeBg} border ${themeBorder} space-y-3 shadow-lg">
                         <div class="flex items-center justify-between flex-wrap gap-2">
@@ -1739,7 +2195,7 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
                     <div class="p-4 rounded-2xl bg-slate-950 border border-indigo-500/30 space-y-3 shadow-md">
                         <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800 pb-2">
                             <div class="text-[11px] font-mono font-bold text-indigo-400 uppercase flex items-center gap-1.5">
-                                <i class="fa-solid fa-book-open"></i> Panduan Cara Membaca Akurat:
+                                <i class="fa-solid fa-book-open"></i> Accurate Pronunciation Blueprint:
                             </div>
                             <span class="text-[11px] font-mono text-slate-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-bold">IPA: ${ipaText || '-'}</span>
                         </div>
@@ -1855,32 +2311,80 @@ palsu + daftar panjang cacat yang mengarang detail dan flat tanpa prioritas.`;
         }
 
         // Copy Vocab Study Prompt to Clipboard
+        
+        // Generate High-Yield B1 Pedagogy Study Prompt (Cognitive Methodology)
+        function generatePedagogyStudyPrompt(vocab) {
+            return `I am an English learner around B1 level preparing for everyday English, academic English, and IELTS.
+Teach me the word "${vocab.word}" using this exact cognitive method:
+
+# ${vocab.word.toUpperCase()} (${vocab.pos || 'word'} - CEFR: ${vocab.cefr || 'B2'})
+
+### 🎯 Core meaning
+Give me the simplest and clearest meaning in B1-level English. Do NOT begin with complicated dictionary jargon. Keep it direct and accessible.
+
+### 🧠 Mental image
+Give me a simple visual idea, tangible everyday analogy (grounded in physical objects), or memory trick that helps me remember the core meaning.
+
+### 💬 Natural examples
+Give me 3–5 natural examples: start with simple everyday situations and include 1 academic / Band 7.5+ IELTS-style sentence. For every example, briefly explain what the sentence means in simple English. Highlight new high-yield vocabulary using [VOCAB: word] tags.
+
+### 🔗 Common patterns & collocations
+Teach me the 3-5 most useful combinations with this word (e.g. word + noun, verb + word, preposition patterns) that native speakers actually use.
+
+### ⚖️ Compare (if applicable)
+If the word is commonly confused with another word (e.g., affect vs impair, dissipate vs disappear, increase vs influx), compare them clearly in simple English with a short example for each. If not, skip this section.
+
+### 🚫 Usage warning
+Tell me about important situations where I should NOT use this word or common learner mistakes.
+
+### 📚 IELTS usefulness
+Tell me briefly whether the word is useful for IELTS (Writing Task 1/2 or Speaking Part 1/2/3) and provide 1 natural Band 7.5+ IELTS sentence with clear linguistic rationale.
+
+### ⭐ Quick recap
+${vocab.word.toUpperCase()} = simple meaning • 2-3 most important chunks to remember.
+
+### 🎯 Active recall
+End with a short exercise (fill-in-the-blank or choose between two words) that makes me USE or REMEMBER the word right now.`;
+        }
+
+        // Direct Redirect & Copy to ChatGPT, Claude, or Gemini
+        function openExternalAI(platform) {
+            const vocab = vocabBank.find(v => v.id === currentActiveVocabId);
+            if (!vocab) { showToast("Tidak ada kata aktif yang terbuka.", "error"); return; }
+
+            const promptText = generatePedagogyStudyPrompt(vocab);
+
+            navigator.clipboard.writeText(promptText).then(() => {
+                let url = '';
+                let platformName = '';
+                if (platform === 'chatgpt') {
+                    platformName = 'ChatGPT';
+                    url = 'https://chatgpt.com/';
+                } else if (platform === 'claude') {
+                    platformName = 'Claude AI';
+                    url = 'https://claude.ai/new';
+                } else if (platform === 'gemini') {
+                    platformName = 'Google Gemini';
+                    url = 'https://gemini.google.com/app';
+                }
+
+                if (url) {
+                    window.open(url, '_blank');
+                    showToast(`Prompt "${vocab.word}" disalin! Silakan Paste (Ctrl+V) di ${platformName}.`, "success");
+                } else {
+                    showToast(`Prompt belajar "${vocab.word}" berhasil disalin ke clipboard!`, "success");
+                }
+                SoundFX.play('click');
+            }).catch(() => {
+                showToast("Gagal menyalin prompt ke clipboard.", "error");
+            });
+        }
+
         function copyVocabStudyPrompt() {
             const vocab = vocabBank.find(v => v.id === currentActiveVocabId);
             if (!vocab) { showToast("Tidak ada kata yang terbuka.", "error"); return; }
 
-            const prompt = `Halo! Tolong ajari saya tentang kata bahasa Inggris berikut untuk persiapan IELTS:
-
-Kata: "${vocab.word}"
-Kelas kata: ${vocab.pos || 'kata'}
-Level CEFR: ${vocab.cefr || 'B2'}
-Register / Keformalan: ${vocab.registerLabel || vocab.registerLevel || 'Formal Akademik'}
-Kesesuaian IELTS: ${vocab.ieltsSuitability ? vocab.ieltsSuitability.badgeText : 'Writing & Speaking OK'}
-Arti (Indonesia): ${vocab.meaningId || '-'}
-Arti (Inggris): ${vocab.meaningEn || '-'}
-Pengucapan IPA: ${vocab.ipa || vocab.word}
-Cara baca ala Indonesia: ${vocab.indonesianGuide || vocab.word.toUpperCase()}
-Contoh kalimat: ${vocab.example || '-'}
-Sinonim: ${(vocab.synonyms || []).join(', ') || '-'}
-
-Tolong berikan saya:
-1. 3 kolokasi akademik yang paling natural (${vocab.word} + apa?)
-2. Cara penggunaan di IELTS Writing Task 2 dengan 2 contoh kalimat lengkap (Band 7.5+)
-3. Perbedaan nuansa dengan sinonim-sinonimnya
-4. 1 contoh kalimat Speaking Part 3 yang menggunakan kata ini secara natural
-5. Kesalahan umum pelajar Indonesia yang harus dihindari
-
-Jawab dalam bahasa Indonesia, tapi contoh kalimatnya dalam bahasa Inggris.`;
+            const prompt = generatePedagogyStudyPrompt(vocab);
 
             navigator.clipboard.writeText(prompt).then(() => {
                 const btn = document.getElementById('btn-copy-vocab-prompt');
@@ -1952,24 +2456,24 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 {
   "score": 0 - 100,
   "level": "mastery" | "partial" | "unlearned",
-  "statusLabel": "Paham & Tepat (Mastery)" | "Cukup Paham (Perlu Polesan)" | "Miskonsepsi / Salah Struktur",
-  "meaningCritique": "1-2 kalimat feedback ketepatan arti/analogi dalam Bahasa Indonesia.",
-  "sentenceCritique": "1-2 kalimat feedback gramatika, part of speech, dan kolokasi kalimat siswa dalam Bahasa Indonesia.",
-  "grammarErrors": ["Daftar kesalahan ejaan/struktur spesifik jika ada (misal: 'disrepectfull' -> 'disrespectful', 'salah preposisi: gunakan to bukan with')"],
+  "statusLabel": "Mastered (Clear & Accurate)" | "Partially Mastered (Needs Polish)" | "Misconception / Structural Error",
+  "meaningCritique": "1-2 clear, helpful feedback sentences in simple B1 English.",
+  "sentenceCritique": "1-2 clear grammar, part-of-speech, and collocation feedback sentences in simple B1 English.",
+  "grammarErrors": ["Specific spelling or syntax corrections if any, in simple B1 English"],
   "syntaxFormulas": [
     "[Subject] + make an impertinent remark / comment",
     "It is impertinent of [Someone] to + [Verb]"
   ],
-  "upgradedSentence": "Contoh kalimat versi upgrade tingkat tinggi (Band 7.5+) yang menyempurnakan ide kalimat siswa secara natural.",
+  "upgradedSentence": "Band 7.5+ exemplary upgraded sentence naturally elevating the student's thought.",
   "srsDays": 4
 }`;
 
             try {
-                const userPrompt = `Evaluasi penguasaan konsep dan penggunaan kalimat saya untuk kata "${vocab.word}".
-Arti/Analogi: "${explanation}"
-Contoh Kalimat: "${sentence}"`;
+                const userPrompt = `Evaluate my conceptual understanding and practice sentence for the word "${vocab.word}".
+Meaning/Analogy: "${explanation}"
+Practice Sentence: "${sentence}"`;
 
-                const response = await callGeminiAPI(userPrompt, systemPrompt);
+                const response = await callGeminiAPI(userPrompt, systemPrompt, null, { feature: 'feynman_recall' });
                 if (!response) throw new Error("Tidak ada respon dari AI. Periksa koneksi atau API Key.");
 
                 const parsed = extractJsonFromLLM(response);
@@ -2208,15 +2712,15 @@ Contoh Kalimat: "${sentence}"`;
 
             const systemPrompt = `You are an elite IELTS Senior Examiner creating a high-stakes, spontaneous Mastery Challenge to test if a student has truly mastered the English word "${vocab.word}" (${vocab.pos}, CEFR ${vocab.cefr}).
 
-Design 1 sharp, creative challenge in Indonesian with an English requirement.
+Design 1 sharp, creative challenge in clear, simple B1 English.
 Examples of great challenge formats:
-- "Buat 1 kalimat argumen IELTS Speaking Part 3 / Writing Task 2 yang membandingkan dua kondisi kontras menggunakan kata '${vocab.word}' secara tepat!"
+- "Write 1 strong IELTS Speaking Part 3 or Writing Task 2 sentence comparing two contrasting situations using the word '${vocab.word}' accurately!"
 - "Perbaiki kalimat rancu berikut agar bernuansa akademik Band 7.5+ dengan menyisipkan kata '${vocab.word}': [berikan 1 kalimat rancu relevan]."
 
-Keep the prompt instruction concise (1-2 sentences) in Indonesian. Do NOT provide the answer.`;
+Keep the prompt instruction concise (1-2 sentences) in simple B1 English. Do NOT provide the answer.`;
 
             try {
-                const response = await callGeminiAPI(`Buat 1 soal ujian spontan untuk menguji penguasaan kata "${vocab.word}"`, systemPrompt);
+                const response = await callGeminiAPI(`Create 1 spontaneous challenge question in simple B1 English to test mastery of the word "${vocab.word}"`, systemPrompt, null, { feature: 'fast_track_gen' });
                 promptTextEl.innerHTML = renderMarkdown(response || `Buat 1 kalimat argumen IELTS yang menggunakan kata "${vocab.word}" secara natural dan tepat konteks.`);
                 if (answerInput) {
                     answerInput.disabled = false;
@@ -2269,11 +2773,11 @@ Return ONLY a valid JSON object:
 {
   "isPassed": true | false,
   "score": 0 - 100,
-  "critique": "2 kalimat penjelasan evaluasi tegas dalam Bahasa Indonesia."
+  "critique": "2 sentences of clear, constructive evaluation in simple B1 English."
 }`;
 
             try {
-                const response = await callGeminiAPI(`Evaluasi jawaban ujian spontan untuk kata "${vocab.word}": "${answer}"`, systemPrompt);
+                const response = await callGeminiAPI(`Evaluate spontaneous challenge answer for the word "${vocab.word}": "${answer}"`, systemPrompt, null, { feature: 'fast_track_eval' });
                 const parsed = extractJsonFromLLM(response);
                 if (!parsed) throw new Error("Gagal menguraikan penilaian ujian AI.");
 
@@ -2453,6 +2957,20 @@ Return ONLY a valid JSON object:
             if (backMeaning) backMeaning.innerText = vocab.meaningId || vocab.meaningEn || '';
             if (backGuide) backGuide.innerText = vocab.indonesianGuide || vocab.word.toUpperCase();
             if (backExample) backExample.innerText = vocab.example || '';
+
+            // Populate ⭐ Quick Recap for fast daily review (SRS v7.0)
+            const recapEl = document.getElementById('review-back-recap-text');
+            const chunkEl = document.getElementById('review-back-golden-chunk');
+            const aiRecapEl = document.getElementById('review-ai-recap-text');
+            const aiChunkEl = document.getElementById('review-ai-golden-chunk');
+
+            const recapText = vocab.quickRecap || (vocab.coreMeaningB1 ? `${vocab.word.toUpperCase()} = ${vocab.coreMeaningB1}` : `${vocab.word.toUpperCase()} = ${vocab.meaningId || vocab.meaningEn || ''}`);
+            const goldenChunkText = vocab.collocationMatrix?.starChunk || vocab.goldenChunk || (vocab.synonyms && vocab.synonyms[0] ? `Chunk: ${vocab.synonyms[0]}` : '');
+
+            if (recapEl) recapEl.innerText = recapText;
+            if (chunkEl) chunkEl.innerText = goldenChunkText ? `⭐ ${goldenChunkText}` : '';
+            if (aiRecapEl) aiRecapEl.innerText = recapText;
+            if (aiChunkEl) aiChunkEl.innerText = goldenChunkText ? `⭐ ${goldenChunkText}` : '';
         }
 
         function flipReviewCard() {
@@ -2547,7 +3065,7 @@ Target Register: ${vocab.registerLabel || vocab.registerLevel || 'formal'}
 Student Explanation: "${explanation || '(None)'}"
 Student Sentence: "${sentence || '(None)'}"
 
-Provide a concise evaluation in Indonesian with high-scoring IELTS tips.
+Provide a concise evaluation in clear B1 English with high-scoring IELTS tips.
 1. Meaning Critique: If provided, is it semantically accurate?
 2. Sentence Critique: Is grammar, collocation, and IELTS context accurate?
 3. Grammar Errors: Array of specific correction notes (empty if flawless).
@@ -2559,7 +3077,7 @@ Return JSON ONLY:
 {
   "score": 85,
   "level": "mastery | partial | unlearned",
-  "statusLabel": "Paham Sempurna | Cukup Paham | Perlu Perbaikan",
+  "statusLabel": "Mastered | Partially Mastered | Needs Practice",
   "meaningCritique": "...",
   "sentenceCritique": "...",
   "grammarErrors": ["..."],
@@ -2568,7 +3086,7 @@ Return JSON ONLY:
 }`;
 
             try {
-                const response = await callGeminiAPI(`Evaluate review drill for "${vocab.word}"`, systemPrompt);
+                const response = await callGeminiAPI(`Evaluate review drill for "${vocab.word}"`, systemPrompt, null, { feature: 'srs_drill' });
                 const parsed = extractJsonFromLLM(response);
                 if (!parsed) throw new Error("Respon AI tidak dapat diuraikan.");
 

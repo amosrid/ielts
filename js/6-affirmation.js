@@ -468,7 +468,7 @@ Target Aksen: ${targetAccent}
 1. Periksa kualitas audio. Jika hening atau tidak terdengar, accuracyScore = 0, deliveryBand = 'Band 2.0', transcription = '[Audio hening / tidak jelas]'.
 2. Nilai kelantangan vokal: 'Sangat Lantang & Berenergi' | 'Sedang (Perlu Lebih Yakin)' | 'Terlalu Pelan / Lemah / Datar'.
 3. Lakukan audit fonetik pada SETIAP kata. Masukkan HANYA kata yang SALAH/KURANG TEPAT ke dalam array 'flawedWords'. JANGAN masukkan kata yang sudah benar ke flawedWords!
-4. Berikan 'coachInsight' dalam 1-2 kalimat bahasa Indonesia yang tajam, memotivasi, dan berenergi tinggi.
+4. Provide 'coachInsight' in 1-2 sharp, encouraging, and high-energy sentences in simple B1 English.
 
 WAJIB KELUARKAN HANYA OBJEK JSON VALID TANPA TEKS LAIN:
 {
@@ -479,16 +479,16 @@ WAJIB KELUARKAN HANYA OBJEK JSON VALID TANPA TEKS LAIN:
   "flawedWords": [
     {
       "word": "kata_yang_salah",
-      "issue": "Penjelasan singkat kesalahan (misal: akhiran /s/ tergesa-gesa)",
-      "phonetic": "Panduan ejaan lidah Indonesia A-Z (misal: mis-TEIKS)"
+      "issue": "Short explanation of the error in simple B1 English",
+      "phonetic": "Syllable breakdown with CAPITAL stress (e.g. mis-TEIKS)"
     }
   ],
-  "coachInsight": "1-2 kalimat insight motivasi dan tips vokal"
+  "coachInsight": "1-2 sentences of encouraging vocal coaching insight in simple B1 English"
 }`;
 
             try {
-                const userQuery = `Halo Examiner, ini rekaman audio afirmasi saya: "${currentAff.en}". Tolong nilai artikulasi, akhiran kata, dan kelantangan vokal saya.`;
-                const response = await callGeminiAPI(userQuery, systemPrompt, affirmationAudioBlob);
+                const userQuery = `Hello Examiner, here is my voice recording reciting this affirmation: "${currentAff.en}". Please evaluate my articulation, word endings, and vocal delivery in simple B1 English.`;
+                const response = await callGeminiAPI(userQuery, systemPrompt, affirmationAudioBlob, { feature: 'affirmation_voice' });
 
                 let parsed = extractJsonFromLLM(response);
                 if (!parsed || !parsed.deliveryBand) {
@@ -680,11 +680,11 @@ WAJIB KELUARKAN HANYA OBJEK JSON VALID TANPA TEKS LAIN:
 Return ONLY a valid JSON object in this exact format:
 {
   "en": "English affirmation sentence (10-18 words, uplifting, academic tone)",
-  "id_trans": "Indonesian translation of the sentence"
+  "id_trans": "Simple, encouraging B1 English explanation of this mindset concept"
 }`;
 
             try {
-                const response = await callGeminiAPI("Generate one elite IELTS affirmation.", prompt);
+                const response = await callGeminiAPI("Generate one elite IELTS affirmation.", prompt, null, { feature: 'affirmation_gen' });
                 const data = extractJsonFromLLM(response);
 
                 if (data && data.en) {

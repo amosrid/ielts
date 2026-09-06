@@ -67,13 +67,16 @@
         function openApiKeyModal() {
             SoundFX.play('click');
             const savedKey = localStorage.getItem('ielts_gemini_api_key') || '';
-            const savedModel = localStorage.getItem('ielts_gemini_model') || 'gemini-3.7-flash';
+            const savedModel = localStorage.getItem('ielts_gemini_model') || 'gemini-3.8-flash';
+            const savedThinking = localStorage.getItem('ielts_gemini_thinking_mode') || 'medium';
             const isVerified = localStorage.getItem('ielts_gemini_verified') === 'true';
             
             const keyInput = document.getElementById('input-gemini-key');
             if (keyInput) keyInput.value = savedKey;
             const modelSelect = document.getElementById('select-gemini-model');
             if (modelSelect) modelSelect.value = savedModel;
+            const thinkingSelect = document.getElementById('select-gemini-thinking');
+            if (thinkingSelect) thinkingSelect.value = savedThinking;
             
             const statusBox = document.getElementById('api-key-status-box');
             if (statusBox) {
@@ -153,6 +156,7 @@
             const keyInput = document.getElementById('input-gemini-key');
             const key = keyInput.value.trim();
             const model = document.getElementById('select-gemini-model').value;
+            const thinking = document.getElementById('select-gemini-thinking')?.value || 'medium';
             const statusBox = document.getElementById('api-key-status-box');
             const saveBtn = document.getElementById('btn-save-api-key');
 
@@ -207,6 +211,7 @@
                 // SUCCESS: Verified
                 localStorage.setItem('ielts_gemini_api_key', key);
                 localStorage.setItem('ielts_gemini_model', model);
+                localStorage.setItem('ielts_gemini_thinking_mode', thinking);
                 localStorage.setItem('ielts_gemini_verified', 'true');
 
                 statusBox.className = "p-3 rounded-xl border border-emerald-500/50 bg-emerald-950/40 text-emerald-300 text-xs font-mono";
@@ -264,7 +269,7 @@
 
         function updateApiKeyUI() {
             const key = localStorage.getItem('ielts_gemini_api_key');
-            const model = localStorage.getItem('ielts_gemini_model') || 'gemini-3.7-flash';
+            const model = localStorage.getItem('ielts_gemini_model') || 'gemini-3.8-flash';
             const isVerified = localStorage.getItem('ielts_gemini_verified') === 'true';
             const statusLabel = document.getElementById('hud-api-key-status');
             const sidebarBadge = document.getElementById('sidebar-model-badge');
