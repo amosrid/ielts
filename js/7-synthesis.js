@@ -637,7 +637,7 @@ Return ONLY a valid JSON object without markdown fences, code blocks, or backtic
                     synonyms: v.synonyms || [],
                     dateAdded: now,
                     srInterval: 1,
-                    srNextReview: now,
+                    srNextReview: null,
                     srReviewCount: 0,
                     feynmanLevel: 0,
                     feynmanStatus: 'unlearned',

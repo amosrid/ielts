@@ -144,7 +144,9 @@ html.light-mode .bg-slate-950,
 html.light-mode .bg-slate-950\/90,
 html.light-mode .bg-slate-950\/85,
 html.light-mode .bg-slate-950\/80,
+html.light-mode .bg-slate-950\/70,
 html.light-mode .bg-slate-950\/60,
+html.light-mode .bg-slate-950\/50,
 html.light-mode .bg-slate-900,
 html.light-mode .bg-slate-900\/95,
 html.light-mode .bg-slate-900\/90,
@@ -217,6 +219,7 @@ html.light-mode .text-teal-400 { color: #0f766e !important; font-weight: 600; }
 
 /* Subtle Pill Badges (Light Mode) */
 html.light-mode .bg-emerald-950,
+html.light-mode .bg-emerald-950\/90,
 html.light-mode .bg-emerald-950\/80,
 html.light-mode .bg-emerald-950\/60,
 html.light-mode .bg-emerald-950\/40,
@@ -230,6 +233,7 @@ html.light-mode .bg-emerald-500\/20 {
 }
 
 html.light-mode .bg-amber-950,
+html.light-mode .bg-amber-950\/90,
 html.light-mode .bg-amber-950\/80,
 html.light-mode .bg-amber-950\/60,
 html.light-mode .bg-amber-950\/40,
@@ -242,7 +246,22 @@ html.light-mode .bg-amber-500\/20 {
     color: #92400e !important;
 }
 
+html.light-mode .bg-sky-950,
+html.light-mode .bg-sky-950\/90,
+html.light-mode .bg-sky-950\/80,
+html.light-mode .bg-sky-950\/60,
+html.light-mode .bg-sky-950\/40,
+html.light-mode .bg-sky-950\/30,
+html.light-mode .bg-sky-950\/20,
+html.light-mode .bg-sky-500\/10,
+html.light-mode .bg-sky-500\/20 {
+    background-color: #f0f9ff !important;
+    border-color: #bae6fd !important;
+    color: #0369a1 !important;
+}
+
 html.light-mode .bg-blue-950,
+html.light-mode .bg-blue-950\/90,
 html.light-mode .bg-blue-950\/80,
 html.light-mode .bg-blue-950\/60,
 html.light-mode .bg-blue-950\/40,
@@ -547,11 +566,22 @@ html.light-mode #sidebar-model-badge {
             background-color: #ffffff !important;
             border-color: #fde68a !important;
         }
+        html.light-mode .vocab-item {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        }
+        html.light-mode .vocab-item:hover {
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+        }
+        html.light-mode .vocab-word-title,
         html.light-mode .vocab-item .vocab-word-title {
             color: #0f172a !important;
         }
+        html.light-mode .vocab-word-title:hover,
         html.light-mode .vocab-item .vocab-word-title:hover {
-            color: #4f46e5 !important;
+            color: #059669 !important;
         }
         html.light-mode .vocab-item .text-slate-300 {
             color: #334155 !important;
@@ -559,16 +589,76 @@ html.light-mode #sidebar-model-badge {
         html.light-mode .vocab-item .text-slate-400 {
             color: #64748b !important;
         }
-        html.light-mode .vocab-item button[onclick*="openVocabCard"] {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-            color: #334155 !important;
-            font-weight: 700 !important;
+        html.light-mode .vocab-command-header {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #f5f3ff 100%) !important;
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
         }
-        html.light-mode .vocab-item button[onclick*="openVocabCard"]:hover {
-            background-color: #eef2ff !important;
-            color: #4338ca !important;
-            border-color: #c7d2fe !important;
+        html.light-mode .feynman-pip-active {
+            background-color: #10b981 !important;
+        }
+        html.light-mode .feynman-pip-inactive {
+            background-color: #e2e8f0 !important;
+            border-color: #cbd5e1 !important;
+        }
+        html.light-mode .vocab-item button[onclick*="speakWord"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            color: #e11d48 !important;
+        }
+        html.light-mode .vocab-item button[onclick*="speakWord"]:hover {
+            background-color: #ffe4e6 !important;
+            color: #be123c !important;
+        }
+        html.light-mode .vocab-item button.btn-vocab-detail {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+        html.light-mode .vocab-item button.btn-vocab-detail:hover {
+            background-color: #059669 !important;
+            border-color: #059669 !important;
+            color: #ffffff !important;
+        }
+        html.light-mode .vocab-item button.btn-vocab-detail:hover span,
+        html.light-mode .vocab-item button.btn-vocab-detail:hover i {
+            color: #ffffff !important;
+        }
+
+        button.btn-vocab-locked,
+        html.light-mode button.btn-vocab-locked,
+        html.light-mode .vocab-item button.btn-vocab-locked {
+            background-color: #d97706 !important;
+            border-color: #b45309 !important;
+            color: #ffffff !important;
+        }
+        button.btn-vocab-locked span,
+        button.btn-vocab-locked i,
+        html.light-mode button.btn-vocab-locked span,
+        html.light-mode button.btn-vocab-locked i {
+            color: #ffffff !important;
+        }
+        button.btn-vocab-locked:hover,
+        html.light-mode button.btn-vocab-locked:hover {
+            background-color: #b45309 !important;
+        }
+
+        button.btn-vocab-enriching,
+        html.light-mode button.btn-vocab-enriching,
+        html.light-mode .vocab-item button.btn-vocab-enriching {
+            background-color: #4f46e5 !important;
+            border-color: #4338ca !important;
+            color: #ffffff !important;
+        }
+        button.btn-vocab-enriching span,
+        button.btn-vocab-enriching i,
+        html.light-mode button.btn-vocab-enriching span,
+        html.light-mode button.btn-vocab-enriching i {
+            color: #ffffff !important;
+        }
+        button.btn-vocab-enriching:hover,
+        html.light-mode button.btn-vocab-enriching:hover {
+            background-color: #4338ca !important;
         }
 
         /* Status & Feynman Badges */
@@ -597,6 +687,142 @@ html.light-mode #sidebar-model-badge {
             font-weight: 700 !important;
         }
 
+        /* Vocab Logger KPI HUD & Controls in Light Mode */
+        html.light-mode #tab-vocab-logger div[id^="kpi-card-"] {
+            background-color: #ffffff;
+            border-color: #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        html.light-mode #tab-vocab-logger div[id^="kpi-card-"]:hover {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+        }
+        html.light-mode #tab-vocab-logger div[id^="kpi-card-"] .text-white {
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-vocab-logger div[id^="kpi-card-"] span[class*="bg-slate-800"] {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+        }
+
+        /* Active KPI HUD States in Light Mode (High Contrast & Clean Tint) */
+        html.light-mode #tab-vocab-logger div[id="kpi-card-all"].active-kpi {
+            background-color: #ecfdf5 !important;
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25) !important;
+        }
+        html.light-mode #tab-vocab-logger div[id="kpi-card-due"].active-kpi {
+            background-color: #fffbeb !important;
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25) !important;
+        }
+        html.light-mode #tab-vocab-logger div[id="kpi-card-locked"].active-kpi {
+            background-color: #f8fafc !important;
+            border-color: #64748b !important;
+            box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.25) !important;
+        }
+        html.light-mode #tab-vocab-logger div[id="kpi-card-unlearned"].active-kpi {
+            background-color: #fff1f2 !important;
+            border-color: #f43f5e !important;
+            box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.25) !important;
+        }
+
+        /* Active KPI HUD States in Dark Mode */
+        div[id="kpi-card-all"].active-kpi {
+            background-color: rgba(6, 78, 59, 0.3) !important;
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35) !important;
+        }
+        div[id="kpi-card-due"].active-kpi {
+            background-color: rgba(120, 53, 15, 0.3) !important;
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35) !important;
+        }
+        div[id="kpi-card-locked"].active-kpi {
+            background-color: rgba(30, 41, 59, 0.6) !important;
+            border-color: #94a3b8 !important;
+            box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.35) !important;
+        }
+        div[id="kpi-card-unlearned"].active-kpi {
+            background-color: rgba(136, 19, 55, 0.3) !important;
+            border-color: #f43f5e !important;
+            box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.35) !important;
+        }
+
+        /* Vocab Bank Cards & Filter Panel in Light Mode */
+        html.light-mode .vocab-item {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        }
+        html.light-mode .vocab-item:hover {
+            border-color: #cbd5e1 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04) !important;
+        }
+        html.light-mode .vocab-word-title {
+            color: #0f172a !important;
+        }
+        html.light-mode .btn-vocab-detail {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
+        }
+        html.light-mode .btn-vocab-detail:hover {
+            background-color: #10b981 !important;
+            border-color: #10b981 !important;
+            color: #ffffff !important;
+        }
+        html.light-mode #vocab-filter-detail-panel div[class*="bg-slate-950"] {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+        }
+        html.light-mode #vocab-filter-detail-panel button:not(.bg-emerald-600) {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+        html.light-mode #vocab-filter-detail-panel button:not(.bg-emerald-600):hover {
+            background-color: #f1f5f9 !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-vocab-logger div[class*="bg-slate-900"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
+        html.light-mode #tab-vocab-logger div[class*="bg-slate-950"] {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+        html.light-mode #tab-vocab-logger input[type="text"] {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-vocab-logger select {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html.light-mode #tab-vocab-logger button[id^="pill-vocab-"]:not(.bg-emerald-600) {
+            background-color: #f8fafc !important;
+            color: #334155 !important;
+            border-color: #e2e8f0 !important;
+        }
+        html.light-mode #tab-vocab-logger button[id^="pill-vocab-"]:hover:not(.bg-emerald-600) {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+        }
+        html.light-mode #tab-vocab-logger button[id^="btn-vocab-view-"]:not(.bg-emerald-600) {
+            color: #64748b !important;
+        }
+        html.light-mode #tab-vocab-logger button[id="btn-toggle-filter-panel"]:not(.bg-indigo-600) {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #334155 !important;
+        }
+
         /* Modals & Popups in Light Mode */
         html.light-mode .modal-backdrop {
             background-color: rgba(15, 23, 42, 0.5) !important;
@@ -604,6 +830,7 @@ html.light-mode #sidebar-model-badge {
         }
         html.light-mode #modal-vocab-card > div,
         html.light-mode #modal-vocab-review > div,
+        html.light-mode #modal-bulk-vocab > div,
         html.light-mode #api-key-modal > div,
         html.light-mode #modal-affirmations-manager > div,
         html.light-mode #quest-modal > div,
@@ -633,10 +860,18 @@ html.light-mode #sidebar-model-badge {
         html.light-mode #modal-vocab-card .bg-slate-950,
         html.light-mode #modal-vocab-card .bg-slate-900,
         html.light-mode #modal-vocab-review .bg-slate-950,
+        html.light-mode #modal-bulk-vocab .bg-slate-950,
+        html.light-mode #modal-bulk-vocab .bg-slate-950\/70,
+        html.light-mode #modal-bulk-vocab #bulk-vocab-preview-container,
         html.light-mode #quest-modal .bg-slate-950,
         html.light-mode #mini-boss-modal .bg-slate-950 {
             background-color: #f8fafc !important;
             border-color: #e2e8f0 !important;
+        }
+        html.light-mode #modal-bulk-vocab textarea {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
         }
         html.light-mode #modal-vocab-card #vocab-card-word,
         html.light-mode #modal-vocab-card #vocab-card-meaning-b1,
@@ -1404,5 +1639,3 @@ html.light-mode #btn-card-mastered {
 .deliberate-step-pill:hover {
     transform: translateY(-1px);
 }
-
-

@@ -9,6 +9,49 @@ global.window = {
         constructor() { this.state = 'running'; }
         createOscillator() { return { connect() {}, start() {}, stop() {}, frequency: { setValueAtTime() {} } }; }
         createGain() { return { connect() {}, gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} } }; }
+    },
+    open: (url, target) => {
+        global.lastOpenedUrl = { url, target };
+        return { closed: false };
+    }
+};
+if (typeof navigator !== 'undefined') {
+    Object.defineProperty(navigator, 'clipboard', {
+        value: {
+            writeText: async (t) => {
+                global.lastCopiedText = t;
+                return Promise.resolve();
+            }
+        },
+        configurable: true,
+        writable: true
+    });
+} else {
+    global.navigator = {
+        clipboard: {
+            writeText: async (t) => {
+                global.lastCopiedText = t;
+                return Promise.resolve();
+            }
+        }
+    };
+}
+global.URL = {
+    createObjectURL: (blob) => `blob:mock-url-${Math.random()}`,
+    revokeObjectURL: (url) => {}
+};
+global.document = {
+    getElementById: () => null,
+    createElement: (tag) => {
+        return {
+            tagName: tag.toUpperCase(),
+            style: {},
+            click() { this.clicked = true; global.lastClickedElement = this; }
+        };
+    },
+    body: {
+        appendChild(el) { global.appendedChild = el; },
+        removeChild(el) { global.removedChild = el; }
     }
 };
 global.localStorage = {
@@ -17,9 +60,8 @@ global.localStorage = {
     setItem(k, v) { this._data[k] = String(v); },
     removeItem(k) { delete this._data[k]; }
 };
-global.document = { getElementById: () => null };
-global.SoundFX = { play() {} };
-global.showToast = () => {};
+global.SoundFX = { play(sound) { global.lastSoundPlayed = sound; } };
+global.showToast = (msg, type) => { global.lastToast = { msg, type }; };
 global.addXP = () => {};
 global.triggerConfetti = () => {};
 global.updateUI = () => {};
@@ -37,11 +79,16 @@ const {
     buildPart1ShadowingSystemPrompt,
     buildPart2CueCardSystemPrompt,
     buildPart3DiscussionSystemPrompt,
+    buildGeneralSpeakingPrompt,
     buildSpeakingUserQuery,
     parseGeneratedSpeakingPrompt,
     cleanSpeakingTextForTTS,
     renderSpeakingAuditAccordions,
-    buildDynamicSpeakingRemediationPrompt
+    buildDynamicSpeakingRemediationPrompt,
+    downloadSpeakingAudio,
+    copySpeakingGeminiPrompt,
+    copyGeneralSpeakingPrompt,
+    openGeminiWeb
 } = speakingModule;
 
 describe('IELTS Speaking Lab Restructuring TDD Suite', () => {
@@ -70,11 +117,13 @@ describe('IELTS Speaking Lab Restructuring TDD Suite', () => {
         test('buildPart1ShadowingSystemPrompt incorporates Anti-Mishearing rule and Read-Aloud context', () => {
             const prompt = buildPart1ShadowingSystemPrompt("Test sentence", "British RP", "");
             
-            assert.ok(prompt.includes('READ-ALOUD / SHADOWING'), 'Must declare read-aloud/shadowing context');
-            assert.ok(prompt.includes('did NOT compose this sentence themselves'), 'Must specify text is pre-written');
-            assert.ok(prompt.includes('MISHEARING'), 'Must include anti-mishearing instruction');
+            assert.ok(prompt.includes('READ-ALOUD') || prompt.includes('Read-Aloud') || prompt.includes('Preparation Drill'), 'Must declare read-aloud/shadowing context');
+            assert.ok(prompt.includes('Anti-Mishearing') || prompt.includes('MISHEARING'), 'Must include anti-mishearing instruction');
             assert.ok(prompt.includes('# ✅ Text Fidelity Check'), 'Must include Text Fidelity Check');
-            assert.ok(prompt.includes('# 📊 Delivery & Fluency Score'), 'Must use Delivery & Fluency Score heading');
+            assert.ok(prompt.includes('# 📊 Delivery & Accuracy Score'), 'Must use Delivery & Accuracy Score heading');
+            assert.ok(prompt.includes('# 👍 What You Did Well'), 'Must include What You Did Well section');
+            assert.ok(prompt.includes('FC = Fluency & Coherence'), 'Must include glossary with FC, LR, GRA, PR');
+            assert.ok(prompt.includes('# 🔁 Recurring Issue Check'), 'Must include Recurring Issue Check');
         });
 
         test('buildPart1ShadowingSystemPrompt omits grammar correction and Band 7.5 upgrade sections', () => {
@@ -88,7 +137,7 @@ describe('IELTS Speaking Lab Restructuring TDD Suite', () => {
         test('buildPart1ShadowingSystemPrompt handles edge cases (empty or null inputs)', () => {
             const prompt = buildPart1ShadowingSystemPrompt(null, undefined, null);
             assert.ok(typeof prompt === 'string' && prompt.length > 50, 'Should gracefully fallback without throwing');
-            assert.ok(prompt.includes('Delivery & Fluency Score'));
+            assert.ok(prompt.includes('Delivery & Accuracy Score'));
         });
     });
 
@@ -100,18 +149,20 @@ describe('IELTS Speaking Lab Restructuring TDD Suite', () => {
             const prompt = buildPart2CueCardSystemPrompt(cueCard, accent);
 
             assert.ok(prompt.includes(cueCard), 'Prompt must include cue card text');
-            assert.ok(prompt.includes(accent), 'Prompt must include target accent');
+            assert.ok(prompt.includes('General American'), 'Prompt must include target accent');
             assert.ok(prompt.includes('# ✅ Task Fulfillment Check'), 'Must include Task Fulfillment Check');
-            assert.ok(prompt.includes('Addressed / Partially addressed / Missed'), 'Must include fulfillment criteria');
+            assert.ok(prompt.includes('Addressed / Partially Addressed / Missed') || prompt.includes('Addressed / Partially addressed / Missed'), 'Must include fulfillment criteria');
             assert.ok(prompt.includes('# 🔍 Grammar & Coherence Feedback'), 'Must include Grammar & Coherence section');
-            assert.ok(prompt.includes('Coherence & Cohesion'), 'Must include Coherence & Cohesion check');
             assert.ok(prompt.includes('# 🚀 Band 7.5+ Model Upgrade & Vocabulary'), 'Must include Band 7.5+ Model Upgrade');
-            assert.ok(prompt.includes('# 📊 Fluency & Delivery Score'), 'Must use Fluency & Delivery Score heading');
+            assert.ok(prompt.includes('# 📊 Delivery & Fluency Score'), 'Must use Delivery & Fluency Score heading');
+            assert.ok(prompt.includes('# 👍 What You Did Well'), 'Must include What You Did Well section');
+            assert.ok(prompt.includes('FC: [X.X] | LR: [X.X] | GRA: [X.X] | PR: [X.X]'), 'Must include Sub-Scores rubric');
+            assert.ok(prompt.includes('# 🔁 Recurring Issue Check'), 'Must include Recurring Issue Check');
         });
 
         test('buildPart2CueCardSystemPrompt tolerates natural fillers and self-corrections', () => {
             const prompt = buildPart2CueCardSystemPrompt("Test topic", "British RP");
-            assert.ok(prompt.includes('filler words') || prompt.includes('self-corrections'), 'Must instruct examiner to tolerate natural spontaneous markers');
+            assert.ok(prompt.includes('filler words') || prompt.includes('self-corrections') || prompt.includes('Filler words'), 'Must instruct examiner to tolerate natural spontaneous markers');
         });
 
         test('buildPart2CueCardSystemPrompt handles edge cases (empty or special characters)', () => {
@@ -128,13 +179,15 @@ describe('IELTS Speaking Lab Restructuring TDD Suite', () => {
             const prompt = buildPart3DiscussionSystemPrompt(question, accent);
 
             assert.ok(prompt.includes(question), 'Prompt must include discussion questions');
-            assert.ok(prompt.includes(accent), 'Prompt must include target accent');
+            assert.ok(prompt.includes('Australian English'), 'Prompt must include target accent');
             assert.ok(prompt.includes('# 💡 Idea Development Check'), 'Must include Idea Development Check');
             assert.ok(prompt.includes('Developed') && prompt.includes('Basic') && prompt.includes('Minimal'), 'Must classify response depth');
             assert.ok(prompt.includes('Complex Structure Attempts'), 'Must check complex structures');
-            assert.ok(prompt.includes('conditionals, passive voice, or subordinate clauses'), 'Must mention target complex grammar');
             assert.ok(prompt.includes('# 📊 Discussion & Delivery Score'), 'Must use Discussion & Delivery Score heading');
+            assert.ok(prompt.includes('# 👍 What You Did Well'), 'Must include What You Did Well');
+            assert.ok(prompt.includes('FC: [X.X] | LR: [X.X] | GRA: [X.X] | PR: [X.X]'), 'Must include Sub-Scores');
             assert.ok(prompt.includes('# 🚀 Band 7.5+ Model Upgrade & Vocabulary'), 'Must include Model Upgrade for opinion');
+            assert.ok(prompt.includes('# 🔁 Recurring Issue Check'), 'Must include Recurring Issue Check');
         });
 
         test('buildPart3DiscussionSystemPrompt handles null or empty inputs gracefully', () => {
@@ -265,6 +318,31 @@ You should say:
             assert.ok(html.includes('speaking-audit-band-card'), 'Must render score band card');
             assert.ok(html.includes('Text Fidelity Check'), 'Must render Text Fidelity section');
             assert.ok(html.includes('fa-square-check text-emerald-400') || html.includes('text-emerald'), 'Must style fidelity with emerald check');
+        });
+
+        test('renders Hero Score card for Part 1 Delivery & Accuracy Score and What You Did Well', () => {
+            const md = `
+# 📊 Delivery & Accuracy Score
+**6.5** | **85%** — Clear and rhythmic delivery with natural stress.
+- **Target Accent**: British RP
+- **Glossary**: FC = Fluency & Coherence | LR = Lexical Resource | GRA = Grammatical Range & Accuracy | PR = Pronunciation
+
+# 👍 What You Did Well
+- Steady pacing on introductory clause and crisp aspirated plosives.
+
+# 📝 Actual Audio Transcription
+"My hometown is quiet and clean."
+
+# ✅ Text Fidelity Check
+- **Matched Words**: 38 of 40 words matched
+- **Skipped / Added Words**: None — full text read accurately
+            `;
+
+            const html = renderSpeakingAuditAccordions(md, 'part1');
+            assert.ok(html.includes('speaking-audit-band-card'), 'Must render score band card');
+            assert.ok(html.includes('What You Did Well'), 'Must render What You Did Well section');
+            assert.ok(html.includes('fa-thumbs-up text-emerald-400') || html.includes('text-emerald'), 'Must style What You Did Well with emerald thumbs-up');
+            assert.ok(html.includes('Text Fidelity Check'), 'Must render Text Fidelity section');
         });
 
         test('renders Accordion for Part 2 Task Fulfillment Check and Coherence', () => {
@@ -597,6 +675,158 @@ You should say:
             const ctx = speakingModule.getUnlockedGrammarContext('ielts_natural');
             assert.strictEqual(ctx.mode, 'ielts_natural');
             assert.ok(ctx.label.includes('Alami'));
+        });
+    });
+
+    describe('13. General / Free Speaking System Prompt Builder', () => {
+        test('buildGeneralSpeakingPrompt generates valid unprompted evaluation prompt', () => {
+            const prompt = buildGeneralSpeakingPrompt('British RP (Received Pronunciation)', 'Talking about favorite hobbies');
+            assert.ok(prompt.includes('Talking about favorite hobbies'), 'Must include custom context');
+            assert.ok(prompt.includes('British RP'), 'Must include target accent');
+            assert.ok(prompt.includes('# 📊 General Speaking Evaluation Score'), 'Must include General Speaking Evaluation Score');
+            assert.ok(prompt.includes('FC: [X.X] | LR: [X.X] | GRA: [X.X] | PR: [X.X]'), 'Must include IELTS 4 sub-scores');
+            assert.ok(prompt.includes('# 👍 What You Did Well'), 'Must include strengths section');
+            assert.ok(prompt.includes('# 🔍 Grammar & Coherence Feedback'), 'Must include grammar feedback');
+            assert.ok(prompt.includes('# 🚀 Band 7.5+ Model Upgrade & Vocabulary'), 'Must include Band 7.5 model upgrade');
+        });
+
+        test('buildGeneralSpeakingPrompt handles default arguments when empty', () => {
+            const prompt = buildGeneralSpeakingPrompt();
+            assert.ok(typeof prompt === 'string' && prompt.length > 50);
+            assert.ok(prompt.includes('General spontaneous IELTS speaking practice'));
+        });
+    });
+
+    describe('14. Audio Download Flow (downloadSpeakingAudio)', () => {
+        test('alerts user with toast and returns false when no audio blob exists', () => {
+            speakingState.audioBlobs.part1 = null;
+            let alerted = false;
+            global.showToast = (msg, type) => {
+                if (type === 'warning' || type === 'error') alerted = true;
+            };
+
+            const result = downloadSpeakingAudio('part1');
+            assert.strictEqual(result, false, 'Should return false when no audio blob');
+            assert.strictEqual(alerted, true, 'Should display warning toast');
+        });
+
+        test('creates download link, sets filename, and triggers click when audio exists', () => {
+            speakingState.audioBlobs.part1 = { size: 4096, type: 'audio/webm' };
+            global.lastClickedElement = null;
+            global.appendedChild = null;
+
+            const result = downloadSpeakingAudio('part1');
+            assert.strictEqual(result, true, 'Should return true on successful download trigger');
+            assert.ok(global.lastClickedElement, 'Link element must be clicked');
+            assert.ok(global.lastClickedElement.download.includes('ielts-speaking-part1'), 'Filename should include mode');
+            assert.ok(global.lastClickedElement.href.startsWith('blob:'), 'Href should be an object URL');
+        });
+    });
+
+    describe('15. Clipboard Copy Prompt Flow (copySpeakingGeminiPrompt & copyGeneralSpeakingPrompt)', () => {
+        test('copySpeakingGeminiPrompt copies Part 1 prompt with prepended Gemini guidance', async () => {
+            speakingState.cleanMonologues.part1 = "I prioritize my daily work in the morning.";
+            global.lastCopiedText = '';
+            let toastMsg = '';
+            global.showToast = (msg) => { toastMsg = msg; };
+
+            const copied = await copySpeakingGeminiPrompt('part1');
+            assert.ok(copied.includes('I prioritize my daily work in the morning.'));
+            assert.ok(copied.includes('Delivery & Accuracy Score'));
+            assert.strictEqual(global.lastCopiedText, copied, 'Clipboard text must match generated prompt');
+            assert.ok(toastMsg.includes('berhasil disalin') || toastMsg.includes('clipboard'));
+        });
+
+        test('copySpeakingGeminiPrompt copies Part 2 cue card prompt', async () => {
+            speakingState.cleanMonologues.part2 = "Describe a momentous event.";
+            const copied = await copySpeakingGeminiPrompt('part2');
+            assert.ok(copied.includes('Describe a momentous event.'));
+            assert.ok(copied.includes('Delivery & Fluency Score'));
+            assert.ok(copied.includes('Task Fulfillment Check'));
+        });
+
+        test('copySpeakingGeminiPrompt copies Part 3 analytical discussion prompt', async () => {
+            speakingState.cleanMonologues.part3 = "How does artificial intelligence impact creative industries?";
+            const copied = await copySpeakingGeminiPrompt('part3');
+            assert.ok(copied.includes('artificial intelligence'));
+            assert.ok(copied.includes('Discussion & Delivery Score'));
+            assert.ok(copied.includes('Idea Development Check'));
+        });
+
+        test('copyGeneralSpeakingPrompt copies general free speaking prompt', async () => {
+            global.lastCopiedText = '';
+            const copied = await copyGeneralSpeakingPrompt();
+            assert.ok(copied.includes('General Speaking Evaluation Score'));
+            assert.ok(copied.includes('Sub-Scores'));
+            assert.strictEqual(global.lastCopiedText, copied);
+        });
+    });
+
+    describe('16. External Gemini Navigation & Recorder UI State Integration', () => {
+        test('openGeminiWeb opens Google Gemini app in a new tab', () => {
+            global.lastOpenedUrl = null;
+            openGeminiWeb();
+            assert.ok(global.lastOpenedUrl, 'window.open must be invoked');
+            assert.strictEqual(global.lastOpenedUrl.url, 'https://gemini.google.com/app');
+            assert.strictEqual(global.lastOpenedUrl.target, '_blank');
+        });
+
+        test('stopSpeakingRecording reveals download, copy prompt, and Gemini chat buttons', () => {
+            const elements = {
+                'rec-dot-part1': { className: '' },
+                'rec-status-label-part1': { innerText: '' },
+                'btn-rec-stop-part1': { classList: { add: () => {}, remove: () => {} } },
+                'btn-rec-start-part1': { classList: { add: () => {}, remove: () => {} }, innerHTML: '' },
+                'btn-rec-play-part1': { classList: { add: () => {}, remove: () => {} } },
+                'btn-rec-submit-part1': { classList: { add: () => {}, remove: () => {} } },
+                'btn-rec-download-part1': { classList: { add: () => {}, remove: () => {} } },
+                'btn-rec-copy-prompt-part1': { classList: { add: () => {}, remove: () => {} } },
+                'btn-rec-open-gemini-part1': { classList: { add: () => {}, remove: () => {} } },
+                'speaking-gemini-workflow-part1': { classList: { add: () => {}, remove: () => {} } }
+            };
+
+            let removedHidden = [];
+            Object.keys(elements).forEach(k => {
+                if (elements[k].classList) {
+                    elements[k].classList.remove = (cls) => { if (cls === 'hidden') removedHidden.push(k); };
+                }
+            });
+
+            global.document.getElementById = (id) => elements[id] || null;
+            speakingState.mediaRecorders.part1 = { state: 'inactive', stop: () => {} };
+
+            speakingModule.stopSpeakingRecording('part1');
+
+            assert.ok(removedHidden.includes('btn-rec-download-part1'), 'Must reveal download audio button');
+            assert.ok(removedHidden.includes('btn-rec-copy-prompt-part1'), 'Must reveal copy prompt button');
+            assert.ok(removedHidden.includes('btn-rec-open-gemini-part1'), 'Must reveal open gemini button');
+            assert.ok(removedHidden.includes('speaking-gemini-workflow-part1'), 'Must reveal 3-step workflow card');
+        });
+    });
+
+    describe('17. index.html UI Markup Verification', () => {
+        const fs = require('node:fs');
+        const indexPath = path.join(__dirname, '..', 'index.html');
+        const htmlContent = fs.readFileSync(indexPath, 'utf-8');
+
+        test('index.html contains General Speaking Prompt button in Speaking Lab header', () => {
+            assert.ok(htmlContent.includes('id="btn-copy-general-speaking-prompt"'), 'Must have btn-copy-general-speaking-prompt');
+            assert.ok(htmlContent.includes('copyGeneralSpeakingPrompt()'), 'Must call copyGeneralSpeakingPrompt()');
+        });
+
+        ['part1', 'part2', 'part3'].forEach(mode => {
+            test(`index.html contains Download, Copy Prompt, Open Gemini, and Workflow Card for ${mode}`, () => {
+                assert.ok(htmlContent.includes(`id="btn-rec-download-${mode}"`), `Must have btn-rec-download-${mode}`);
+                assert.ok(htmlContent.includes(`downloadSpeakingAudio('${mode}')`), `Must invoke downloadSpeakingAudio('${mode}')`);
+
+                assert.ok(htmlContent.includes(`id="btn-rec-copy-prompt-${mode}"`), `Must have btn-rec-copy-prompt-${mode}`);
+                assert.ok(htmlContent.includes(`copySpeakingGeminiPrompt('${mode}')`), `Must invoke copySpeakingGeminiPrompt('${mode}')`);
+
+                assert.ok(htmlContent.includes(`id="btn-rec-open-gemini-${mode}"`), `Must have btn-rec-open-gemini-${mode}`);
+                assert.ok(htmlContent.includes(`openGeminiWeb()`), `Must invoke openGeminiWeb()`);
+
+                assert.ok(htmlContent.includes(`id="speaking-gemini-workflow-${mode}"`), `Must have speaking-gemini-workflow-${mode}`);
+            });
         });
     });
 

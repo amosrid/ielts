@@ -64,6 +64,16 @@ function loadVocabBank() {
                         if (w === 'algorithmic' || ((v.registerLabel || '').toLowerCase().includes('tech') && v.cefr === 'B2')) {
                             v.cefr = 'Tech';
                         }
+                        if (v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5)) {
+                            v.status = 'mastered';
+                            v.feynmanStatus = 'mastered';
+                            v.feynmanLevel = 5;
+                            v.srInterval = 999;
+                        } else if (!v.feynmanLevel || v.feynmanLevel === 0) {
+                            v.status = 'learning';
+                            v.feynmanStatus = 'unlearned';
+                            v.feynmanLevel = 0;
+                        }
                     });
 
                     // Resume any pending background enrichment queue after page load
@@ -77,6 +87,8 @@ function loadVocabBank() {
                     }
                 } else {
                     vocabBank = [];
+                    seedSampleVocabBank(false);
+                    return;
                 }
             } catch (e) {
                 console.error("Vocab bank load error:", e);
@@ -122,6 +134,85 @@ function loadVocabBank() {
             learning: 'all',   // 'all' | 'locked' | 'unlearned' | 'due' | 'mastered'
             register: 'all'    // 'all' | 'formal' | 'semi_formal' | 'casual' | 'written_academic'
         };
+        let currentVocabQuickPill = 'all';
+        let currentVocabViewMode = 'grid'; // 'grid' | 'list'
+
+        function setVocabViewMode(mode) {
+            SoundFX.play('click');
+            currentVocabViewMode = mode;
+            const btnGrid = document.getElementById('btn-vocab-view-grid');
+            const btnList = document.getElementById('btn-vocab-view-list');
+            if (mode === 'grid') {
+                if (btnGrid) btnGrid.className = "px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-mono font-bold transition-all shadow-sm";
+                if (btnList) btnList.className = "px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-mono font-bold transition-all";
+            } else {
+                if (btnList) btnList.className = "px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-mono font-bold transition-all shadow-sm";
+                if (btnGrid) btnGrid.className = "px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-mono font-bold transition-all";
+            }
+            renderVocabBank();
+        }
+
+        function setVocabQuickPill(type) {
+            SoundFX.play('click');
+            currentVocabQuickPill = type;
+
+            // Reset deep filters so quick pill drives the view
+            vocabFilterState.ielts = 'all';
+            vocabFilterState.cefr = 'all';
+            vocabFilterState.learning = 'all';
+            vocabFilterState.register = 'all';
+
+            if (type === 'due') {
+                vocabFilterState.learning = 'due';
+            } else if (type === 'locked') {
+                vocabFilterState.learning = 'locked';
+            } else if (type === 'writing') {
+                vocabFilterState.ielts = 'writing_only';
+            } else if (type === 'speaking') {
+                vocabFilterState.ielts = 'speaking_only';
+            } else if (type === 'unlearned') {
+                vocabFilterState.learning = 'unlearned';
+            } else if (type === 'learning') {
+                vocabFilterState.learning = 'learning';
+            } else if (type === 'mastered') {
+                vocabFilterState.learning = 'mastered';
+            }
+
+            // Update pill styling
+            const pillKeys = ['all', 'due', 'unlearned', 'learning', 'mastered', 'locked', 'high', 'writing', 'speaking'];
+            pillKeys.forEach(k => {
+                const btn = document.getElementById(`pill-vocab-${k}`);
+                if (btn) {
+                    const isMatch = (k === type) || (k === 'high' && type === 'academic_high');
+                    if (isMatch) {
+                        btn.className = "px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5 text-xs font-mono cursor-pointer";
+                    } else {
+                        btn.className = "px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 font-bold whitespace-nowrap transition-all flex items-center gap-1.5 text-xs font-mono cursor-pointer";
+                    }
+                }
+            });
+
+            // Update KPI HUD card active highlight
+            const kpiCardMap = {
+                'all': 'kpi-card-all',
+                'due': 'kpi-card-due',
+                'locked': 'kpi-card-locked',
+                'unlearned': 'kpi-card-unlearned'
+            };
+            Object.keys(kpiCardMap).forEach(key => {
+                const cardEl = document.getElementById(kpiCardMap[key]);
+                if (cardEl) {
+                    if (key === type) {
+                        cardEl.classList.add('active-kpi');
+                    } else {
+                        cardEl.classList.remove('active-kpi');
+                    }
+                }
+            });
+
+            updateActiveFilterBadge();
+            renderVocabBank();
+        }
 
         function getVocabCefrBadgeHTML(cefr) {
             const c = cefr || 'B2';
@@ -134,7 +225,16 @@ function loadVocabBank() {
             if (c === 'Idiom' || c === 'idiom') {
                 return `<span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-idiom flex items-center gap-1 shadow-sm"><i class="fa-solid fa-comments text-purple-400 text-[9px]"></i>Idiom</span>`;
             }
-            return `<span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${c.toLowerCase()} shadow-sm">${c}</span>`;
+            const bandMap = {
+                C2: 'Band 8.5-9.0',
+                C1: 'Band 7.5-8.0',
+                B2: 'Band 6.0-6.5',
+                B1: 'Band 5.0-5.5',
+                A2: 'Band 4.0-4.5',
+                A1: 'Band 3.0-3.5'
+            };
+            const bandText = bandMap[c.toUpperCase()] ? ` • ${bandMap[c.toUpperCase()]}` : '';
+            return `<span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${c.toLowerCase()} shadow-sm">${c}${bandText}</span>`;
         }
 
         function onVocabSearchInput(val) {
@@ -228,8 +328,9 @@ function loadVocabBank() {
                     all: 'Semua Status',
                     locked: '🔒 Belum Buka Gembok',
                     unlearned: '🔴 Belum Belajar (Lvl 0)',
+                    learning: '📘 Sedang Belajar (Lvl 1-4)',
                     due: '⏰ Review Hari Ini',
-                    mastered: '🏆 Bebas Review'
+                    mastered: '🏆 Bebas Review (Lvl 5)'
                 };
                 learnLabel.innerText = map[vocabFilterState.learning] || 'Semua Status';
             }
@@ -284,7 +385,7 @@ function loadVocabBank() {
         function setVocabFilterLearning(status) {
             SoundFX.play('click');
             vocabFilterState.learning = status;
-            ['all', 'locked', 'unlearned', 'due', 'mastered'].forEach(s => {
+            ['all', 'locked', 'unlearned', 'learning', 'due', 'mastered'].forEach(s => {
                 const chip = document.getElementById(`chip-learn-${s}`);
                 if (chip) {
                     if (s === status) {
@@ -318,6 +419,7 @@ function loadVocabBank() {
         function resetVocabFilters() {
             SoundFX.play('click');
             vocabFilterState = { ielts: 'all', cefr: 'all', learning: 'all', register: 'all' };
+            currentVocabQuickPill = 'all';
             
             const searchInput = document.getElementById('input-vocab-search');
             if (searchInput) searchInput.value = '';
@@ -326,10 +428,40 @@ function loadVocabBank() {
             const selectSort = document.getElementById('select-vocab-sort');
             if (selectSort) selectSort.value = 'recent';
             
+            const pillKeys = ['all', 'due', 'unlearned', 'learning', 'mastered', 'locked', 'high', 'writing', 'speaking'];
+            pillKeys.forEach(k => {
+                const btn = document.getElementById(`pill-vocab-${k}`);
+                if (btn) {
+                    if (k === 'all') {
+                        btn.className = "px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5 text-xs font-mono cursor-pointer";
+                    } else {
+                        btn.className = "px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 font-bold whitespace-nowrap transition-all flex items-center gap-1.5 text-xs font-mono cursor-pointer";
+                    }
+                }
+            });
+
             setVocabFilterIelts('all');
             setVocabFilterCefr('all');
             setVocabFilterLearning('all');
             setVocabFilterRegister('all');
+            // Reset KPI active card highlight back to 'all'
+            const kpiCardMapReset = {
+                'all': 'kpi-card-all',
+                'due': 'kpi-card-due',
+                'locked': 'kpi-card-locked',
+                'unlearned': 'kpi-card-unlearned'
+            };
+            Object.keys(kpiCardMapReset).forEach(key => {
+                const cardEl = document.getElementById(kpiCardMapReset[key]);
+                if (cardEl) {
+                    if (key === 'all') {
+                        cardEl.classList.add('active-kpi');
+                    } else {
+                        cardEl.classList.remove('active-kpi');
+                    }
+                }
+            });
+
             showToast("Semua filter kosakata telah di-reset.", "info");
         }
 
@@ -347,13 +479,63 @@ function loadVocabBank() {
 
             updateActiveFilterBadge();
 
+            // Calculate KPIs over full bank
+            const totalCount = vocabBank.length;
+            const dueCount = getVocabsDueToday().length;
+            const highYieldCount = vocabBank.filter(v => {
+                const c = (v.cefr || '').toUpperCase();
+                return c === 'C1' || c === 'C2';
+            }).length;
+            const masteredCount = vocabBank.filter(v => v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5)).length;
+            const lockedCount = vocabBank.filter(v => v.lockStatus === 'locked').length;
+            const unlearnedCount = vocabBank.filter(v => (!v.feynmanLevel || v.feynmanLevel === 0) && v.lockStatus !== 'locked' && v.status !== 'mastered').length;
+            const learningCount = vocabBank.filter(v => (v.feynmanLevel && v.feynmanLevel >= 1 && v.feynmanLevel <= 4) && v.lockStatus !== 'locked' && v.status !== 'mastered').length;
+
+            const kpiTotal = document.getElementById('kpi-vocab-total');
+            const kpiDue = document.getElementById('kpi-vocab-due');
+            const kpiHigh = document.getElementById('kpi-vocab-high');
+            const kpiMastered = document.getElementById('kpi-vocab-mastered');
+            const kpiLocked = document.getElementById('kpi-vocab-locked');
+            const kpiUnlearned = document.getElementById('kpi-vocab-unlearned');
+            if (kpiTotal) kpiTotal.innerText = totalCount;
+            if (kpiDue) kpiDue.innerText = dueCount;
+            if (kpiHigh) kpiHigh.innerText = highYieldCount;
+            if (kpiMastered) kpiMastered.innerText = masteredCount;
+            if (kpiLocked) kpiLocked.innerText = lockedCount;
+            if (kpiUnlearned) kpiUnlearned.innerText = unlearnedCount;
+
+            const pillTotal = document.getElementById('pill-count-vocab-all');
+            const pillDue = document.getElementById('pill-count-vocab-due');
+            const pillUnlearned = document.getElementById('pill-count-vocab-unlearned');
+            const pillLearning = document.getElementById('pill-count-vocab-learning');
+            const pillMastered = document.getElementById('pill-count-vocab-mastered');
+            const pillLocked = document.getElementById('pill-count-vocab-locked');
+            const pillHigh = document.getElementById('pill-count-vocab-high');
+            if (pillTotal) pillTotal.innerText = totalCount;
+            if (pillDue) pillDue.innerText = dueCount;
+            if (pillUnlearned) pillUnlearned.innerText = unlearnedCount;
+            if (pillLearning) pillLearning.innerText = learningCount;
+            if (pillMastered) pillMastered.innerText = masteredCount;
+            if (pillLocked) pillLocked.innerText = lockedCount;
+            if (pillHigh) pillHigh.innerText = highYieldCount;
+
+            const headerDue = document.getElementById('vocab-header-due-count');
+            if (headerDue) headerDue.innerText = dueCount;
+
             // Multi-Filter Logic (Combinatorial AND)
             let filtered = vocabBank.filter(v => {
                 const isEnriching = (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing');
                 const isLocked = v.lockStatus === 'locked';
                 const isMastered = !isEnriching && !isLocked && (v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5));
-                const isDue = !isEnriching && !isLocked && !isMastered && (v.srNextReview || 0) <= now + 3600000;
-                const isUnlearned = !isEnriching && !isLocked && !isMastered && (!v.feynmanLevel || v.feynmanLevel === 0);
+                const isLearned = (v.feynmanLevel || 0) > 0;
+                const isDue = !isEnriching && !isLocked && !isMastered && isLearned && v.srNextReview && (v.srNextReview <= now + 3600000);
+                const isUnlearned = !isEnriching && !isLocked && !isMastered && !isLearned;
+
+                // Quick Pill: Academic High (C1/C2)
+                if (currentVocabQuickPill === 'academic_high') {
+                    const c = (v.cefr || '').toUpperCase();
+                    if (c !== 'C1' && c !== 'C2') return false;
+                }
 
                 // 1. IELTS Module Filter:
                 if (vocabFilterState.ielts === 'both') {
@@ -387,6 +569,8 @@ function loadVocabBank() {
                     if (!isUnlearned) return false;
                 } else if (vocabFilterState.learning === 'due') {
                     if (!isDue) return false;
+                } else if (vocabFilterState.learning === 'learning') {
+                    if (isLocked || isMastered || isUnlearned) return false;
                 } else if (vocabFilterState.learning === 'mastered') {
                     if (!isMastered) return false;
                 }
@@ -409,6 +593,7 @@ function loadVocabBank() {
                         (v.meaningEn && v.meaningEn.toLowerCase().includes(searchQuery)) ||
                         (v.registerLabel && v.registerLabel.toLowerCase().includes(searchQuery)) ||
                         (v.highYieldContext && v.highYieldContext.toLowerCase().includes(searchQuery)) ||
+                        (v.collocationMatrix?.starChunk && v.collocationMatrix.starChunk.toLowerCase().includes(searchQuery)) ||
                         (v.synonyms && v.synonyms.some(s => s.toLowerCase().includes(searchQuery)));
                     if (!match) return false;
                 }
@@ -426,38 +611,53 @@ function loadVocabBank() {
                     if (isLockedA !== isLockedB) return isLockedB - isLockedA;
                     return (b.dateAdded || 0) - (a.dateAdded || 0);
                 }
-                if (sortBy === 'due_first') {
-                    const isDueA = (a.status !== 'mastered' && a.lockStatus !== 'locked' && (a.srNextReview || 0) <= now + 3600000) ? 1 : 0;
-                    const isDueB = (b.status !== 'mastered' && b.lockStatus !== 'locked' && (b.srNextReview || 0) <= now + 3600000) ? 1 : 0;
+                if (sortBy === 'review_priority' || sortBy === 'due_first') {
+                    const isDueA = (a.status !== 'mastered' && a.lockStatus !== 'locked' && (a.feynmanLevel || 0) > 0 && a.srNextReview && a.srNextReview <= now + 3600000) ? 1 : 0;
+                    const isDueB = (b.status !== 'mastered' && b.lockStatus !== 'locked' && (b.feynmanLevel || 0) > 0 && b.srNextReview && b.srNextReview <= now + 3600000) ? 1 : 0;
                     if (isDueA !== isDueB) return isDueB - isDueA;
-                    return (a.srNextReview || 0) - (b.srNextReview || 0);
-                }
-                if (sortBy === 'feynman_asc') {
-                    const lvlA = (a.status === 'mastered' || (a.feynmanLevel && a.feynmanLevel >= 5)) ? 5 : (a.feynmanLevel || 0);
-                    const lvlB = (b.status === 'mastered' || (b.feynmanLevel && b.feynmanLevel >= 5)) ? 5 : (b.feynmanLevel || 0);
-                    return lvlA - lvlB;
+                    const timeA = a.srNextReview || Infinity;
+                    const timeB = b.srNextReview || Infinity;
+                    if (timeA !== timeB) return timeA - timeB;
+                    return (b.dateAdded || 0) - (a.dateAdded || 0);
                 }
                 if (sortBy === 'feynman_desc') {
                     const lvlA = (a.status === 'mastered' || (a.feynmanLevel && a.feynmanLevel >= 5)) ? 5 : (a.feynmanLevel || 0);
                     const lvlB = (b.status === 'mastered' || (b.feynmanLevel && b.feynmanLevel >= 5)) ? 5 : (b.feynmanLevel || 0);
-                    return lvlB - lvlA;
+                    if (lvlA !== lvlB) return lvlB - lvlA;
+                    return (b.dateAdded || 0) - (a.dateAdded || 0);
+                }
+                if (sortBy === 'feynman_asc') {
+                    const lvlA = (a.status === 'mastered' || (a.feynmanLevel && a.feynmanLevel >= 5)) ? 5 : (a.feynmanLevel || 0);
+                    const lvlB = (b.status === 'mastered' || (b.feynmanLevel && b.feynmanLevel >= 5)) ? 5 : (b.feynmanLevel || 0);
+                    if (lvlA !== lvlB) return lvlA - lvlB;
+                    return (b.dateAdded || 0) - (a.dateAdded || 0);
+                }
+                if (sortBy === 'cefr_asc') {
+                    const order = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6, Tech: 7, Slang: 8, Idiom: 9 };
+                    const normA = (a.cefr === 'Technical' ? 'Tech' : a.cefr) || 'B2';
+                    const normB = (b.cefr === 'Technical' ? 'Tech' : b.cefr) || 'B2';
+                    if ((order[normA] || 0) !== (order[normB] || 0)) {
+                        return (order[normA] || 0) - (order[normB] || 0);
+                    }
+                    return (b.dateAdded || 0) - (a.dateAdded || 0);
                 }
                 if (sortBy === 'cefr_desc') {
                     const order = { C2: 8, C1: 7, B2: 6, B1: 5, A2: 4, A1: 3, Tech: 2, Slang: 1, Idiom: 1 };
                     const normA = (a.cefr === 'Technical' ? 'Tech' : a.cefr) || 'B2';
                     const normB = (b.cefr === 'Technical' ? 'Tech' : b.cefr) || 'B2';
-                    return (order[normB] || 0) - (order[normA] || 0);
+                    if ((order[normB] || 0) !== (order[normA] || 0)) {
+                        return (order[normB] || 0) - (order[normA] || 0);
+                    }
+                    return (b.dateAdded || 0) - (a.dateAdded || 0);
                 }
-                if (sortBy === 'cefr_asc') {
-                    const order = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6, Tech: 7, Slang: 8, Idiom: 8 };
-                    const normA = (a.cefr === 'Technical' ? 'Tech' : a.cefr) || 'B2';
-                    const normB = (b.cefr === 'Technical' ? 'Tech' : b.cefr) || 'B2';
-                    return (order[normA] || 99) - (order[normB] || 99);
+                if (sortBy === 'alpha_asc' || sortBy === 'alpha') {
+                    return a.word.localeCompare(b.word);
                 }
-                if (sortBy === 'alpha_desc') return b.word.localeCompare(a.word);
-                if (sortBy === 'alpha_asc' || sortBy === 'alpha') return a.word.localeCompare(b.word);
                 return (b.dateAdded || 0) - (a.dateAdded || 0);
             });
+
+            const visibleCountEl = document.getElementById('vocab-visible-count');
+            if (visibleCountEl) visibleCountEl.innerText = filtered.length;
 
             if (filtered.length === 0) {
                 listContainer.innerHTML = '';
@@ -467,121 +667,227 @@ function loadVocabBank() {
 
             if (emptyContainer) emptyContainer.classList.add('hidden');
 
-            // Render 2-Column Responsive High-Density Card Grid
+            // 1. Compact Row View (List Mode) - Solid, Tabular & High Legibility
+            if (currentVocabViewMode === 'list') {
+                listContainer.className = "space-y-2.5";
+                listContainer.innerHTML = filtered.map(v => {
+                    const isEnriching = (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing');
+                    const isLocked = v.lockStatus === 'locked';
+                    const lvl = isMastered ? 5 : (v.feynmanLevel || 0);
+                    
+                    // Feynman Mastery Pips
+                    let pipsHTML = `<div class="flex items-center gap-1" title="Feynman Level ${lvl}/5">`;
+                    for (let i = 1; i <= 5; i++) {
+                        pipsHTML += (i <= lvl) 
+                            ? '<div class="feynman-pip-active w-3.5 h-1.5 rounded-full bg-emerald-500 shadow-xs"></div>' 
+                            : '<div class="feynman-pip-inactive w-3.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>';
+                    }
+                    pipsHTML += `<span class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 ml-1">Lvl ${lvl}/5</span></div>`;
+
+                    // Star Collocation snippet
+                    const starChunk = v.collocationMatrix?.starChunk || (Array.isArray(v.collocations) && v.collocations[0]) || '';
+                    const starBadge = (!isLocked && starChunk)
+                        ? `<span class="hidden xl:inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/50 truncate max-w-[200px]" title="Kolokasi Utama"><i class="fa-solid fa-star text-amber-500 text-[9px]"></i> "${starChunk}"</span>`
+                        : '';
+
+                    // Status Button
+                    let actionBtnHTML = '';
+                    if (isEnriching) {
+                        actionBtnHTML = `
+                            <button onclick="openVocabCard('${v.id}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-mono font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap">
+                                <i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>
+                                <span>Status AI</span>
+                            </button>
+                        `;
+                    } else if (isLocked) {
+                        actionBtnHTML = `
+                            <button onclick="openVocabCard('${v.id}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-mono font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap">
+                                <i class="fa-solid fa-key text-[10px]"></i>
+                                <span>Buka Gembok</span>
+                            </button>
+                        `;
+                    } else {
+                        actionBtnHTML = `
+                            <button onclick="openVocabCard('${v.id}')" class="btn-vocab-detail px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 text-xs font-mono font-bold rounded-xl transition-all border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap">
+                                <span>Detail</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        `;
+                    }
+
+                    // Meaning / Challenge Text
+                    let meaningHTML = '';
+                    if (isEnriching) {
+                        meaningHTML = `<span class="text-xs font-mono text-indigo-600 dark:text-indigo-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-notch fa-spin text-indigo-500 text-[10px]"></i> AI menyusun analisis konteks...</span>`;
+                    } else if (isLocked) {
+                        meaningHTML = `<span class="text-xs font-mono text-amber-700 dark:text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-lock text-amber-500"></i> Selesaikan tebakan 3 kalimat kontras...</span>`;
+                    } else {
+                        meaningHTML = `<span class="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">${v.meaningId || v.meaningEn || ''}</span>`;
+                    }
+
+                    return `
+                        <div class="vocab-item bg-white dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800/90 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 transition-all shadow-xs hover:shadow-sm">
+                            <!-- Left: Speaker, Word, POS, CEFR -->
+                            <div class="flex items-center gap-2.5 min-w-[260px] shrink-0 flex-wrap sm:flex-nowrap">
+                                <button onclick="event.stopPropagation(); speakWord('${v.word}', 'en-GB')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-950 dark:hover:bg-slate-800 text-rose-500 dark:text-rose-300 text-xs border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 cursor-pointer transition-colors shadow-2xs" title="Putar Audio UK">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                </button>
+                                <span class="vocab-word-title font-black text-slate-900 dark:text-white text-base cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors" onclick="openVocabCard('${v.id}')">${v.word}</span>
+                                ${v.ipa ? `<span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 hidden sm:inline-block">${v.ipa}</span>` : ''}
+                                <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400 italic">${v.pos || ''}</span>
+                                ${getVocabCefrBadgeHTML(v.cefr)}
+                            </div>
+
+                            <!-- Center: Meaning & Star Collocation -->
+                            <div class="flex-1 min-w-0 flex items-center gap-2 overflow-hidden w-full md:w-auto">
+                                <div class="truncate flex-1">
+                                    ${meaningHTML}
+                                </div>
+                                ${starBadge}
+                            </div>
+
+                            <!-- Right: Feynman Mastery Pips & Action Button -->
+                            <div class="flex items-center justify-between md:justify-end gap-3 shrink-0 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
+                                ${pipsHTML}
+                                ${actionBtnHTML}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                return;
+            }
+
+            // 2. Responsive High-Density Card Grid
+            listContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-3.5";
             listContainer.innerHTML = filtered.map(v => {
                 const isEnriching = (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing');
                 const isLocked = v.lockStatus === 'locked';
-                const isDue = !isEnriching && !isLocked && v.status !== 'mastered' && (v.srNextReview || 0) <= now + 3600000;
+                const isLearned = (v.feynmanLevel || 0) > 0;
                 const isMastered = !isEnriching && !isLocked && (v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5));
-                const isUnlearnedFeynman = !isEnriching && !isLocked && !isMastered && (!v.feynmanLevel || v.feynmanLevel === 0);
+                const isDue = !isEnriching && !isLocked && !isMastered && isLearned && v.srNextReview && (v.srNextReview <= now + 3600000);
+                const isUnlearnedFeynman = !isEnriching && !isLocked && !isMastered && !isLearned;
                 
                 let scheduleTag = '';
-                let borderClass = 'border-slate-800';
-                let bgClass = 'bg-slate-900/90';
+                let borderClass = 'border-slate-200 dark:border-slate-800';
+                let bgClass = 'bg-white dark:bg-slate-900/90';
                 let itemStatusClass = '';
 
                 if (isEnriching) {
                     const statusText = (v.enrichmentStatus === 'analyzing') ? 'AI Menganalisis...' : 'Antrean AI';
-                    scheduleTag = `<span class="badge-vocab-enriching text-[10px] bg-indigo-950/90 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/50 font-bold font-mono flex items-center gap-1.5 animate-pulse"><i class="fa-solid fa-circle-notch fa-spin text-indigo-400"></i> ${statusText}</span>`;
-                    borderClass = 'border-indigo-500/40';
-                    bgClass = 'bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/20';
+                    scheduleTag = `<span class="badge-vocab-enriching text-[10px] bg-indigo-50 dark:bg-indigo-950/90 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-200 dark:border-indigo-500/50 font-bold font-mono flex items-center gap-1.5"><i class="fa-solid fa-circle-notch fa-spin text-indigo-500 text-[9px]"></i> ${statusText}</span>`;
+                    borderClass = 'border-indigo-200 dark:border-indigo-500/30';
                     itemStatusClass = 'vocab-item-enriching';
                 } else if (isLocked) {
-                    scheduleTag = `<span class="badge-vocab-locked text-[10px] bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/50 font-bold font-mono flex items-center gap-1 animate-pulse"><i class="fa-solid fa-lock text-amber-400"></i> Locked Challenge</span>`;
-                    borderClass = 'border-amber-500/40';
-                    bgClass = 'bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/20';
+                    scheduleTag = `<span class="badge-vocab-locked text-[10px] bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-500/50 font-bold font-mono flex items-center gap-1"><i class="fa-solid fa-lock text-amber-600 text-[9px]"></i> Locked Challenge</span>`;
+                    borderClass = 'border-amber-200 dark:border-amber-500/30';
                     itemStatusClass = 'vocab-item-locked';
                 } else if (isMastered) {
-                    scheduleTag = `<span class="badge-feynman-mastered text-[10px] bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/50 font-bold font-mono"><i class="fa-solid fa-crown mr-1 text-amber-400"></i> 🏆 Bebas Review</span>`;
-                    borderClass = 'border-amber-500/40';
-                    bgClass = 'bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/20';
+                    scheduleTag = `<span class="badge-feynman-mastered text-[10px] bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/50 font-bold font-mono"><i class="fa-solid fa-crown mr-1 text-amber-500 text-[9px]"></i> Bebas Review</span>`;
+                    borderClass = 'border-emerald-200 dark:border-emerald-500/30';
                     itemStatusClass = 'vocab-item-mastered';
                 } else if (isUnlearnedFeynman) {
-                    scheduleTag = `<span class="badge-feynman-unlearned text-[10px] bg-rose-950/80 text-rose-300 px-2 py-0.5 rounded-full border border-rose-500/40 font-bold font-mono animate-pulse"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 🔴 Belum Feynman</span>`;
-                    borderClass = 'border-rose-500/30';
+                    scheduleTag = `<span class="badge-feynman-unlearned text-[10px] bg-rose-50 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 px-2.5 py-1 rounded-full border border-rose-200 dark:border-rose-500/40 font-bold font-mono"><i class="fa-solid fa-triangle-exclamation mr-1 text-rose-500 text-[9px]"></i> Belum Feynman</span>`;
+                    borderClass = 'border-rose-200 dark:border-rose-500/30';
                     itemStatusClass = 'vocab-item-unlearned';
                 } else if (isDue) {
-                    scheduleTag = `<span class="badge-feynman-due text-[10px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/40 font-bold review-due-pulse"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Review Hari Ini</span>`;
-                    borderClass = 'border-amber-500/40';
+                    scheduleTag = `<span class="badge-feynman-due text-[10px] bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-500/40 font-bold"><i class="fa-solid fa-clock-rotate-left mr-1 text-amber-600 text-[9px]"></i> Review Hari Ini</span>`;
+                    borderClass = 'border-amber-200 dark:border-amber-500/30';
                     itemStatusClass = 'vocab-item-due';
                 } else {
                     const daysLeft = Math.max(1, Math.ceil(((v.srNextReview || now) - now) / (1000 * 60 * 60 * 24)));
-                    scheduleTag = `<span class="badge-feynman-learning text-[10px] bg-emerald-950/60 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 font-mono font-bold"><i class="fa-solid fa-calendar mr-1"></i> Lvl ${v.feynmanLevel || 1} • ${daysLeft} hr lagi</span>`;
-                    borderClass = 'border-emerald-500/20';
+                    scheduleTag = `<span class="badge-feynman-learning text-[10px] bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/30 font-mono font-bold"><i class="fa-solid fa-calendar mr-1 text-emerald-600 text-[9px]"></i> Lvl ${v.feynmanLevel || 1} • ${daysLeft} hr lagi</span>`;
+                    borderClass = 'border-slate-200 dark:border-slate-800';
                 }
 
                 // Register Mini Badge
                 const regMini = v.registerLevel === 'casual'
-                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-500/30 font-bold">🔴 Casual</span>`
+                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 font-bold">🔴 Casual</span>`
                     : (v.registerLevel === 'semi_formal'
-                        ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-950/80 text-sky-300 border border-sky-500/30 font-bold">🟡 Agak Formal</span>`
+                        ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-500/30 font-bold">🟡 Agak Formal</span>`
                         : (v.registerLevel === 'written_academic'
-                            ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-950/80 text-purple-300 border border-purple-500/30 font-bold">📝 Writing Only</span>`
-                            : `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 font-bold">🟢 Formal</span>`));
+                            ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-50 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30 font-bold">📝 Writing Only</span>`
+                            : `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 font-bold">🟢 Formal</span>`));
 
                 const highYieldBadge = v.highYieldContext
-                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-1" title="${v.highYieldContext}"><i class="fa-solid fa-fire text-amber-400"></i> High-Yield</span>`
+                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/40 font-bold flex items-center gap-1" title="${safeEscape(v.highYieldContext)}"><i class="fa-solid fa-fire text-amber-500 mr-0.5"></i> High-Yield</span>`
                     : '';
 
                 const lockHeaderTag = isEnriching
-                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-indigo-950/90 text-indigo-300 border border-indigo-500/50 font-bold flex items-center gap-1"><i class="fa-solid fa-circle-notch fa-spin text-indigo-400 text-[8px]"></i> Loading</span>`
+                    ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/90 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/50 font-bold flex items-center gap-1"><i class="fa-solid fa-circle-notch fa-spin text-indigo-500 text-[8px]"></i> Loading</span>`
                     : (isLocked
-                        ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-950/90 text-amber-300 border border-amber-500/50 font-bold flex items-center gap-1"><i class="fa-solid fa-lock text-amber-400 text-[8px]"></i> Locked</span>`
+                        ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/50 font-bold flex items-center gap-1"><i class="fa-solid fa-lock text-amber-600 text-[8px]"></i> Locked</span>`
                         : '');
 
                 const meaningPreview = isEnriching
-                    ? `<p class="text-xs text-indigo-300/80 line-clamp-2 font-mono italic"><i class="fa-solid fa-gear fa-spin mr-1 text-[10px] text-indigo-400"></i> AI sedang menyusun CEFR, 3 konteks kontras & kolokasi...</p>`
+                    ? `<p class="text-xs text-indigo-700 dark:text-indigo-300/80 line-clamp-2 font-mono italic"><i class="fa-solid fa-gear fa-spin mr-1 text-[10px] text-indigo-500"></i> AI sedang menyusun CEFR, konteks & kolokasi...</p>`
                     : (isLocked
-                        ? `<p class="text-xs text-amber-300/80 line-clamp-2 font-mono italic">🔒 Deduce meaning from 3 contrasting contexts...</p>`
-                        : `<p class="text-xs text-slate-300 line-clamp-2 font-medium leading-relaxed">${v.meaningId || v.meaningEn || ''}</p>`);
+                        ? `<p class="text-xs text-amber-800 dark:text-amber-300/90 line-clamp-2 font-mono font-medium italic"><i class="fa-solid fa-lock text-amber-600 mr-1"></i> Selesaikan tebakan 3 kalimat kontras...</p>`
+                        : `<p class="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 font-medium leading-relaxed">${v.meaningId || v.meaningEn || ''}</p>`);
 
-                const openBtnClass = isEnriching
-                    ? `px-2.5 py-1 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 font-mono font-bold text-[11px] rounded-lg transition-all border border-indigo-500/40 flex items-center gap-1 shadow-sm`
-                    : (isLocked
-                        ? `px-2.5 py-1 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 font-mono font-bold text-[11px] rounded-lg transition-all border border-amber-500/40 flex items-center gap-1 shadow-sm`
-                        : `px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-mono font-bold text-[11px] rounded-lg transition-all border border-emerald-500/30 flex items-center gap-1`);
+                // Star Collocation Chunk
+                const starChunk = v.collocationMatrix?.starChunk || (Array.isArray(v.collocations) && v.collocations[0]) || '';
+                const starChunkHTML = (!isLocked && starChunk)
+                    ? `<div class="bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/25 rounded-lg px-2.5 py-1.5 flex items-center justify-between text-[11px]"><span class="text-slate-500 dark:text-slate-400 font-mono text-[10px]"><i class="fa-solid fa-star text-amber-500 mr-1"></i> Kolokasi:</span><span class="text-indigo-700 dark:text-indigo-300 font-mono font-bold truncate ml-1">"${safeEscape(starChunk)}"</span></div>`
+                    : '';
 
-                const openBtnText = isEnriching
-                    ? `<span>Cek Status</span><i class="fa-solid fa-circle-notch fa-spin text-[9px] text-indigo-400"></i>`
-                    : (isLocked
-                        ? `<span>Buka Gembok</span><i class="fa-solid fa-key text-[9px] text-amber-400"></i>`
-                        : `<span>Buka Kartu</span><i class="fa-solid fa-chevron-right text-[9px]"></i>`);
+                // 5-Pip Feynman Mastery Tracker
+                const lvl = isMastered ? 5 : (v.feynmanLevel || 0);
+                let pipsHTML = `<div class="flex items-center gap-1" title="Feynman Mastery Lvl ${lvl}/5">`;
+                for (let i = 1; i <= 5; i++) {
+                    pipsHTML += (i <= lvl)
+                        ? '<div class="feynman-pip-active w-3.5 h-1.5 rounded-full bg-emerald-500 shadow-xs"></div>'
+                        : '<div class="feynman-pip-inactive w-3.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>';
+                }
+                pipsHTML += `<span class="ml-1 text-[10px] font-mono text-slate-500 dark:text-slate-400 font-bold">Lvl ${lvl}/5</span></div>`;
+
+                let openBtnClass = '';
+                let openBtnText = '';
+                if (isEnriching) {
+                    openBtnClass = 'btn-vocab-enriching px-3 py-1.5 rounded-xl font-mono font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap';
+                    openBtnText = '<span>Status AI</span><i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>';
+                } else if (isLocked) {
+                    openBtnClass = 'btn-vocab-locked px-3 py-1.5 rounded-xl font-mono font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap';
+                    openBtnText = '<span>Buka Gembok</span><i class="fa-solid fa-key text-[10px]"></i>';
+                } else {
+                    openBtnClass = 'btn-vocab-detail px-3 py-1.5 rounded-xl font-mono font-bold text-xs border transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap';
+                    openBtnText = '<span>Buka Kartu</span><i class="fa-solid fa-chevron-right text-[10px]"></i>';
+                }
 
                 return `
-                    <div class="${bgClass} border ${borderClass} rounded-2xl p-4 flex flex-col justify-between gap-3 vocab-item ${itemStatusClass} shadow-md transition-all hover:border-slate-700 hover:shadow-xl">
-                        <div class="space-y-1.5 cursor-pointer" onclick="openVocabCard('${v.id}')">
-                            <div class="flex items-center justify-between flex-wrap gap-1">
+                    <div class="${bgClass} border ${borderClass} rounded-2xl p-4 flex flex-col justify-between gap-3 vocab-item ${itemStatusClass} shadow-xs hover:shadow-md transition-all">
+                        <div class="space-y-2 cursor-pointer" onclick="openVocabCard('${v.id}')">
+                            <div class="flex items-start justify-between gap-2">
                                 <div class="flex items-center space-x-2 flex-wrap gap-y-1">
-                                    <span class="vocab-word-title text-base font-black text-white hover:text-emerald-300 transition-colors">${v.word}</span>
-                                    <span class="text-[11px] font-mono text-slate-400 italic">${v.pos || ''}</span>
+                                    <span class="vocab-word-title text-base font-black text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">${v.word}</span>
+                                    <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400 italic">${v.pos || ''}</span>
                                     ${getVocabCefrBadgeHTML(v.cefr)}
                                 </div>
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button onclick="event.stopPropagation(); speakWord('${v.word}', 'en-GB')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-950 dark:hover:bg-slate-800 text-rose-600 dark:text-rose-300 text-xs border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 cursor-pointer transition-colors shadow-2xs" title="Dengarkan Audio UK">
+                                        <i class="fa-solid fa-volume-high"></i>
+                                    </button>
                                     ${lockHeaderTag}
                                     ${regMini}
                                     ${highYieldBadge}
                                 </div>
                             </div>
                             
-                            <div class="text-xs font-mono text-emerald-400 flex items-center gap-2">
-                                <span>${v.ipa || ''}</span>
+                            <div class="flex items-center justify-between text-[11px] font-mono bg-slate-100/70 dark:bg-slate-950/50 px-2.5 py-1 rounded-lg">
+                                <span class="text-emerald-700 dark:text-emerald-400 font-bold">${v.ipa || ''}</span>
+                                <span class="text-amber-800 dark:text-amber-300/90 truncate ml-2 text-[10px] font-semibold"><i class="fa-solid fa-bullhorn text-[9px] text-amber-600 dark:text-amber-400 mr-1"></i>${v.indonesianGuide || ''}</span>
                             </div>
 
                             ${meaningPreview}
-                            
-                            <div class="text-[10px] font-mono text-amber-300/90 flex items-center gap-1 pt-1 border-t border-slate-800/60">
-                                <i class="fa-solid fa-bullhorn text-[9px] text-amber-400 shrink-0"></i>
-                                <span class="truncate">${v.indonesianGuide || ''}</span>
-                            </div>
+                            ${starChunkHTML}
                         </div>
 
-                        <!-- Card Bottom Bar -->
-                        <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
-                            ${scheduleTag}
+                        <!-- Card Bottom Bar: Feynman Pips & Actions -->
+                        <div class="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-800/60 gap-2">
+                            <div>
+                                ${pipsHTML}
+                            </div>
                             <div class="flex items-center space-x-1.5">
-                                <button onclick="speakWord('${v.word}', 'en-GB')" class="p-1.5 bg-slate-950 hover:bg-slate-800 text-rose-300 rounded-lg text-xs border border-slate-800 transition-all shadow-sm" title="Dengarkan Audio UK">
-                                    <i class="fa-solid fa-volume-high"></i>
-                                </button>
+                                ${scheduleTag}
                                 <button onclick="openVocabCard('${v.id}')" class="${openBtnClass}">
                                     ${openBtnText}
                                 </button>
@@ -771,7 +1077,7 @@ function loadVocabBank() {
                     ipa: analysis.ipa || '',
                     dateAdded: Date.now(),
                     srInterval: 1,
-                    srNextReview: Date.now() + (1 * 86400000),
+                    srNextReview: null,
                     srReviewCount: 0,
                     feynmanLevel: 0,
                     feynmanStatus: 'unlearned',
@@ -948,8 +1254,8 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             throw new Error("Respon AI tidak dapat diuraikan. Silakan coba lagi.");
         }
 
-        function seedSampleVocabBank() {
-            SoundFX.play('click');
+        function seedSampleVocabBank(showFeedback = true) {
+            if (showFeedback) SoundFX.play('click');
             const starterPack = [
                 {
                     id: 'vocab_seed_dissipate',
@@ -1238,8 +1544,10 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 
             vocabBank = starterPack;
             saveVocabBank();
-            showToast("5 Kosakata IELTS Band 7.5+ berhasil ditambahkan!", "success");
-            SoundFX.play('levelup');
+            if (showFeedback) {
+                showToast("5 Kosakata IELTS Band 7.5+ berhasil ditambahkan!", "success");
+                SoundFX.play('levelup');
+            }
         }
 
         // =========================================================================
@@ -1734,7 +2042,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 const now = Date.now();
                 const isMastered = vocab.status === 'mastered' || (vocab.feynmanLevel && vocab.feynmanLevel >= 5);
                 const isUnlearned = !isMastered && (!vocab.feynmanLevel || vocab.feynmanLevel === 0);
-                const isDue = !isMastered && (vocab.srNextReview || 0) <= now + 3600000;
+                const isDue = !isMastered && !isUnlearned && vocab.srNextReview && (vocab.srNextReview <= now + 3600000);
                 const daysLeft = Math.max(1, Math.ceil(((vocab.srNextReview || now) - now) / (1000 * 60 * 60 * 24)));
 
                 if (isMastered) {
@@ -1744,7 +2052,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
                 } else if (isDue) {
                     feynmanBadge.innerHTML = `<span class="text-[10px] bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-500/40 font-mono font-bold review-due-pulse"><i class="fa-solid fa-clock-rotate-left mr-1"></i> 🟡 Jatuh Tempo Review Hari Ini</span>`;
                 } else {
-                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/40 font-mono font-bold"><i class="fa-solid fa-circle-check mr-1"></i> 🟢 Dikuasai (Lv.${vocab.feynmanLevel || 1}/4) • Review: ${daysLeft} hr lagi</span>`;
+                    feynmanBadge.innerHTML = `<span class="text-[10px] bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/40 font-mono font-bold"><i class="fa-solid fa-circle-check mr-1"></i> 🟢 Dikuasai (Lv.${vocab.feynmanLevel || 1}/5) • Review: ${daysLeft} hr lagi</span>`;
                 }
             }
 
@@ -3079,8 +3387,11 @@ Return ONLY a valid JSON object:
         function getVocabsDueToday() {
             const now = Date.now();
             return vocabBank.filter(v => {
-                if (v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5)) return false;
-                return (v.srNextReview || 0) <= now + 3600000;
+                const isMastered = v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5);
+                const isLocked = v.lockStatus === 'locked';
+                const isEnriching = (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing');
+                const isLearned = (v.feynmanLevel || 0) > 0;
+                return !isMastered && !isLocked && !isEnriching && isLearned && v.srNextReview && (v.srNextReview <= now + 3600000);
             });
         }
 
@@ -3180,8 +3491,8 @@ Return ONLY a valid JSON object:
             const inputExpl = document.getElementById('input-review-feynman-expl');
             const inputSentence = document.getElementById('input-review-feynman-sentence');
             const feedbackBox = document.getElementById('review-ai-feedback-box');
-            if (inputExpl) inputExpl.value = vocab.feynmanLastExplanation || '';
-            if (inputSentence) inputSentence.value = vocab.feynmanLastSentence || '';
+            if (inputExpl) inputExpl.value = '';
+            if (inputSentence) inputSentence.value = '';
             if (feedbackBox) {
                 feedbackBox.classList.add('hidden');
                 feedbackBox.innerHTML = '';
@@ -3927,30 +4238,30 @@ Return ONLY a valid JSON object matching this schema:
             if (counterBadge) {
                 counterBadge.innerText = `${newWords.length} kata baru terdeteksi`;
                 counterBadge.className = newWords.length > 0 
-                    ? "text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40 font-bold"
-                    : "text-[11px] px-2.5 py-0.5 rounded-full bg-slate-950 text-slate-400 border border-slate-800 font-bold";
+                    ? "text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40 font-bold"
+                    : "text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 font-bold";
             }
 
             if (summaryText) {
                 if (totalDetected === 0) {
                     summaryText.innerText = "Ketik atau tempel teks di atas.";
-                    summaryText.className = "text-[10px] text-slate-400";
+                    summaryText.className = "text-[10px] text-slate-500 dark:text-slate-400";
                 } else {
                     summaryText.innerHTML = `<strong>${newWords.length}</strong> baru, <strong>${existingWords.length}</strong> sudah ada di bank.`;
-                    summaryText.className = "text-[10px] text-slate-300";
+                    summaryText.className = "text-[10px] text-slate-700 dark:text-slate-300";
                 }
             }
 
             if (chipsList) {
                 if (totalDetected === 0) {
-                    chipsList.innerHTML = `<span class="text-xs text-slate-500 font-mono italic">Belum ada kata terdeteksi...</span>`;
+                    chipsList.innerHTML = `<span class="text-xs text-slate-400 dark:text-slate-500 font-mono italic">Belum ada kata terdeteksi...</span>`;
                 } else {
                     const newChips = newWords.map(w => 
-                        `<span class="px-2 py-0.5 rounded-md bg-emerald-950/70 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-semibold flex items-center gap-1"><i class="fa-solid fa-plus text-[9px] text-emerald-400"></i> ${safeEscape(w)}</span>`
+                        `<span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40 text-xs font-mono font-semibold flex items-center gap-1.5"><i class="fa-solid fa-plus text-[9px] text-emerald-600 dark:text-emerald-400"></i> ${safeEscape(w)}</span>`
                     ).join('');
 
                     const existingChips = existingWords.map(w => 
-                        `<span class="px-2 py-0.5 rounded-md bg-slate-900 text-slate-400 border border-slate-800 text-xs font-mono line-through flex items-center gap-1 opacity-70" title="Sudah ada di bank kosakata (akan dilewati)"><i class="fa-solid fa-check text-[9px]"></i> ${safeEscape(w)}</span>`
+                        `<span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 text-xs font-mono line-through flex items-center gap-1.5 opacity-70" title="Sudah ada di bank kosakata (akan dilewati)"><i class="fa-solid fa-check text-[9px]"></i> ${safeEscape(w)}</span>`
                     ).join('');
 
                     chipsList.innerHTML = newChips + existingChips;
@@ -4020,7 +4331,7 @@ Return ONLY a valid JSON object matching this schema:
                     },
                     dateAdded: now + i,
                     srInterval: 1,
-                    srNextReview: now + (1 * 86400000),
+                    srNextReview: null,
                     srReviewCount: 0,
                     feynmanLevel: 0,
                     feynmanStatus: 'unlearned',

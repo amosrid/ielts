@@ -1638,10 +1638,24 @@
                         </span>
                         <span class="text-[11px] sm:text-xs text-amber-400 font-mono inline-flex items-center shrink-0"><i class="fa-solid fa-bolt mr-1"></i> Reward: +150 XP per Evaluation</span>
                     </div>
-                    <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
-                        <span>IeltsGo Speaking Coach & Recorder</span>
-                    </h2>
-                    <p class="text-sm text-slate-300 mt-1">Latih transfer rumus tata bahasa dari menulis ke berbicara spontan di bawah 2 detik! AI menghasilkan teks dan soal speaking khusus berdasarkan stage yang sudah Anda selesaikan.</p>
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+                                <span>IeltsGo Speaking Coach & Recorder</span>
+                            </h2>
+                            <p class="text-sm text-slate-300 mt-1">Latih transfer rumus tata bahasa dari menulis ke berbicara spontan di bawah 2 detik! AI menghasilkan teks dan soal speaking khusus berdasarkan stage yang sudah Anda selesaikan.</p>
+                        </div>
+                        <div class="shrink-0 flex items-center gap-2">
+                            <button type="button" onclick="copyGeneralSpeakingPrompt()" id="btn-copy-general-speaking-prompt" class="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/40 text-xs font-bold transition flex items-center gap-2 shadow-sm" title="Salin prompt evaluasi speaking umum (bebas topik) untuk digunakan di Gemini AI">
+                                <i class="fa-solid fa-clipboard-question text-indigo-400"></i>
+                                <span>Salin Prompt Speaking Bebas</span>
+                            </button>
+                            <button type="button" onclick="openGeminiWeb()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-bold transition flex items-center gap-1.5" title="Buka Gemini AI Web di Tab Baru">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-rose-400"></i>
+                                <span>Gemini AI Web</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Stage Knowledge Scaffolding & Target Accent Context Bar -->
@@ -1845,10 +1859,44 @@
                                     <i class="fa-solid fa-play"></i>
                                     <span>Putar Ulang</span>
                                 </button>
+                                <button onclick="downloadSpeakingAudio('part1')" id="btn-rec-download-part1" class="hidden px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold text-xs rounded-xl transition-all border border-cyan-500/40 flex items-center gap-2" title="Unduh file audio rekaman Anda">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Unduh Audio</span>
+                                </button>
+                                <button onclick="copySpeakingGeminiPrompt('part1')" id="btn-rec-copy-prompt-part1" class="hidden px-4 py-2.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 font-bold text-xs rounded-xl transition-all border border-indigo-500/50 flex items-center gap-2" title="Salin prompt evaluasi Part 1 untuk Gemini AI">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Salin Prompt Gemini</span>
+                                </button>
+                                <button onclick="openGeminiWeb()" id="btn-rec-open-gemini-part1" class="hidden px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2" title="Buka Gemini AI Web untuk upload audio & tempel prompt">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    <span>Buka Gemini AI ↗</span>
+                                </button>
                                 <button onclick="submitSpeakingEvaluation('part1')" id="btn-rec-submit-part1" class="hidden px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2 font-mono">
                                     <i class="fa-solid fa-paper-plane"></i>
                                     <span>Kirim ke AI Examiner untuk Dinilai</span>
                                 </button>
+                            </div>
+
+                            <!-- Gemini Self-Evaluation 3-Step Guide Banner -->
+                            <div id="speaking-gemini-workflow-part1" class="hidden mt-3 p-3.5 bg-slate-900/90 rounded-xl border border-indigo-500/30 text-xs text-slate-300 space-y-2">
+                                <div class="flex items-center justify-between text-indigo-300 font-bold font-mono">
+                                    <span class="flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles"></i> Alur Evaluasi Mandiri via Gemini AI:</span>
+                                    <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">Langkah 1 - 2 - 3</span>
+                                </div>
+                                <ol class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-slate-300 list-none">
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center shrink-0 text-[10px]">1</span>
+                                        <div><strong class="text-white block">Unduh Audio</strong> Klik tombol <em>Unduh Audio</em> untuk menyimpan file rekaman suara Anda.</div>
+                                    </li>
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 font-bold flex items-center justify-center shrink-0 text-[10px]">2</span>
+                                        <div><strong class="text-white block">Salin Prompt</strong> Klik <em>Salin Prompt Gemini</em> (prompt rubrik & teks shadowing otomatis disalin).</div>
+                                    </li>
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-[10px]">3</span>
+                                        <div><strong class="text-white block">Kirim ke Gemini</strong> Buka Gemini AI, lampirkan audio unduhan Anda, lalu paste prompt dan kirim!</div>
+                                    </li>
+                                </ol>
                             </div>
 
                             <!-- Audio Player Element (Hidden by default, used for playback) -->
@@ -1975,10 +2023,44 @@
                                     <i class="fa-solid fa-play"></i>
                                     <span>Putar Ulang</span>
                                 </button>
+                                <button onclick="downloadSpeakingAudio('part2')" id="btn-rec-download-part2" class="hidden px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold text-xs rounded-xl transition-all border border-cyan-500/40 flex items-center gap-2" title="Unduh file audio monolog Anda">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Unduh Audio</span>
+                                </button>
+                                <button onclick="copySpeakingGeminiPrompt('part2')" id="btn-rec-copy-prompt-part2" class="hidden px-4 py-2.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 font-bold text-xs rounded-xl transition-all border border-indigo-500/50 flex items-center gap-2" title="Salin prompt evaluasi Part 2 untuk Gemini AI">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Salin Prompt Gemini</span>
+                                </button>
+                                <button onclick="openGeminiWeb()" id="btn-rec-open-gemini-part2" class="hidden px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2" title="Buka Gemini AI Web untuk upload audio & tempel prompt">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    <span>Buka Gemini AI ↗</span>
+                                </button>
                                 <button onclick="submitSpeakingEvaluation('part2')" id="btn-rec-submit-part2" class="hidden px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2 font-mono">
                                     <i class="fa-solid fa-paper-plane"></i>
                                     <span>Kirim Monolog untuk Dinilai AI</span>
                                 </button>
+                            </div>
+
+                            <!-- Gemini Self-Evaluation 3-Step Guide Banner Part 2 -->
+                            <div id="speaking-gemini-workflow-part2" class="hidden mt-3 p-3.5 bg-slate-900/90 rounded-xl border border-indigo-500/30 text-xs text-slate-300 space-y-2">
+                                <div class="flex items-center justify-between text-indigo-300 font-bold font-mono">
+                                    <span class="flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles"></i> Alur Evaluasi Mandiri via Gemini AI:</span>
+                                    <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">Langkah 1 - 2 - 3</span>
+                                </div>
+                                <ol class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-slate-300 list-none">
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center shrink-0 text-[10px]">1</span>
+                                        <div><strong class="text-white block">Unduh Audio</strong> Klik tombol <em>Unduh Audio</em> untuk menyimpan file rekaman monolog Anda.</div>
+                                    </li>
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 font-bold flex items-center justify-center shrink-0 text-[10px]">2</span>
+                                        <div><strong class="text-white block">Salin Prompt</strong> Klik <em>Salin Prompt Gemini</em> (prompt rubrik & cue card otomatis disalin).</div>
+                                    </li>
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-[10px]">3</span>
+                                        <div><strong class="text-white block">Kirim ke Gemini</strong> Buka Gemini AI, lampirkan rekaman monolog Anda, lalu paste prompt dan kirim!</div>
+                                    </li>
+                                </ol>
                             </div>
 
                             <audio id="audio-player-part2" class="hidden w-full mt-2" controls></audio>
@@ -2084,10 +2166,44 @@
                                     <i class="fa-solid fa-play"></i>
                                     <span>Putar Ulang</span>
                                 </button>
+                                <button onclick="downloadSpeakingAudio('part3')" id="btn-rec-download-part3" class="hidden px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold text-xs rounded-xl transition-all border border-cyan-500/40 flex items-center gap-2" title="Unduh file audio jawaban Anda">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Unduh Audio</span>
+                                </button>
+                                <button onclick="copySpeakingGeminiPrompt('part3')" id="btn-rec-copy-prompt-part3" class="hidden px-4 py-2.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 font-bold text-xs rounded-xl transition-all border border-indigo-500/50 flex items-center gap-2" title="Salin prompt evaluasi Part 3 untuk Gemini AI">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Salin Prompt Gemini</span>
+                                </button>
+                                <button onclick="openGeminiWeb()" id="btn-rec-open-gemini-part3" class="hidden px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2" title="Buka Gemini AI Web untuk upload audio & tempel prompt">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    <span>Buka Gemini AI ↗</span>
+                                </button>
                                 <button onclick="submitSpeakingEvaluation('part3')" id="btn-rec-submit-part3" class="hidden px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2 font-mono">
                                     <i class="fa-solid fa-paper-plane"></i>
                                     <span>Kirim Jawaban untuk Dinilai AI</span>
                                 </button>
+                            </div>
+
+                            <!-- Gemini Self-Evaluation 3-Step Guide Banner Part 3 -->
+                            <div id="speaking-gemini-workflow-part3" class="hidden mt-3 p-3.5 bg-slate-900/90 rounded-xl border border-indigo-500/30 text-xs text-slate-300 space-y-2">
+                                <div class="flex items-center justify-between text-indigo-300 font-bold font-mono">
+                                    <span class="flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles"></i> Alur Evaluasi Mandiri via Gemini AI:</span>
+                                    <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">Langkah 1 - 2 - 3</span>
+                                </div>
+                                <ol class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-slate-300 list-none">
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center shrink-0 text-[10px]">1</span>
+                                        <div><strong class="text-white block">Unduh Audio</strong> Klik tombol <em>Unduh Audio</em> untuk menyimpan rekaman opini/analisis Anda.</div>
+                                    </li>
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 font-bold flex items-center justify-center shrink-0 text-[10px]">2</span>
+                                        <div><strong class="text-white block">Salin Prompt</strong> Klik <em>Salin Prompt Gemini</em> (prompt rubrik & topik analitis otomatis disalin).</div>
+                                    </li>
+                                    <li class="bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-start gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-[10px]">3</span>
+                                        <div><strong class="text-white block">Kirim ke Gemini</strong> Buka Gemini AI, lampirkan rekaman jawaban Anda, lalu paste prompt dan kirim!</div>
+                                    </li>
+                                </ol>
                             </div>
 
                             <audio id="audio-player-part3" class="hidden w-full mt-2" controls></audio>

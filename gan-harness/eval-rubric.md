@@ -1,32 +1,23 @@
-# GAN Design Evaluation Rubric
-
-## Evaluation Dimensions & Weights
+# Eval Rubric: Vocab Page GAN Design
 
 ### Design Quality (weight: 0.35)
-- **Aesthetic Authority**: Does the workspace feel like a high-end Cambridge / IDP preparation publication (The Economist / The Guardian aesthetic) rather than a noisy gamified tutorial?
-- **Hierarchy & Layout Balance**: Is the eye guided naturally from the editorial masthead to the daily deliberate ritual, the Band 7.5 readiness radar, and the core diagnostic cards?
-- **Color Discipline**: Strict adherence to the 60-30-10 palette (Ivory / Obsidian Slate canvas, crisp structural cards, restrained academic indigo, emerald, warm ochre, crimson slate semantic accents). Zero harsh neon glows or clashes.
-- **Theme Fidelity**: Flawless contrast and visual warmth in both Light Mode and Dark Mode.
+- Visual hierarchy and solidity: typography scale, spacing rhythm, solid borders, glassmorphic accents without visual noise.
+- Information density: scannable cards that present word, CEFR, stress pattern, collocation, meaning, and mastery without feeling cramped.
+- Dark & Light mode polish: immaculate contrast, refined color semantics matching `theme.css`.
+- Command Center HUD: sleek metric cards that elevate the page to look like a high-end mastery suite.
 
 ### Originality (weight: 0.30)
-- **Creative Leaps**: Avoidance of generic "AI slop" (no generic purple-blue gradients, no identical rounded cards with centered icons, no boilerplate heroes).
-- **Editorial Distinction**: Use of academic serif mastheads, bespoke micro-borders, clean status pill tags, and an authoritative Band 7.5 diagnostic score matrix.
-- **Pedagogical Polish**: A 20-minute daily deliberate practice ritual tracker that conveys seriousness of purpose.
+- Interactive KPI Cards that serve as instant 1-click filters.
+- 5-step tactile Feynman Mastery progress pips directly on card surface.
+- IELTS Star Collocation highlight chunk on every card to promote chunk-based learning.
+- Dual View toggle (Card Grid vs Compact Speedy Row View).
 
 ### Craft (weight: 0.25)
-- **Micro-Interactions**: Smooth hover states, subtle card elevation transitions, clean responsive adjustments.
-- **Spacing & Rhythm**: Consistent 8pt grid spacing, balanced line heights, and refined typography scales (`JetBrains Mono` for figures/IPA, `Newsreader`/`Lora` for editorial headers, `Outfit`/`Inter` for labels).
-- **DOM Precision**: Clean semantic HTML structure, well-structured CSS classes, and maintainable CSS utility rules.
+- Micro-interactions: audio play button hover states, filter chip active animations, badge status pulses.
+- Responsive resilience: flawless layout on 360px mobile up to 1440px+ ultra-wide desktop.
+- Monospace phonetic guide badge specifically tailored for Indonesian speakers with phonetic stress arrows (`↘`, `↗`).
 
 ### Functionality (weight: 0.10)
-- **Strict DOM Contract**: All 25+ dynamic DOM IDs queried by JavaScript remain 100% active, functional, and correctly populated.
-- **Interactive Integrity**: Every button (Continue Stage, Start Review, Open Speaking Lab, Vocab Logger, Deck Manager, Achievements) works smoothly without JavaScript console errors.
-- **State Synchronicity**: Dynamic counters (XP, Level, Streak, Vocab Due, CEFR counts, Phase progress, Boss unlock) reflect live `playerState` and `vocabBank`.
-
-## Scoring Calibration
-- 1-4: AI slop, broken elements, harsh contrast clashes, or missing IDs.
-- 5-6: Functional but visually mundane or inconsistent theme contrast.
-- 7-8: Polished, professional academic design, clean typography, all features working.
-- 9-10: Award-winning editorial elegance, breathtaking calm aesthetic, immaculate craft and zero regressions.
-
-**Passing Threshold**: 7.5 / 10
+- 100% preservation of all existing input IDs, buttons, search logic, filter logic, and modals.
+- Audio UK pronunciation triggers reliably.
+- Real-time search and sorting respond instantaneously.
