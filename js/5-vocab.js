@@ -51,10 +51,18 @@ function loadVocabBank() {
                 const saved = localStorage.getItem('ielts_vocab_bank_v1');
                 if (saved) {
                     vocabBank = JSON.parse(saved);
-                    // Ensure backward compatibility: legacy entries default to unlocked
+                    // Ensure backward compatibility & auto-normalize non-CEFR words
                     vocabBank.forEach(v => {
-                        if (v && v.lockStatus === undefined) {
+                        if (!v) return;
+                        if (v.lockStatus === undefined) {
                             v.lockStatus = 'unlocked';
+                        }
+                        const w = (v.word || '').toLowerCase();
+                        if (w === 'delulu' || ((v.registerLevel === 'casual' || (v.registerLabel || '').toLowerCase().includes('slang')) && v.cefr === 'B2')) {
+                            v.cefr = 'Slang';
+                        }
+                        if (w === 'algorithmic' || ((v.registerLabel || '').toLowerCase().includes('tech') && v.cefr === 'B2')) {
+                            v.cefr = 'Tech';
                         }
                     });
 
@@ -109,10 +117,25 @@ function loadVocabBank() {
         }
 
         let vocabFilterState = {
-            status: 'all',    // 'all' | 'due' | 'writing_ready' | 'speaking_only' | 'c1_c2' | 'mastered' | 'unlearned'
-            cefr: 'all',      // 'all' | 'C2' | 'C1' | 'B2' | 'B1' | 'A2' | 'A1'
-            register: 'all'   // 'all' | 'formal' | 'semi_formal' | 'casual' | 'written_academic'
+            ielts: 'all',      // 'all' | 'both' | 'writing_only' | 'speaking_only'
+            cefr: 'all',       // 'all' | 'C2' | 'C1' | 'B2' | 'B1' | 'A2' | 'A1' | 'Slang' | 'Tech'
+            learning: 'all',   // 'all' | 'locked' | 'unlearned' | 'due' | 'mastered'
+            register: 'all'    // 'all' | 'formal' | 'semi_formal' | 'casual' | 'written_academic'
         };
+
+        function getVocabCefrBadgeHTML(cefr) {
+            const c = cefr || 'B2';
+            if (c === 'Slang' || c === 'slang') {
+                return `<span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-slang flex items-center gap-1 shadow-sm"><i class="fa-solid fa-bolt text-amber-400 text-[9px]"></i>Slang</span>`;
+            }
+            if (c === 'Tech' || c === 'tech' || c === 'Technical') {
+                return `<span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-tech flex items-center gap-1 shadow-sm"><i class="fa-solid fa-gear text-cyan-400 text-[9px]"></i>Tech</span>`;
+            }
+            if (c === 'Idiom' || c === 'idiom') {
+                return `<span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-idiom flex items-center gap-1 shadow-sm"><i class="fa-solid fa-comments text-purple-400 text-[9px]"></i>Idiom</span>`;
+            }
+            return `<span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${c.toLowerCase()} shadow-sm">${c}</span>`;
+        }
 
         function onVocabSearchInput(val) {
             const clearBtn = document.getElementById('btn-clear-vocab-search');
@@ -158,7 +181,9 @@ function loadVocabBank() {
 
         function updateActiveFilterBadge() {
             let activeCount = 0;
+            if (vocabFilterState.ielts !== 'all') activeCount++;
             if (vocabFilterState.cefr !== 'all') activeCount++;
+            if (vocabFilterState.learning !== 'all') activeCount++;
             if (vocabFilterState.register !== 'all') activeCount++;
 
             const badge = document.getElementById('badge-active-filter-count');
@@ -171,9 +196,42 @@ function loadVocabBank() {
                 }
             }
 
+            const summaryEl = document.getElementById('filter-active-summary');
+            if (summaryEl) {
+                summaryEl.innerText = `${activeCount} Filter Aktif`;
+                summaryEl.className = activeCount > 0 ? "text-emerald-400 font-bold" : "text-slate-400";
+            }
+
+            // Update Label Headers in Detail Panel
+            const ieltsLabel = document.getElementById('active-ielts-label');
+            if (ieltsLabel) {
+                const map = {
+                    all: 'Semua Modul',
+                    both: '🌐 Writing & Speaking',
+                    writing_only: '✍️ Writing Only',
+                    speaking_only: '🎙️ Speaking Only'
+                };
+                ieltsLabel.innerText = map[vocabFilterState.ielts] || 'Semua Modul';
+            }
+
             const cefrLabel = document.getElementById('active-cefr-label');
             if (cefrLabel) {
-                cefrLabel.innerText = vocabFilterState.cefr === 'all' ? 'Semua Level' : `Level ${vocabFilterState.cefr}`;
+                if (vocabFilterState.cefr === 'all') cefrLabel.innerText = 'Semua Tipe';
+                else if (vocabFilterState.cefr === 'Slang') cefrLabel.innerText = '⚡ Slang / Pop';
+                else if (vocabFilterState.cefr === 'Tech') cefrLabel.innerText = '⚙️ Technical / STEM';
+                else cefrLabel.innerText = `Level ${vocabFilterState.cefr}`;
+            }
+
+            const learnLabel = document.getElementById('active-learning-label');
+            if (learnLabel) {
+                const map = {
+                    all: 'Semua Status',
+                    locked: '🔒 Belum Buka Gembok',
+                    unlearned: '🔴 Belum Belajar (Lvl 0)',
+                    due: '⏰ Review Hari Ini',
+                    mastered: '🏆 Bebas Review'
+                };
+                learnLabel.innerText = map[vocabFilterState.learning] || 'Semua Status';
             }
 
             const regLabels = {
@@ -189,30 +247,27 @@ function loadVocabBank() {
             }
         }
 
-        function setVocabFilterStatus(status) {
+        function setVocabFilterIelts(val) {
             SoundFX.play('click');
-            vocabFilterState.status = status;
-            
-            // Update status pill styling with sleek modern active states
-            ['all', 'due', 'writing_ready', 'speaking_only', 'c1_c2', 'mastered', 'unlearned'].forEach(s => {
-                const btn = document.getElementById(`filter-btn-status-${s}`);
-                if (btn) {
-                    if (s === status) {
-                        btn.className = "px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-md active:scale-95 shrink-0";
+            vocabFilterState.ielts = val;
+            ['all', 'both', 'writing_only', 'speaking_only'].forEach(m => {
+                const chip = document.getElementById(`chip-ielts-${m}`);
+                if (chip) {
+                    if (m === val) {
+                        chip.className = "px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm";
                     } else {
-                        btn.className = "px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0";
+                        chip.className = "px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold text-[11px] transition-all";
                     }
                 }
             });
+            updateActiveFilterBadge();
             renderVocabBank();
         }
 
         function setVocabFilterCefr(cefr) {
             SoundFX.play('click');
             vocabFilterState.cefr = cefr;
-            
-            // Update CEFR chips
-            ['all', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'].forEach(c => {
+            ['all', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1', 'Slang', 'Tech'].forEach(c => {
                 const chip = document.getElementById(`chip-cefr-${c}`);
                 if (chip) {
                     if (c === cefr) {
@@ -226,16 +281,31 @@ function loadVocabBank() {
             renderVocabBank();
         }
 
+        function setVocabFilterLearning(status) {
+            SoundFX.play('click');
+            vocabFilterState.learning = status;
+            ['all', 'locked', 'unlearned', 'due', 'mastered'].forEach(s => {
+                const chip = document.getElementById(`chip-learn-${s}`);
+                if (chip) {
+                    if (s === status) {
+                        chip.className = "px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm";
+                    } else {
+                        chip.className = "px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold text-[11px] transition-all";
+                    }
+                }
+            });
+            updateActiveFilterBadge();
+            renderVocabBank();
+        }
+
         function setVocabFilterRegister(reg) {
             SoundFX.play('click');
             vocabFilterState.register = reg;
-
-            // Update Register chips
             ['all', 'formal', 'semi_formal', 'casual', 'written_academic'].forEach(r => {
                 const chip = document.getElementById(`chip-reg-${r}`);
                 if (chip) {
                     if (r === reg) {
-                        chip.className = "px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold text-[11px] transition-all shadow-sm";
+                        chip.className = "px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm";
                     } else {
                         chip.className = "px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-bold text-[11px] transition-all";
                     }
@@ -247,7 +317,7 @@ function loadVocabBank() {
 
         function resetVocabFilters() {
             SoundFX.play('click');
-            vocabFilterState = { status: 'all', cefr: 'all', register: 'all' };
+            vocabFilterState = { ielts: 'all', cefr: 'all', learning: 'all', register: 'all' };
             
             const searchInput = document.getElementById('input-vocab-search');
             if (searchInput) searchInput.value = '';
@@ -256,29 +326,11 @@ function loadVocabBank() {
             const selectSort = document.getElementById('select-vocab-sort');
             if (selectSort) selectSort.value = 'recent';
             
-            setVocabFilterStatus('all');
+            setVocabFilterIelts('all');
             setVocabFilterCefr('all');
+            setVocabFilterLearning('all');
             setVocabFilterRegister('all');
-            showToast("Filter kosakata telah di-reset.", "info");
-        }
-
-        // Backward compatibility
-        function setVocabFilter(filter) {
-            if (['all', 'due', 'mastered', 'unlearned'].includes(filter)) {
-                setVocabFilterStatus(filter);
-            } else if (filter === 'reg_writing') {
-                setVocabFilterStatus('writing_ready');
-            } else if (filter === 'reg_speaking') {
-                setVocabFilterStatus('speaking_only');
-            } else if (filter === 'c1_c2') {
-                setVocabFilterStatus('c1_c2');
-            } else if (filter === 'reg_formal') {
-                setVocabFilterRegister('formal');
-            } else if (filter === 'reg_casual') {
-                setVocabFilterRegister('casual');
-            } else if (['C2', 'C1', 'B2', 'B1', 'A2', 'A1'].includes(filter)) {
-                setVocabFilterCefr(filter);
-            }
+            showToast("Semua filter kosakata telah di-reset.", "info");
         }
 
         function renderVocabBank() {
@@ -293,50 +345,53 @@ function loadVocabBank() {
             const sortBy = sortSelect ? sortSelect.value : 'recent';
             const now = Date.now();
 
-            // 1. Calculate Realtime Counts for All Status Pills
-            const dueCount = getVocabsDueToday().length;
-            const masteredCount = vocabBank.filter(v => v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5)).length;
-            const writingReadyCount = vocabBank.filter(v => (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic')).length;
-            const speakingOnlyCount = vocabBank.filter(v => v.ieltsSuitability?.status === 'speaking_only').length;
-            const c1c2Count = vocabBank.filter(v => v.cefr === 'C1' || v.cefr === 'C2').length;
-            const unlearnedCount = vocabBank.filter(v => (!v.feynmanLevel || v.feynmanLevel === 0) && v.status !== 'mastered').length;
+            updateActiveFilterBadge();
 
-            const filterCountAll = document.getElementById('filter-count-all');
-            if (filterCountAll) filterCountAll.innerText = vocabBank.length;
-            const filterCountDue = document.getElementById('filter-count-due');
-            if (filterCountDue) filterCountDue.innerText = dueCount;
-            const filterCountMastered = document.getElementById('filter-count-mastered');
-            if (filterCountMastered) filterCountMastered.innerText = masteredCount;
-            const filterCountWriting = document.getElementById('filter-count-writing_ready');
-            if (filterCountWriting) filterCountWriting.innerText = writingReadyCount;
-            const filterCountSpeaking = document.getElementById('filter-count-speaking_only');
-            if (filterCountSpeaking) filterCountSpeaking.innerText = speakingOnlyCount;
-            const filterCountC1C2 = document.getElementById('filter-count-c1_c2');
-            if (filterCountC1C2) filterCountC1C2.innerText = c1c2Count;
-            const filterCountUnlearned = document.getElementById('filter-count-unlearned');
-            if (filterCountUnlearned) filterCountUnlearned.innerText = unlearnedCount;
-
-            // 2. Multi-Filter Logic (Combinatorial AND)
+            // Multi-Filter Logic (Combinatorial AND)
             let filtered = vocabBank.filter(v => {
-                const isMastered = v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5);
-                const isDue = !isMastered && (v.srNextReview || 0) <= now + 3600000;
-                const isWritingReady = (v.ieltsSuitability?.status === 'both' || v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'formal' || v.registerLevel === 'written_academic');
-                const isSpeakingOnly = v.ieltsSuitability?.status === 'speaking_only';
-                const isC1C2 = (v.cefr === 'C1' || v.cefr === 'C2');
-                const isUnlearned = !isMastered && (!v.feynmanLevel || v.feynmanLevel === 0);
+                const isEnriching = (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing');
+                const isLocked = v.lockStatus === 'locked';
+                const isMastered = !isEnriching && !isLocked && (v.status === 'mastered' || (v.feynmanLevel && v.feynmanLevel >= 5));
+                const isDue = !isEnriching && !isLocked && !isMastered && (v.srNextReview || 0) <= now + 3600000;
+                const isUnlearned = !isEnriching && !isLocked && !isMastered && (!v.feynmanLevel || v.feynmanLevel === 0);
 
-                // A. Status Filter
-                if (vocabFilterState.status === 'due' && !isDue) return false;
-                if (vocabFilterState.status === 'mastered' && !isMastered) return false;
-                if (vocabFilterState.status === 'writing_ready' && !isWritingReady) return false;
-                if (vocabFilterState.status === 'speaking_only' && !isSpeakingOnly) return false;
-                if (vocabFilterState.status === 'c1_c2' && !isC1C2) return false;
-                if (vocabFilterState.status === 'unlearned' && !isUnlearned) return false;
+                // 1. IELTS Module Filter:
+                if (vocabFilterState.ielts === 'both') {
+                    const isBoth = v.ieltsSuitability?.status === 'both' || (!v.ieltsSuitability && (v.registerLevel === 'formal' || v.registerLevel === 'semi_formal'));
+                    if (!isBoth) return false;
+                } else if (vocabFilterState.ielts === 'writing_only') {
+                    const isWritingOnly = v.ieltsSuitability?.status === 'writing_only' || v.registerLevel === 'written_academic';
+                    if (!isWritingOnly) return false;
+                } else if (vocabFilterState.ielts === 'speaking_only') {
+                    const isSpeakingOnly = v.ieltsSuitability?.status === 'speaking_only' || v.registerLevel === 'casual' || v.cefr === 'Slang';
+                    if (!isSpeakingOnly) return false;
+                }
 
-                // B. CEFR Filter
-                if (vocabFilterState.cefr !== 'all' && v.cefr !== vocabFilterState.cefr) return false;
+                // 2. CEFR / Special Type Filter:
+                if (vocabFilterState.cefr !== 'all') {
+                    const itemCefr = (v.cefr || '').toLowerCase();
+                    const targetCefr = vocabFilterState.cefr.toLowerCase();
+                    if (targetCefr === 'slang') {
+                        if (itemCefr !== 'slang' && v.registerLevel !== 'casual' && !(v.registerLabel || '').toLowerCase().includes('slang')) return false;
+                    } else if (targetCefr === 'tech') {
+                        if (itemCefr !== 'tech' && itemCefr !== 'technical' && !(v.registerLabel || '').toLowerCase().includes('technical') && !(v.registerLabel || '').toLowerCase().includes('tech')) return false;
+                    } else {
+                        if (itemCefr !== targetCefr) return false;
+                    }
+                }
 
-                // C. Register Filter
+                // 3. Learning & Lock Status Filter:
+                if (vocabFilterState.learning === 'locked') {
+                    if (!isLocked) return false;
+                } else if (vocabFilterState.learning === 'unlearned') {
+                    if (!isUnlearned) return false;
+                } else if (vocabFilterState.learning === 'due') {
+                    if (!isDue) return false;
+                } else if (vocabFilterState.learning === 'mastered') {
+                    if (!isMastered) return false;
+                }
+
+                // 4. Register Filter:
                 if (vocabFilterState.register === 'formal') {
                     if (v.registerLevel !== 'formal' && v.registerLevel !== 'written_academic' && v.registerLevel) return false;
                 } else if (vocabFilterState.register === 'semi_formal') {
@@ -347,7 +402,7 @@ function loadVocabBank() {
                     if (v.registerLevel !== 'written_academic') return false;
                 }
 
-                // D. Search Query
+                // 5. Search Query
                 if (searchQuery) {
                     const match = v.word.toLowerCase().includes(searchQuery) ||
                         (v.meaningId && v.meaningId.toLowerCase().includes(searchQuery)) ||
@@ -361,37 +416,47 @@ function loadVocabBank() {
                 return true;
             });
 
-            // 3. Sorting (Including Comprehension Level & Review Due First)
+            // Enhanced 10-Option Sorting
             filtered.sort((a, b) => {
                 if (sortBy === 'recent') return (b.dateAdded || 0) - (a.dateAdded || 0);
+                if (sortBy === 'oldest') return (a.dateAdded || 0) - (b.dateAdded || 0);
+                if (sortBy === 'locked_first') {
+                    const isLockedA = a.lockStatus === 'locked' ? 1 : 0;
+                    const isLockedB = b.lockStatus === 'locked' ? 1 : 0;
+                    if (isLockedA !== isLockedB) return isLockedB - isLockedA;
+                    return (b.dateAdded || 0) - (a.dateAdded || 0);
+                }
                 if (sortBy === 'due_first') {
-                    const isDueA = (a.status !== 'mastered' && (a.srNextReview || 0) <= now + 3600000) ? 1 : 0;
-                    const isDueB = (b.status !== 'mastered' && (b.srNextReview || 0) <= now + 3600000) ? 1 : 0;
+                    const isDueA = (a.status !== 'mastered' && a.lockStatus !== 'locked' && (a.srNextReview || 0) <= now + 3600000) ? 1 : 0;
+                    const isDueB = (b.status !== 'mastered' && b.lockStatus !== 'locked' && (b.srNextReview || 0) <= now + 3600000) ? 1 : 0;
                     if (isDueA !== isDueB) return isDueB - isDueA;
                     return (a.srNextReview || 0) - (b.srNextReview || 0);
                 }
                 if (sortBy === 'feynman_asc') {
-                    // Level Pemahaman: Terendah ke Tertinggi (0 -> 1 -> 2 -> 3 -> 4 -> 5)
                     const lvlA = (a.status === 'mastered' || (a.feynmanLevel && a.feynmanLevel >= 5)) ? 5 : (a.feynmanLevel || 0);
                     const lvlB = (b.status === 'mastered' || (b.feynmanLevel && b.feynmanLevel >= 5)) ? 5 : (b.feynmanLevel || 0);
                     return lvlA - lvlB;
                 }
                 if (sortBy === 'feynman_desc') {
-                    // Level Pemahaman: Tertinggi ke Terendah (5 -> 4 -> 3 -> 2 -> 1 -> 0)
                     const lvlA = (a.status === 'mastered' || (a.feynmanLevel && a.feynmanLevel >= 5)) ? 5 : (a.feynmanLevel || 0);
                     const lvlB = (b.status === 'mastered' || (b.feynmanLevel && b.feynmanLevel >= 5)) ? 5 : (b.feynmanLevel || 0);
                     return lvlB - lvlA;
                 }
                 if (sortBy === 'cefr_desc') {
-                    const order = { C2: 6, C1: 5, B2: 4, B1: 3, A2: 2, A1: 1 };
-                    return (order[b.cefr] || 0) - (order[a.cefr] || 0);
+                    const order = { C2: 8, C1: 7, B2: 6, B1: 5, A2: 4, A1: 3, Tech: 2, Slang: 1, Idiom: 1 };
+                    const normA = (a.cefr === 'Technical' ? 'Tech' : a.cefr) || 'B2';
+                    const normB = (b.cefr === 'Technical' ? 'Tech' : b.cefr) || 'B2';
+                    return (order[normB] || 0) - (order[normA] || 0);
                 }
                 if (sortBy === 'cefr_asc') {
-                    const order = { C2: 6, C1: 5, B2: 4, B1: 3, A2: 2, A1: 1 };
-                    return (order[a.cefr] || 0) - (order[b.cefr] || 0);
+                    const order = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6, Tech: 7, Slang: 8, Idiom: 8 };
+                    const normA = (a.cefr === 'Technical' ? 'Tech' : a.cefr) || 'B2';
+                    const normB = (b.cefr === 'Technical' ? 'Tech' : b.cefr) || 'B2';
+                    return (order[normA] || 99) - (order[normB] || 99);
                 }
-                if (sortBy === 'alpha') return a.word.localeCompare(b.word);
-                return 0;
+                if (sortBy === 'alpha_desc') return b.word.localeCompare(a.word);
+                if (sortBy === 'alpha_asc' || sortBy === 'alpha') return a.word.localeCompare(b.word);
+                return (b.dateAdded || 0) - (a.dateAdded || 0);
             });
 
             if (filtered.length === 0) {
@@ -402,7 +467,7 @@ function loadVocabBank() {
 
             if (emptyContainer) emptyContainer.classList.add('hidden');
 
-            // 4. Render 2-Column Responsive High-Density Card Grid
+            // Render 2-Column Responsive High-Density Card Grid
             listContainer.innerHTML = filtered.map(v => {
                 const isEnriching = (v.enrichmentStatus === 'queued' || v.enrichmentStatus === 'analyzing');
                 const isLocked = v.lockStatus === 'locked';
@@ -489,7 +554,7 @@ function loadVocabBank() {
                                 <div class="flex items-center space-x-2 flex-wrap gap-y-1">
                                     <span class="vocab-word-title text-base font-black text-white hover:text-emerald-300 transition-colors">${v.word}</span>
                                     <span class="text-[11px] font-mono text-slate-400 italic">${v.pos || ''}</span>
-                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${(v.cefr || 'b2').toLowerCase()}">${v.cefr}</span>
+                                    ${getVocabCefrBadgeHTML(v.cefr)}
                                 </div>
                                 <div class="flex items-center gap-1">
                                     ${lockHeaderTag}
@@ -525,6 +590,35 @@ function loadVocabBank() {
                     </div>
                 `;
             }).join('');
+        }
+
+        function sanitizeVocabCefr(rawCefr, word, analysis = {}) {
+            let c = (rawCefr || '').toString().trim();
+            const w = (word || '').toLowerCase();
+            const regLvl = (analysis.registerLevel || '').toLowerCase();
+            const regLbl = (analysis.registerLabel || '').toLowerCase();
+
+            // Check explicit slang or known slang
+            if (c.toLowerCase() === 'slang' || w === 'delulu' || regLbl.includes('slang') || (regLvl === 'casual' && (w === 'rizz' || w === 'cap' || w === 'salty'))) {
+                return 'Slang';
+            }
+            // Check explicit tech or known tech jargon
+            if (c.toLowerCase() === 'tech' || c.toLowerCase() === 'technical' || w === 'algorithmic' || regLbl.includes('tech') || regLbl.includes('technical')) {
+                return 'Tech';
+            }
+            // Check idiom
+            if (c.toLowerCase() === 'idiom' || regLbl.includes('idiom')) {
+                return 'Idiom';
+            }
+            // Standard CEFR
+            const standard = ['C2', 'C1', 'B2', 'B1', 'A2', 'A1'];
+            const matched = standard.find(s => s.toLowerCase() === c.toLowerCase());
+            if (matched) return matched;
+
+            // Fallback based on word/register
+            if (regLvl === 'casual') return 'Slang';
+            if (regLbl.includes('tech') || regLbl.includes('technical')) return 'Tech';
+            return 'B2';
         }
 
         async function addVocabWord() {
@@ -571,7 +665,7 @@ function loadVocabBank() {
                 if (targetEntry) {
                     targetEntry.word = finalWord;
                     targetEntry.pos = analysis.pos || targetEntry.pos || 'noun';
-                    targetEntry.cefr = analysis.cefr || targetEntry.cefr || 'B2';
+                    targetEntry.cefr = sanitizeVocabCefr(analysis.cefr || targetEntry.cefr, finalWord, analysis);
                     targetEntry.registerLevel = analysis.registerLevel || targetEntry.registerLevel || 'formal';
                     targetEntry.registerLabel = analysis.registerLabel || targetEntry.registerLabel || 'Formal Akademik';
                     targetEntry.ieltsSuitability = analysis.ieltsSuitability || targetEntry.ieltsSuitability || {
@@ -646,7 +740,7 @@ function loadVocabBank() {
                         unlockedAt: null
                     },
                     pos: analysis.pos || 'noun',
-                    cefr: analysis.cefr || 'B2',
+                    cefr: sanitizeVocabCefr(analysis.cefr, finalWord, analysis),
                     registerLevel: analysis.registerLevel || 'formal',
                     registerLabel: analysis.registerLabel || 'Formal Akademik',
                     ieltsSuitability: analysis.ieltsSuitability || {
@@ -767,6 +861,7 @@ REGISTER CLASSIFICATION:
 - "ieltsSuitability": { "status": "both | speaking_only | writing_only | non_ielts", "badgeText": "...", "badgeColor": "emerald | sky | purple | amber", "description": "..." }
 - "highYieldContext": High-frequency IELTS theme or null.
 - "registerTrapAlert": Warning string or null.
+- "cefr": "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "Slang" | "Tech" | "Idiom" (CRITICAL: If informal internet/pop slang like "delulu", return "Slang". If specialized computing/STEM technical jargon without standard general CEFR like "algorithmic", return "Tech". If idiomatic phrase, return "Idiom". Otherwise assign official Cambridge CEFR A1-C2).
 
 Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
 {
@@ -774,7 +869,7 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
   "isNonEnglish": false,
   "rejectionReason": null,
   "pos": "verb | noun | adjective | adverb",
-  "cefr": "A1 | A2 | B1 | B2 | C1 | C2",
+  "cefr": "A1 | A2 | B1 | B2 | C1 | C2 | Slang | Tech | Idiom",
   "registerLevel": "formal",
   "registerLabel": "Formal Akademik",
   "ieltsSuitability": {
@@ -1176,8 +1271,20 @@ Return ONLY a valid JSON object (no markdown, no backticks, no code blocks):
             if (wordEl) wordEl.innerText = vocab.word;
             if (posEl) posEl.innerText = vocab.pos || '';
             if (cefrBadge) {
-                cefrBadge.innerText = vocab.cefr || 'B2';
-                cefrBadge.className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${(vocab.cefr || 'b2').toLowerCase()}`;
+                const c = vocab.cefr || 'B2';
+                if (c === 'Slang' || c === 'slang') {
+                    cefrBadge.innerHTML = `<i class="fa-solid fa-bolt text-amber-400 mr-1"></i>Slang`;
+                    cefrBadge.className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-slang shadow-sm`;
+                } else if (c === 'Tech' || c === 'tech' || c === 'Technical') {
+                    cefrBadge.innerHTML = `<i class="fa-solid fa-gear text-cyan-400 mr-1"></i>Tech`;
+                    cefrBadge.className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-tech shadow-sm`;
+                } else if (c === 'Idiom' || c === 'idiom') {
+                    cefrBadge.innerHTML = `<i class="fa-solid fa-comments text-purple-400 mr-1"></i>Idiom`;
+                    cefrBadge.className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-idiom shadow-sm`;
+                } else {
+                    cefrBadge.innerText = c;
+                    cefrBadge.className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded border cefr-${c.toLowerCase()} shadow-sm`;
+                }
             }
             if (ipaEl) ipaEl.innerText = vocab.ipa || '';
 
@@ -2535,29 +2642,6 @@ End with a short exercise (fill-in-the-blank or choose between two words) that m
                 SoundFX.play('click');
             }).catch(() => {
                 showToast("Gagal menyalin prompt ke clipboard.", "error");
-            });
-        }
-
-        function copyVocabStudyPrompt() {
-            const vocab = vocabBank.find(v => v.id === currentActiveVocabId);
-            if (!vocab) { showToast("Tidak ada kata yang terbuka.", "error"); return; }
-
-            const prompt = generatePedagogyStudyPrompt(vocab);
-
-            navigator.clipboard.writeText(prompt).then(() => {
-                const btn = document.getElementById('btn-copy-vocab-prompt');
-                if (btn) {
-                    const orig = btn.innerHTML;
-                    btn.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> <span>Berhasil Disalin!</span>`;
-                    btn.className = btn.className.replace('bg-indigo-600/20', 'bg-emerald-600/20').replace('text-indigo-300', 'text-emerald-300');
-                    setTimeout(() => {
-                        btn.innerHTML = orig;
-                        btn.className = btn.className.replace('bg-emerald-600/20', 'bg-indigo-600/20').replace('text-emerald-300', 'text-indigo-300');
-                    }, 2000);
-                }
-                showToast(`Prompt belajar "${vocab.word}" disalin! Buka ChatGPT / Claude / Gemini dan paste.`, "success");
-            }).catch(() => {
-                showToast("Gagal menyalin. Coba lagi.", "error");
             });
         }
 
@@ -4040,7 +4124,7 @@ Return ONLY a valid JSON object matching this schema:
                     if (analysis && !analysis.isNonEnglish) {
                         liveItem.word = analysis.correctedWord || liveItem.word;
                         liveItem.pos = analysis.pos || liveItem.pos || 'noun';
-                        liveItem.cefr = analysis.cefr || liveItem.cefr || 'B2';
+                        liveItem.cefr = sanitizeVocabCefr(analysis.cefr || liveItem.cefr, liveItem.word, analysis);
                         liveItem.registerLevel = analysis.registerLevel || liveItem.registerLevel || 'formal';
                         liveItem.registerLabel = analysis.registerLabel || liveItem.registerLabel || 'Formal';
                         liveItem.ieltsSuitability = analysis.ieltsSuitability || liveItem.ieltsSuitability;

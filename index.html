@@ -2168,16 +2168,19 @@
                                 <span id="badge-active-filter-count" class="hidden text-[10px] bg-indigo-600 text-white px-1.5 py-0.2 rounded-full font-bold">0</span>
                             </button>
 
-                            <!-- Minimalist Sort Selector -->
+                            <!-- Enhanced Sort Selector -->
                             <div class="relative w-full">
                                 <select id="select-vocab-sort" onchange="renderVocabBank()" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl py-2.5 px-2 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm">
-                                    <option value="recent">🔃 Terbaru</option>
-                                    <option value="feynman_asc">🔴 Rendah</option>
-                                    <option value="feynman_desc">🟢 Tinggi</option>
-                                    <option value="due_first">🟡 Jatuh Tempo</option>
-                                    <option value="cefr_desc">CEFR (C2→A1)</option>
-                                    <option value="cefr_asc">CEFR (A1→C2)</option>
-                                    <option value="alpha">A-Z</option>
+                                    <option value="recent">🕒 Terbaru Ditambahkan</option>
+                                    <option value="oldest">⏳ Terlama Ditambahkan</option>
+                                    <option value="locked_first">🔒 Terkunci (Gembok Dulu)</option>
+                                    <option value="due_first">⏰ Perlu Review Hari Ini</option>
+                                    <option value="feynman_asc">🧠 Pemahaman: Belum Belajar (Lvl 0→5)</option>
+                                    <option value="feynman_desc">🏆 Pemahaman: Dikuasai (Lvl 5→0)</option>
+                                    <option value="cefr_desc">👑 Tingkat CEFR (C2 → A1 → Non-CEFR)</option>
+                                    <option value="cefr_asc">🌱 Tingkat CEFR (A1 → C2)</option>
+                                    <option value="alpha_asc">🔤 Abjad (A → Z)</option>
+                                    <option value="alpha_desc">🔤 Abjad (Z → A)</option>
                                 </select>
                             </div>
 
@@ -2188,46 +2191,28 @@
                         </div>
                     </div>
 
-                    <!-- Row 2: Floating Quick Filter Carousel Pills (Spotify Style) -->
-                    <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs font-mono">
-                        <button onclick="setVocabFilterStatus('all')" id="filter-btn-status-all" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-md active:scale-95 shrink-0">
-                            <i class="fa-solid fa-layer-group"></i>
-                            <span>Semua (<span id="filter-count-all">0</span>)</span>
-                        </button>
-                        <button onclick="setVocabFilterStatus('due')" id="filter-btn-status-due" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-amber-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
-                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                            <span>Review Hari Ini (<span id="filter-count-due">0</span>)</span>
-                        </button>
-                        <button onclick="setVocabFilterStatus('writing_ready')" id="filter-btn-status-writing_ready" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
-                            <i class="fa-solid fa-pen-nib text-emerald-400"></i>
-                            <span>Writing Ready (<span id="filter-count-writing_ready">0</span>)</span>
-                        </button>
-                        <button onclick="setVocabFilterStatus('speaking_only')" id="filter-btn-status-speaking_only" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-sky-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
-                            <i class="fa-solid fa-microphone text-sky-400"></i>
-                            <span>Speaking Only (<span id="filter-count-speaking_only">0</span>)</span>
-                        </button>
-                        <button onclick="setVocabFilterStatus('c1_c2')" id="filter-btn-status-c1_c2" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-purple-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
-                            <i class="fa-solid fa-crown text-purple-400"></i>
-                            <span>👑 C1/C2 Academic (<span id="filter-count-c1_c2">0</span>)</span>
-                        </button>
-                        <button onclick="setVocabFilterStatus('mastered')" id="filter-btn-status-mastered" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-yellow-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
-                            <i class="fa-solid fa-trophy text-amber-400"></i>
-                            <span>Bebas Review (<span id="filter-count-mastered">0</span>)</span>
-                        </button>
-                        <button onclick="setVocabFilterStatus('unlearned')" id="filter-btn-status-unlearned" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-rose-300 border border-slate-800 font-bold whitespace-nowrap transition-all text-[11px] flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
-                            <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
-                            <span>Belum Belajar (<span id="filter-count-unlearned">0</span>)</span>
-                        </button>
-                    </div>
-
-                    <!-- Row 3: Collapsible Sleek Filter Detail Panel (Opens via ⚡ Filter Detail) -->
+                    <!-- Single Unified Filter Panel (Expandable via Filter Button) -->
                     <div id="vocab-filter-detail-panel" class="hidden pt-3 border-t border-slate-800/80 space-y-3">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
-                            <!-- CEFR Level Chips -->
+                            <!-- Group 1: IELTS Module Suitability -->
                             <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 shadow-inner">
                                 <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-between">
-                                    <span>Tingkat CEFR:</span>
-                                    <span id="active-cefr-label" class="text-emerald-400 font-bold">Semua Level</span>
+                                    <span>🎯 Kesesuaian Modul IELTS:</span>
+                                    <span id="active-ielts-label" class="text-emerald-400 font-bold">Semua Modul</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5" id="ielts-filter-chips">
+                                    <button onclick="setVocabFilterIelts('all')" id="chip-ielts-all" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm">Semua</button>
+                                    <button onclick="setVocabFilterIelts('both')" id="chip-ielts-both" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 font-bold text-[11px] transition-all">🌐 Writing & Speaking</button>
+                                    <button onclick="setVocabFilterIelts('writing_only')" id="chip-ielts-writing_only" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-purple-300 border border-purple-500/30 font-bold text-[11px] transition-all">✍️ Writing Only</button>
+                                    <button onclick="setVocabFilterIelts('speaking_only')" id="chip-ielts-speaking_only" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-sky-300 border border-sky-500/30 font-bold text-[11px] transition-all">🎙️ Speaking Only</button>
+                                </div>
+                            </div>
+
+                            <!-- Group 2: CEFR Level & Non-CEFR Special Types -->
+                            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 shadow-inner">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-between">
+                                    <span>📊 Tingkat CEFR & Tipe Kata:</span>
+                                    <span id="active-cefr-label" class="text-purple-400 font-bold">Semua Tipe</span>
                                 </div>
                                 <div class="flex flex-wrap gap-1.5" id="cefr-filter-chips">
                                     <button onclick="setVocabFilterCefr('all')" id="chip-cefr-all" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm">Semua</button>
@@ -2237,23 +2222,49 @@
                                     <button onclick="setVocabFilterCefr('B1')" id="chip-cefr-B1" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold text-[11px] transition-all">B1</button>
                                     <button onclick="setVocabFilterCefr('A2')" id="chip-cefr-A2" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 font-bold text-[11px] transition-all">A2</button>
                                     <button onclick="setVocabFilterCefr('A1')" id="chip-cefr-A1" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 font-bold text-[11px] transition-all">A1</button>
+                                    <button onclick="setVocabFilterCefr('Slang')" id="chip-cefr-Slang" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 font-bold text-[11px] transition-all"><i class="fa-solid fa-bolt mr-1 text-amber-400"></i>Slang</button>
+                                    <button onclick="setVocabFilterCefr('Tech')" id="chip-cefr-Tech" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/40 font-bold text-[11px] transition-all"><i class="fa-solid fa-gear mr-1 text-cyan-400"></i>Tech</button>
                                 </div>
                             </div>
 
-                            <!-- Register & Keformalan Chips -->
+                            <!-- Group 3: Progress & Lock Status -->
                             <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 shadow-inner">
                                 <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-between">
-                                    <span>Register & Keformalan:</span>
+                                    <span>🔄 Status Belajar & Gembok:</span>
+                                    <span id="active-learning-label" class="text-amber-400 font-bold">Semua Status</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5" id="learning-filter-chips">
+                                    <button onclick="setVocabFilterLearning('all')" id="chip-learn-all" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm">Semua</button>
+                                    <button onclick="setVocabFilterLearning('locked')" id="chip-learn-locked" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 font-bold text-[11px] transition-all">🔒 Belum Buka Gembok</button>
+                                    <button onclick="setVocabFilterLearning('unlearned')" id="chip-learn-unlearned" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-rose-300 border border-rose-500/40 font-bold text-[11px] transition-all">🔴 Belum Belajar (Lvl 0)</button>
+                                    <button onclick="setVocabFilterLearning('due')" id="chip-learn-due" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 font-bold text-[11px] transition-all">⏰ Review Hari Ini</button>
+                                    <button onclick="setVocabFilterLearning('mastered')" id="chip-learn-mastered" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-yellow-300 border border-yellow-500/40 font-bold text-[11px] transition-all">🏆 Bebas Review</button>
+                                </div>
+                            </div>
+
+                            <!-- Group 4: Register & Keformalan -->
+                            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 shadow-inner">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-between">
+                                    <span>🏛️ Register & Keformalan:</span>
                                     <span id="active-register-label" class="text-indigo-400 font-bold">Semua Register</span>
                                 </div>
                                 <div class="flex flex-wrap gap-1.5" id="register-filter-chips">
-                                    <button onclick="setVocabFilterRegister('all')" id="chip-reg-all" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold text-[11px] transition-all shadow-sm">Semua</button>
+                                    <button onclick="setVocabFilterRegister('all')" id="chip-reg-all" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm">Semua</button>
                                     <button onclick="setVocabFilterRegister('formal')" id="chip-reg-formal" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 font-bold text-[11px] transition-all">🟢 Formal</button>
                                     <button onclick="setVocabFilterRegister('semi_formal')" id="chip-reg-semi_formal" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-sky-300 border border-sky-500/30 font-bold text-[11px] transition-all">🟡 Agak Formal</button>
                                     <button onclick="setVocabFilterRegister('casual')" id="chip-reg-casual" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold text-[11px] transition-all">🔴 Casual</button>
                                     <button onclick="setVocabFilterRegister('written_academic')" id="chip-reg-written_academic" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-purple-300 border border-purple-500/30 font-bold text-[11px] transition-all">🟣 Written Only</button>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Filter Panel Action Footer -->
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px] font-mono">
+                            <span class="text-slate-400">Total Filter Aktif: <strong id="filter-active-summary" class="text-emerald-400 font-bold">0 Filter</strong></span>
+                            <button onclick="resetVocabFilters()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 rounded-lg transition-all font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-rotate-left text-xs"></i>
+                                <span>Reset Semua Filter</span>
+                            </button>
                         </div>
                     </div>
                 </div>

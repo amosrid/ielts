@@ -1416,10 +1416,3 @@ MANDATORY MARKDOWN OUTPUT STRUCTURE:
                 showToast("Gagal menyalin prompt.", "error");
             });
         }
-
-        // =========================================================================
-        
-        function quickAddVocabFromSpeaking(word) {
-            return saveMispronouncedWordToVocabBank(word);
-        }
-    
