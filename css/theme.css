@@ -1337,3 +1337,72 @@ html.light-mode #btn-card-mastered {
     border-color: #cbd5e1 !important;
 }
 
+/* ============================================================
+   CALM EDITORIAL ACADEMIC DESIGN SYSTEM (FOCUS COCKPIT & RADAR)
+   Inspired by The Economist & The Guardian
+   ============================================================ */
+
+.font-editorial {
+    font-family: 'Newsreader', Georgia, Cambria, 'Times New Roman', Times, serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+}
+
+.editorial-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+    border-radius: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dark .editorial-card {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.editorial-card:hover {
+    border-color: #cbd5e1;
+}
+
+.dark .editorial-card:hover {
+    border-color: #334155;
+}
+
+/* Academic Masthead Banner */
+.editorial-masthead {
+    position: relative;
+    border-top: 3px solid #4338ca;
+}
+
+.dark .editorial-masthead {
+    border-top: 3px solid #6366f1;
+}
+
+/* Diagnostic Radar & Gauge Indicators */
+.radar-bar-track {
+    height: 6px;
+    border-radius: 9999px;
+    background-color: #e2e8f0;
+    overflow: hidden;
+}
+
+.dark .radar-bar-track {
+    background-color: #1e293b;
+}
+
+.radar-bar-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Micro Deliberate Checklist Pill */
+.deliberate-step-pill {
+    transition: all 0.2s ease;
+}
+.deliberate-step-pill:hover {
+    transform: translateY(-1px);
+}
+
+

@@ -1012,6 +1012,60 @@
                 }
             }
 
+            // 8. Band 7.5 Readiness Radar Diagnostic Calibration
+            try {
+                // Task Response (TR): Base 5.5 + up to 3.0 based on overall stage completion
+                const trScore = Math.min(8.5, 5.5 + (totalDone / totalAllStages) * 3.0);
+                const trPercent = Math.min(100, Math.round(((trScore - 4.0) / 4.5) * 100));
+
+                // Coherence & Cohesion (CC): Based on combos, clauses & modifiers (Phase 2, 3, 4 completion)
+                const ccDone = (phaseCounts.phase2 || 0) + (phaseCounts.phase3 || 0) + (phaseCounts.phase4 || 0);
+                const ccTotal = (phaseTotals.phase2 || 4) + (phaseTotals.phase3 || 3) + (phaseTotals.phase4 || 2);
+                const ccScore = Math.min(8.5, 5.5 + (ccDone / (ccTotal || 9)) * 3.0);
+                const ccPercent = Math.min(100, Math.round(((ccScore - 4.0) / 4.5) * 100));
+
+                // Lexical Resource (LR): Based on C1/C2 vocabulary volume and total vocab bank
+                const advancedVocabCount = (cefrCounts.C1 || 0) + (cefrCounts.C2 || 0);
+                const lrBonus = Math.min(3.0, (advancedVocabCount * 0.25) + (totalVocabs * 0.05));
+                const lrScore = Math.min(8.5, 5.5 + lrBonus);
+                const lrPercent = Math.min(100, Math.round(((lrScore - 4.0) / 4.5) * 100));
+
+                // Grammatical Range & Accuracy (GRA): Based on base engine & overall player level/xp
+                const graDone = (phaseCounts.phase1 || 0) + (phaseCounts.phase5 || 0);
+                const graTotal = (phaseTotals.phase1 || 3) + (phaseTotals.phase5 || 2);
+                const graBonus = ((graDone / (graTotal || 5)) * 2.0) + Math.min(1.0, (playerState.level || 1) * 0.2);
+                const graScore = Math.min(8.5, 5.5 + graBonus);
+                const graPercent = Math.min(100, Math.round(((graScore - 4.0) / 4.5) * 100));
+
+                // Update UI elements
+                const setRadar = (key, score, pct) => {
+                    const scoreEl = document.getElementById(`dash-radar-${key}-score`);
+                    const barEl = document.getElementById(`dash-radar-${key}-bar`);
+                    if (scoreEl) scoreEl.innerText = score.toFixed(1);
+                    if (barEl) barEl.style.width = `${pct}%`;
+                };
+                setRadar('tr', trScore, trPercent);
+                setRadar('cc', ccScore, ccPercent);
+                setRadar('lr', lrScore, lrPercent);
+                setRadar('gra', graScore, graPercent);
+
+                // Composite band calculation (standard IELTS rounding to nearest 0.5)
+                const rawComposite = (trScore + ccScore + lrScore + graScore) / 4;
+                const roundedComposite = (Math.round(rawComposite * 2) / 2).toFixed(1);
+                const compositeEl = document.getElementById('dash-radar-composite');
+                if (compositeEl) {
+                    if (rawComposite >= 7.5) {
+                        compositeEl.className = "text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700";
+                        compositeEl.innerText = `Band ${roundedComposite} Candidate • Ready for Band 7.5+`;
+                    } else {
+                        compositeEl.className = "text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/70";
+                        compositeEl.innerText = `Band ${roundedComposite} Est • Calibrating to 7.5+`;
+                    }
+                }
+            } catch(e) {
+                console.warn("Radar calibration calculation error:", e);
+            }
+
             // Render Daily Affirmation Ritual Card (v6.4)
             renderDailyAffirmationUI();
         }

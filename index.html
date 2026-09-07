@@ -26,7 +26,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- PDF.js & Mammoth Document Parsers -->
@@ -57,6 +57,7 @@
                     },
                     fontFamily: {
                         sans: ['Outfit', 'sans-serif'],
+                        serif: ['Newsreader', 'Georgia', 'serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     }
                 }
@@ -287,87 +288,228 @@
             <!-- ========================================================= -->
             <!-- DASHBOARD SECTION (v6.0)                                  -->
             <!-- ========================================================= -->
+            <!-- ========================================================= -->
+            <!-- THE FOCUS COCKPIT & DASHBOARD (Calm Editorial Academic)    -->
+            <!-- ========================================================= -->
             <div id="tab-dashboard" class="tab-content space-y-6">
-                <!-- 1. Hero Status Card (Unified Daily Focus) -->
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden widget-fadein">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div class="space-y-1.5">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/60 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-800/40">
-                                    <i class="fa-solid fa-graduation-cap mr-1"></i> IELTS MASTER COCKPIT
-                                </span>
-                                <span id="dash-greeting-badge" class="text-xs text-slate-500 dark:text-slate-400 font-mono">Selamat Datang!</span>
+
+                <!-- 1. Editorial Masthead Banner (The Cambridge-IDP Daily Dispatch) -->
+                <div class="editorial-card editorial-masthead p-6 md:p-8 relative overflow-hidden widget-fadein">
+                    <!-- Publication Metadata Dateline -->
+                    <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3.5 mb-5 text-[11px] font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400 animate-pulse"></span>
+                            <span class="font-bold text-indigo-700 dark:text-indigo-400">Cambridge-IDP Standard</span>
+                            <span class="text-slate-300 dark:text-slate-700">•</span>
+                            <span>IELTS Band 7.5+ Candidate Journal</span>
+                        </div>
+                        <div class="flex items-center space-x-2 font-semibold">
+                            <span id="dash-greeting-badge" class="text-indigo-600 dark:text-indigo-400">Selamat Datang!</span>
+                        </div>
+                    </div>
+
+                    <!-- Editorial Masthead Headline & Quick Metric Capsules -->
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                        <div class="space-y-2 max-w-2xl">
+                            <div class="inline-flex items-center space-x-2 text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/70 px-2.5 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800/60">
+                                <i class="fa-solid fa-feather-pointed mr-1"></i> The Focus Cockpit
                             </div>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                                <span>Ringkasan Kemajuan Belajar</span>
+                            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
+                                Candidate Focus & Calibration Studio
                             </h2>
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">Pantau ritme latihan, hafalan kosakata CEFR, pelafalan speaking, dan taklukkan semua stage menuju target emas Band 7.5+.</p>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-editorial italic leading-relaxed">
+                                "A disciplined 20-minute daily practice transforms syntactic precision, acoustic clarity, and academic coherence toward Band 7.5+ mastery."
+                            </p>
                         </div>
 
-                        <!-- Streak & Level Quick Capsule -->
-                        <div class="flex items-center gap-3 w-full md:w-auto">
-                            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3.5 rounded-2xl flex items-center space-x-3 flex-1 md:flex-initial shadow-sm">
-                                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl border border-amber-200 dark:border-amber-800/40">
+                        <!-- Streak & Level Metric Plaques -->
+                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <div class="bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-xl flex items-center space-x-3.5 flex-1 sm:flex-initial shadow-sm">
+                                <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg border border-amber-200 dark:border-amber-800/50">
                                     <i class="fa-solid fa-fire"></i>
                                 </div>
                                 <div>
-                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Study Streak</div>
-                                    <div id="dash-streak-count" class="text-lg font-black text-amber-600 dark:text-amber-400 font-mono">1 Hari</div>
+                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Study Streak</div>
+                                    <div id="dash-streak-count" class="text-base sm:text-lg font-bold text-amber-700 dark:text-amber-400 font-mono leading-none mt-0.5">1 Hari</div>
                                 </div>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3.5 rounded-2xl flex items-center space-x-3 flex-1 md:flex-initial shadow-sm">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg border border-indigo-200 dark:border-indigo-800/40 font-bold">
+                            <div class="bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-xl flex items-center space-x-3.5 flex-1 sm:flex-initial shadow-sm">
+                                <div class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-lg border border-indigo-200 dark:border-indigo-800/50">
                                     <i class="fa-solid fa-shield-halved"></i>
                                 </div>
                                 <div>
-                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Level Saat Ini</div>
-                                    <div id="dash-level-text" class="text-lg font-black text-indigo-600 dark:text-indigo-400 font-mono">Level 1</div>
+                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Candidate Level</div>
+                                    <div id="dash-level-text" class="text-base sm:text-lg font-bold text-indigo-700 dark:text-indigo-400 font-mono leading-none mt-0.5">Level 1</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- XP Progress Tracker inside Hero -->
-                    <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
-                        <div class="sm:col-span-8 space-y-1.5">
-                            <div class="flex justify-between text-xs font-mono">
-                                <span class="text-slate-500 dark:text-slate-400 font-bold flex items-center gap-1.5">
-                                    <i class="fa-solid fa-bolt text-amber-500"></i> Progres XP Menuju Level Berikutnya:
+                    <!-- XP Progression Gauge & Hero Deliberate Action CTA -->
+                    <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                        <div class="sm:col-span-8 space-y-2">
+                            <div class="flex justify-between items-center text-xs font-mono">
+                                <span class="text-slate-600 dark:text-slate-400 font-semibold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-compass text-indigo-600 dark:text-indigo-400"></i> Progression to Next Band Level:
                                 </span>
-                                <span id="dash-xp-fraction" class="text-indigo-600 dark:text-indigo-400 font-bold">0 / 400 XP</span>
+                                <span id="dash-xp-fraction" class="text-indigo-700 dark:text-indigo-400 font-bold">0 / 400 XP</span>
                             </div>
-                            <div class="w-full bg-slate-100 dark:bg-slate-950 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-800">
-                                <div id="dash-xp-bar-inner" class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-950 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-800">
+                                <div id="dash-xp-bar-inner" class="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                             </div>
                         </div>
                         <div class="sm:col-span-4 flex justify-start sm:justify-end">
-                            <button onclick="continueNextIncompleteStage()" id="btn-dash-hero-continue" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
-                                <i class="fa-solid fa-play"></i>
+                            <button onclick="continueNextIncompleteStage()" id="btn-dash-hero-continue" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-700 hover:bg-indigo-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
+                                <i class="fa-solid fa-play text-[10px]"></i>
                                 <span id="dash-hero-continue-text">Lanjut Belajar Stage 1</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- DAILY IELTS AFFIRMATION & VOCAL POWER BOOSTER (v6.4) -->
-                <div id="daily-affirmation-card" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm relative overflow-hidden">
-                    <!-- Top Bar: Badge, XP, and Settings Deck Button -->
+                <!-- 2. BAND 7.5 DIAGNOSTIC READINESS RADAR & DELIBERATE RITUAL (NEW) -->
+                <div class="editorial-card p-6 space-y-5 widget-fadein">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-sm border border-indigo-200 dark:border-indigo-800/60">
+                                <i class="fa-solid fa-chart-radar"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                                    <span>Band 7.5+ Readiness Calibration Radar</span>
+                                </h3>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">4-Pillar Academic Assessment Rubric (Cambridge / IDP Benchmark)</p>
+                            </div>
+                        </div>
+                        <span id="dash-radar-composite" class="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/70">
+                            Target Band: 7.5 • Calibrating
+                        </span>
+                    </div>
+
+                    <!-- 2-Part Grid: 4-Pillar Diagnostic Gauges & 20-Min Deliberate Ritual Protocol -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Left: 4 Pillars Diagnostic Bars (Col 7) -->
+                        <div class="lg:col-span-7 space-y-3.5 font-mono text-xs">
+                            <!-- TR -->
+                            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1.5">
+                                <div class="flex justify-between items-center text-[11px]">
+                                    <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                        <span class="w-4 h-4 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center justify-center font-bold">TR</span>
+                                        <span>Task Response & Topic Synthesis</span>
+                                    </span>
+                                    <span class="text-slate-500 dark:text-slate-400">Band <strong id="dash-radar-tr-score" class="text-emerald-700 dark:text-emerald-400 text-xs">6.0</strong> / 8.5</span>
+                                </div>
+                                <div class="radar-bar-track">
+                                    <div id="dash-radar-tr-bar" class="radar-bar-fill bg-emerald-600" style="width: 50%"></div>
+                                </div>
+                            </div>
+
+                            <!-- CC -->
+                            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1.5">
+                                <div class="flex justify-between items-center text-[11px]">
+                                    <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                        <span class="w-4 h-4 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 text-[10px] flex items-center justify-center font-bold">CC</span>
+                                        <span>Coherence, Cohesion & Clause Logic</span>
+                                    </span>
+                                    <span class="text-slate-500 dark:text-slate-400">Band <strong id="dash-radar-cc-score" class="text-blue-700 dark:text-blue-400 text-xs">6.0</strong> / 8.5</span>
+                                </div>
+                                <div class="radar-bar-track">
+                                    <div id="dash-radar-cc-bar" class="radar-bar-fill bg-blue-600" style="width: 50%"></div>
+                                </div>
+                            </div>
+
+                            <!-- LR -->
+                            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1.5">
+                                <div class="flex justify-between items-center text-[11px]">
+                                    <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                        <span class="w-4 h-4 rounded bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 text-[10px] flex items-center justify-center font-bold">LR</span>
+                                        <span>Lexical Resource & C1/C2 Collocations</span>
+                                    </span>
+                                    <span class="text-slate-500 dark:text-slate-400">Band <strong id="dash-radar-lr-score" class="text-purple-700 dark:text-purple-400 text-xs">6.0</strong> / 8.5</span>
+                                </div>
+                                <div class="radar-bar-track">
+                                    <div id="dash-radar-lr-bar" class="radar-bar-fill bg-purple-600" style="width: 50%"></div>
+                                </div>
+                            </div>
+
+                            <!-- GRA -->
+                            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1.5">
+                                <div class="flex justify-between items-center text-[11px]">
+                                    <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                        <span class="w-4 h-4 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 text-[10px] flex items-center justify-center font-bold">GRA</span>
+                                        <span>Grammatical Range & Acoustic Precision</span>
+                                    </span>
+                                    <span class="text-slate-500 dark:text-slate-400">Band <strong id="dash-radar-gra-score" class="text-amber-700 dark:text-amber-400 text-xs">6.0</strong> / 8.5</span>
+                                </div>
+                                <div class="radar-bar-track">
+                                    <div id="dash-radar-gra-bar" class="radar-bar-fill bg-amber-600" style="width: 50%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: 20-Min Deliberate Ritual Protocol (Col 5) -->
+                        <div class="lg:col-span-5 bg-slate-50 dark:bg-slate-950/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-2 text-[10px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
+                                    <i class="fa-solid fa-stopwatch text-indigo-600 dark:text-indigo-400"></i>
+                                    <span>20-Minute Deliberate Ritual</span>
+                                </div>
+                                <h4 class="font-serif font-bold text-sm text-slate-900 dark:text-slate-100">
+                                    Daily Tri-Pillar Routine
+                                </h4>
+                                <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-editorial italic">
+                                    Three deliberate touchpoints per day build permanent neural pathways for academic fluency.
+                                </p>
+                            </div>
+
+                            <!-- 3-Touchpoint Deliberate Steps -->
+                            <div class="space-y-2 font-mono text-xs">
+                                <div onclick="document.getElementById('daily-affirmation-card').scrollIntoView({behavior:'smooth'})" class="deliberate-step-pill p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:border-indigo-400 transition-all">
+                                    <div class="flex items-center space-x-2.5">
+                                        <span class="w-5 h-5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center text-[10px] font-bold">1</span>
+                                        <span class="text-slate-800 dark:text-slate-200 text-[11px] font-semibold">Vocal Power Warmup</span>
+                                    </div>
+                                    <span class="text-[10px] text-amber-600 dark:text-amber-400 font-bold">+30 XP</span>
+                                </div>
+
+                                <div onclick="continueNextIncompleteStage()" class="deliberate-step-pill p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:border-indigo-400 transition-all">
+                                    <div class="flex items-center space-x-2.5">
+                                        <span class="w-5 h-5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-[10px] font-bold">2</span>
+                                        <span class="text-slate-800 dark:text-slate-200 text-[11px] font-semibold">Curricular Stage Mastery</span>
+                                    </div>
+                                    <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">+100 XP</span>
+                                </div>
+
+                                <div onclick="startReviewSession()" class="deliberate-step-pill p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:border-indigo-400 transition-all">
+                                    <div class="flex items-center space-x-2.5">
+                                        <span class="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-[10px] font-bold">3</span>
+                                        <span class="text-slate-800 dark:text-slate-200 text-[11px] font-semibold">SM-2 Spaced Recall</span>
+                                    </div>
+                                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">+50 XP</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. DAILY IELTS AFFIRMATION & VOCAL POWER BOOSTER (Preserved ID) -->
+                <div id="daily-affirmation-card" class="editorial-card p-5 sm:p-6 space-y-4 widget-fadein relative overflow-hidden">
                     <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
                         <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-200 dark:border-amber-800/40">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-200 dark:border-amber-800/50">
                                 <i class="fa-solid fa-fire"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                                     <span>Daily IELTS Affirmation & Vocal Power</span>
-                                    <span class="text-[10px] font-mono font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/40">+30 XP</span>
+                                    <span class="text-[10px] font-mono font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/50">+30 XP</span>
                                 </h3>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Ritual Harian 1x Sehari • Ketik & Ucapkan Lantang untuk Memprogram Mindset Juara</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Morning Acoustic Conditioning • Read Aloud to Prime Voice & Academic Mindset</p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
                             <button onclick="openAffirmationsManager()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-mono font-semibold rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-all shadow-sm">
-                                <i class="fa-solid fa-sliders text-amber-500"></i>
+                                <i class="fa-solid fa-sliders text-amber-600 dark:text-amber-400"></i>
                                 <span>Kelola Deck (<span id="affirmation-deck-count">5</span>)</span>
                             </button>
                         </div>
@@ -377,34 +519,34 @@
                     <div id="affirmation-card-body"></div>
                 </div>
 
-                <!-- 2-Column Balanced Dashboard Grid -->
+                <!-- 4. 2-COLUMN BALANCED DASHBOARD WORKSTATION -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     
                     <!-- LEFT COLUMN (Col 6): Roadmap Progress & Speaking Lab Snapshot -->
                     <div class="lg:col-span-6 space-y-6">
                         
                         <!-- 1. Roadmap Phases Progress -->
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm">
+                        <div class="editorial-card p-5 space-y-4 widget-fadein">
                             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                                 <div class="flex items-center space-x-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-sm border border-cyan-200 dark:border-cyan-800/40">
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-sm border border-indigo-200 dark:border-indigo-800/50">
                                         <i class="fa-solid fa-map-location-dot"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Roadmap Phase Mastery</h3>
+                                        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Curricular Roadmap Mastery</h3>
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">14 Stages • 5 Mini-Bosses • 1 Final Boss</p>
                                     </div>
                                 </div>
-                                <span id="dash-overall-percent" class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-500/30">0% Selesai</span>
+                                <span id="dash-overall-percent" class="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-500/30">0% Selesai</span>
                             </div>
 
                             <!-- 5 Phase Progress Rows -->
                             <div class="space-y-2.5 font-mono text-xs">
                                 <!-- Phase 1 -->
-                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-emerald-500/40 transition-all cursor-pointer" onclick="switchTab('phase1')">
+                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-emerald-500/40 transition-all cursor-pointer" onclick="switchTab('phase1')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-[10px]">I</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 1: Base Engine</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 1: Base Engine</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -415,10 +557,10 @@
                                 </div>
 
                                 <!-- Phase 2 -->
-                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-blue-500/40 transition-all cursor-pointer" onclick="switchTab('phase2')">
+                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-blue-500/40 transition-all cursor-pointer" onclick="switchTab('phase2')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-[10px]">II</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 2: Time & Modifiers</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 2: Time & Modifiers</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -429,10 +571,10 @@
                                 </div>
 
                                 <!-- Phase 3 -->
-                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-purple-500/40 transition-all cursor-pointer" onclick="switchTab('phase3')">
+                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-purple-500/40 transition-all cursor-pointer" onclick="switchTab('phase3')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 flex items-center justify-center font-bold text-[10px]">III</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 3: Combos & Clauses</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 3: Combos & Clauses</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -443,10 +585,10 @@
                                 </div>
 
                                 <!-- Phase 4 -->
-                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-amber-500/40 transition-all cursor-pointer" onclick="switchTab('phase4')">
+                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-amber-500/40 transition-all cursor-pointer" onclick="switchTab('phase4')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center font-bold text-[10px]">IV</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 4: Precision & Shield</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 4: Precision & Shield</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -457,10 +599,10 @@
                                 </div>
 
                                 <!-- Phase 5 -->
-                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-cyan-500/40 transition-all cursor-pointer" onclick="switchTab('phase5')">
+                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-cyan-500/40 transition-all cursor-pointer" onclick="switchTab('phase5')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 flex items-center justify-center font-bold text-[10px]">V</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 5: Output Automation</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 5: Output Automation</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -472,7 +614,7 @@
                             </div>
 
                             <!-- Boss Arena Status Capsule -->
-                            <div class="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-red-200 dark:border-red-500/30 flex items-center justify-between font-mono text-xs cursor-pointer hover:border-red-400 transition-all" onclick="switchTab('boss')">
+                            <div class="bg-slate-50 dark:bg-slate-950/80 p-3.5 rounded-xl border border-red-200 dark:border-red-500/30 flex items-center justify-between font-mono text-xs cursor-pointer hover:border-red-400 transition-all" onclick="switchTab('boss')">
                                 <div class="flex items-center space-x-2.5 text-red-600 dark:text-red-400 font-bold">
                                     <i class="fa-solid fa-dragon"></i>
                                     <span>60-Min Boss Arena</span>
@@ -482,33 +624,33 @@
                         </div>
 
                         <!-- 2. Speaking Lab Diagnostic Snapshot -->
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm">
+                        <div class="editorial-card p-5 space-y-4 widget-fadein">
                             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                                 <div class="flex items-center space-x-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-sm border border-rose-200 dark:border-rose-800/40">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 flex items-center justify-center text-sm border border-rose-200 dark:border-rose-800/50">
                                         <i class="fa-solid fa-microphone"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Speaking Lab & Acoustic Audit</h3>
+                                        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Speaking Acoustic Diagnostic</h3>
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Part 1, 2, 3 • Live Waveform & Accent Evaluation</p>
                                     </div>
                                 </div>
-                                <span id="dash-speaking-accent-tag" class="text-[10px] font-mono font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950 px-2.5 py-1 rounded-md border border-rose-200 dark:border-rose-500/30">🇬🇧 British RP</span>
+                                <span id="dash-speaking-accent-tag" class="text-[10px] font-mono font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/80 px-2.5 py-1 rounded-md border border-rose-200 dark:border-rose-500/30">🇬🇧 British RP</span>
                             </div>
 
                             <!-- 3 Speaking Mode Status -->
                             <div class="grid grid-cols-3 gap-2 font-mono text-xs">
-                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
+                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
                                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Part 1</div>
                                     <div id="dash-spk-part1-status" class="text-slate-500 font-bold text-xs"><i class="fa-solid fa-circle-xmark mr-1"></i> Belum</div>
                                     <div class="text-[9px] text-slate-400">Shadowing</div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
+                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
                                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Part 2</div>
                                     <div id="dash-spk-part2-status" class="text-slate-500 font-bold text-xs"><i class="fa-solid fa-circle-xmark mr-1"></i> Belum</div>
                                     <div class="text-[9px] text-slate-400">2-Min Cue Card</div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
+                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
                                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Part 3</div>
                                     <div id="dash-spk-part3-status" class="text-slate-500 font-bold text-xs"><i class="fa-solid fa-circle-xmark mr-1"></i> Belum</div>
                                     <div class="text-[9px] text-slate-400">Q&A Drill</div>
@@ -516,7 +658,7 @@
                             </div>
 
                             <div class="pt-1">
-                                <button onclick="switchTab('speaking-lab')" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
+                                <button onclick="switchTab('speaking-lab')" class="w-full py-2.5 bg-rose-700 hover:bg-rose-800 dark:bg-rose-600 dark:hover:bg-rose-500 text-white font-semibold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
                                     <i class="fa-solid fa-microphone-lines"></i>
                                     <span>Buka Speaking Lab (+150 XP)</span>
                                 </button>
@@ -528,30 +670,30 @@
                     <div class="lg:col-span-6 space-y-6">
                         
                         <!-- 3. Vocabulary Bank (Spaced Repetition) -->
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm flex flex-col justify-between">
+                        <div class="editorial-card p-5 space-y-4 widget-fadein flex flex-col justify-between">
                             <div class="space-y-3.5">
                                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                                     <div class="flex items-center space-x-2.5">
-                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm border border-emerald-200 dark:border-emerald-800/40">
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-sm border border-emerald-200 dark:border-emerald-800/50">
                                             <i class="fa-solid fa-book-bookmark"></i>
                                         </div>
                                         <div>
-                                            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Vocabulary Bank</h3>
-                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Spaced Repetition (SM-2 & Feynman Recall)</p>
+                                            <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Vocabulary & Lexical Vault</h3>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Spaced Repetition (SM-2 & Feynman Anchoring)</p>
                                         </div>
                                     </div>
                                     <span id="dash-vocab-total-badge" class="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-500/30">0 Kata</span>
                                 </div>
 
                                 <!-- Review Due Banner -->
-                                <div id="dash-vocab-review-banner" class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2.5">
+                                <div id="dash-vocab-review-banner" class="bg-slate-50 dark:bg-slate-950/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2.5">
                                     <div class="flex justify-between items-center text-xs font-mono">
                                         <span class="text-slate-700 dark:text-slate-300 font-bold flex items-center gap-1.5">
-                                            <i class="fa-solid fa-clock-rotate-left text-amber-500"></i> Perlu Direview Hari Ini:
+                                            <i class="fa-solid fa-clock-rotate-left text-amber-600 dark:text-amber-400"></i> Perlu Direview Hari Ini:
                                         </span>
-                                        <span id="dash-vocab-due-count" class="text-amber-600 dark:text-amber-400 font-bold text-sm">0 Kata</span>
+                                        <span id="dash-vocab-due-count" class="text-amber-700 dark:text-amber-400 font-bold text-sm">0 Kata</span>
                                     </div>
-                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">Uji daya ingat Anda dengan sistem Spaced Repetition untuk mengunci kosakata di memori jangka panjang.</p>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-editorial italic">Lock academic vocabulary into durable long-term memory via calibrated SM-2 intervals.</p>
                                     <button onclick="startReviewSession()" id="btn-dash-review-cta" class="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
                                         <i class="fa-solid fa-bolt"></i>
                                         <span>Mulai Sesi Review Hari Ini</span>
@@ -581,15 +723,15 @@
                         </div>
 
                         <!-- 4. Achievements & Badges Showcase -->
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm">
+                        <div class="editorial-card p-5 space-y-4 widget-fadein">
                             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                                 <div class="flex items-center space-x-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-200 dark:border-amber-800/40">
+                                    <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-200 dark:border-amber-800/50">
                                         <i class="fa-solid fa-trophy"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Achievements & Badges</h3>
-                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Pencapaian Gamifikasi Anda</p>
+                                        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Academic Honours & Medals</h3>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Pencapaian Kompetensi IELTS</p>
                                     </div>
                                 </div>
                                 <span id="dash-badges-unlocked-count" class="text-xs font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-500/30">0 / 18</span>
