@@ -22,6 +22,8 @@
             speakingTimerInterval: null,
             speakingTimeSeconds: 120,
             generatedPrompts: {},
+            cleanMonologues: {},
+            injectedVocabs: {},
             remediationPrompts: {}
         };
 
@@ -59,6 +61,35 @@
             showToast(`Target Aksen Diperbarui: ${labelMap[val] || val}`, "info");
         }
 
+        function onSpeakingGrammarModeChange() {
+            SoundFX.play('click');
+            const sel = document.getElementById('select-speaking-grammar-mode');
+            if (!sel) return;
+            const mode = sel.value;
+            localStorage.setItem('ielts_speaking_grammar_mode', mode);
+
+            const labelMap = {
+                'ielts_natural': '✨ IELTS Band 7.5+ Alami (Rekomendasi)',
+                'recent_stages': '🎯 Fokus 2-3 Stage Terakhir',
+                'all_stages': '📚 Semua Stage Terbuka (Strict)'
+            };
+            showToast(`Mode Tata Bahasa: ${labelMap[mode] || mode}`, "info");
+        }
+
+        function onSpeakingRateChange(mode) {
+            const sel = document.getElementById(`select-tts-rate-${mode}`);
+            if (!sel) return;
+            const rateVal = sel.value;
+            localStorage.setItem('ielts_tts_selected_rate', rateVal);
+
+            // Synchronize all 3 tabs
+            ['part1', 'part2', 'part3'].forEach(m => {
+                const s = document.getElementById(`select-tts-rate-${m}`);
+                if (s) s.value = rateVal;
+            });
+            showToast(`Kecepatan TTS diatur ke ${rateVal}x`, "info");
+        }
+
         function initSpeakingLabUI() {
             const completedCount = Object.keys(playerState.completedStages || {}).length;
             const summaryEl = document.getElementById('speaking-unlocked-stages-summary');
@@ -78,6 +109,18 @@
             const savedAccent = localStorage.getItem('ielts_target_accent') || 'british_rp';
             const accentSelect = document.getElementById('speaking-target-accent');
             if (accentSelect) accentSelect.value = savedAccent;
+
+            // Restore saved grammar mode
+            const savedGrammarMode = localStorage.getItem('ielts_speaking_grammar_mode') || 'ielts_natural';
+            const grammarSelect = document.getElementById('select-speaking-grammar-mode');
+            if (grammarSelect) grammarSelect.value = savedGrammarMode;
+
+            // Restore saved TTS rate
+            const savedRate = localStorage.getItem('ielts_tts_selected_rate') || '1.0';
+            ['part1', 'part2', 'part3'].forEach(m => {
+                const rateSelect = document.getElementById(`select-tts-rate-${m}`);
+                if (rateSelect) rateSelect.value = savedRate;
+            });
 
             updateSpeakingVocabPoolStatus();
         }
@@ -119,8 +162,15 @@
         }
 
         function getVocabPoolByFilter(filterVal) {
-            // Only select words with status === 'learning' (not mastered)
-            let pool = (vocabBank || []).filter(v => v.status !== 'mastered');
+            // Only select words with:
+            // 1. Not mastered (v.status !== 'mastered')
+            // 2. Not locked behind padlock (v.lockStatus !== 'locked')
+            // 3. Has active Feynman practice (v.feynmanLevel > 0)
+            let pool = (vocabBank || []).filter(v => 
+                v.status !== 'mastered' && 
+                v.lockStatus !== 'locked' && 
+                (v.feynmanLevel || 0) > 0
+            );
             const f = (filterVal || 'all').toUpperCase();
             
             if (f === 'C1') {
@@ -144,7 +194,7 @@
 
             const chk = document.getElementById('toggle-speaking-use-vocab');
             if (!chk || !chk.checked) {
-                statusEl.innerText = "Aktifkan untuk menyisipkan kosakata yang sedang dipelajari";
+                statusEl.innerText = "Aktifkan untuk menyisipkan kosakata yang sudah dilatih di Feynman Lab";
                 return;
             }
 
@@ -152,35 +202,453 @@
             const filterLabel = speakingVocabFilter === 'all' ? 'Semua Level' : speakingVocabFilter;
 
             if (pool.length === 0) {
-                statusEl.innerHTML = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 0 kata learning (${filterLabel})</span>`;
+                statusEl.innerHTML = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 0 kata siap (${filterLabel}) — jelaskan minimal 1x di Feynman Lab untuk memasukkannya ke Speaking</span>`;
             } else {
-                statusEl.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check mr-1"></i> ${pool.length} kata learning siap diacak (${filterLabel})</span>`;
+                statusEl.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check mr-1"></i> ${pool.length} kata aktif (Feynman Lv.1+) siap diacak (${filterLabel})</span>`;
             }
         }
 
-        function getRandomVocabsForSpeaking(filterVal, count = 3) {
+        function getRandomVocabsForSpeaking(filterVal, countOrLength = 3) {
             const pool = getVocabPoolByFilter(filterVal);
             if (pool.length === 0) return [];
             
+            let targetCount = 3;
+            if (typeof countOrLength === 'number') {
+                targetCount = countOrLength;
+            } else if (countOrLength === 'short') {
+                targetCount = Math.min(2, pool.length);
+            } else if (countOrLength === 'long') {
+                targetCount = pool.length >= 10 ? 6 : (pool.length >= 5 ? 5 : pool.length);
+            } else { // 'medium' or default
+                targetCount = pool.length >= 8 ? 4 : (pool.length >= 3 ? 3 : pool.length);
+            }
+
             // Shuffle randomly
             const shuffled = [...pool].sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, Math.min(count, shuffled.length));
+            return shuffled.slice(0, Math.min(targetCount, shuffled.length));
         }
 
-        function getUnlockedGrammarContext() {
+        function getUnlockedGrammarContext(forcedMode) {
+            const mode = forcedMode || localStorage.getItem('ielts_speaking_grammar_mode') || 'ielts_natural';
             const completedIds = Object.keys(playerState.completedStages || {});
-            if (completedIds.length === 0) {
+            
+            if (mode === 'ielts_natural') {
                 return {
-                    count: 0,
-                    stageTitles: ["Stage 1: SVO Sentence Frame", "Stage 2: 'Be' State Anchor"],
-                    rulesSummary: "Basic Subject + Verb + Object word order, correct 'be' copula anchors (is/are/was/were)."
+                    mode: 'ielts_natural',
+                    count: completedIds.length,
+                    label: 'IELTS Band 7.5+ Alami',
+                    badgeText: 'IELTS Alami Band 7.5+',
+                    stageTitles: ['Band 7.5+ Natural Flow', 'Compound-Complex Syntax', 'Idiomatic Discourse Markers'],
+                    rulesSummary: 'Natural IELTS Band 7.5+ compound-complex structures, idiomatic discourse markers, subordinate clauses (concession, cause/effect, conditionals), varied clause lengths, and authentic spoken rhythm without artificial beginner constraints.',
+                    promptConstraint: 'Structure: Use natural, fluent IELTS Band 7.5+ spoken grammar (varied clause structures, compound-complex sentences, idiomatic discourse markers). Avoid robotic, toddler-like repetition.'
                 };
             }
-            const stageTitles = completedIds.map(id => STAGE_DATA[id]?.title || id);
+
+            if (mode === 'recent_stages') {
+                let recentIds = completedIds.slice(-3);
+                if (recentIds.length === 0) {
+                    recentIds = ['stage_1', 'stage_2'];
+                }
+                const stageTitles = recentIds.map(id => (typeof STAGE_DATA !== 'undefined' && STAGE_DATA[id]?.title) ? STAGE_DATA[id].title : id);
+                return {
+                    mode: 'recent_stages',
+                    count: recentIds.length,
+                    label: `Fokus ${recentIds.length} Stage Terakhir`,
+                    badgeText: `Fokus Stage ${recentIds.map(id => id.replace('stage_', '')).join('-')}`,
+                    stageTitles: stageTitles,
+                    rulesSummary: stageTitles.join('; '),
+                    promptConstraint: `Scaffolding constraint: Specifically highlight and demonstrate grammar patterns from candidate's recent unlocked stages: [${stageTitles.join('; ')}]. Weave them into natural, communicative spoken English.`
+                };
+            }
+
+            // Cumulative 'all_stages'
+            if (completedIds.length === 0) {
+                return {
+                    mode: 'all_stages',
+                    count: 0,
+                    label: 'Mode Fondasi SVO & Be',
+                    badgeText: 'Stage 1-2 (Fondasi)',
+                    stageTitles: ["Stage 1: SVO Sentence Frame", "Stage 2: 'Be' State Anchor"],
+                    rulesSummary: "Basic Subject + Verb + Object word order, correct 'be' copula anchors (is/are/was/were).",
+                    promptConstraint: 'Scaffolding constraint: Candidate has unlocked foundation stages: SVO sentence frame and "Be" copula verbs.'
+                };
+            }
+            const allTitles = completedIds.map(id => (typeof STAGE_DATA !== 'undefined' && STAGE_DATA[id]?.title) ? STAGE_DATA[id].title : id);
             return {
+                mode: 'all_stages',
                 count: completedIds.length,
-                stageTitles: stageTitles,
-                rulesSummary: stageTitles.join('; ')
+                label: `Semua Stage (${completedIds.length})`,
+                badgeText: `${completedIds.length} Stage Terbuka`,
+                stageTitles: allTitles,
+                rulesSummary: allTitles.join('; '),
+                promptConstraint: `Scaffolding constraint: Candidate has unlocked these stages: [${allTitles.join('; ')}]. Emphasize these patterns naturally in the spoken response.`
+            };
+        }
+
+        // =========================================================================
+        // IELTS SPEAKING PROMPT BUILDERS (PART 1, 2, & 3 MODULAR SPECIFICATIONS)
+        // =========================================================================
+
+        function buildPart1ShadowingSystemPrompt(activePromptText, targetAccentName, injectedVocabList) {
+            const cleanText = activePromptText || 'IELTS Speaking Read-Aloud Task';
+            const accent = targetAccentName || 'British RP';
+            const vocabs = injectedVocabList || 'None specified';
+
+            return `You are a direct, honest, and supportive AI IELTS Speaking Coach specializing in READ-ALOUD / SHADOWING delivery assessment. All feedback MUST be written strictly in clear, accessible B1-level English (simple, friendly, and practical).
+
+Your top priority: HONESTY & ACCURATE DIAGNOSIS. Do NOT inflate scores, do NOT use empty flattery, and do NOT fabricate errors that were not audible.
+
+============================================
+CONTEXT — THIS IS A READ-ALOUD TASK, NOT SPONTANEOUS SPEECH
+============================================
+The candidate was given this EXACT text to read aloud:
+"${cleanText}"
+
+This is critical: the candidate did NOT compose this sentence themselves. Your job is to assess DELIVERY (pronunciation, rhythm, stress, intonation, linking) — NOT sentence structure or word choice, since those were already written by the system.
+
+Target Accent: ${accent}
+
+============================================
+🚨 RULE #1 — CHECK AUDIO QUALITY FIRST
+============================================
+If the audio is completely silent, background noise dominates, or speech is too faint to hear:
+Write exactly: "# ⚠️ REKAMAN TIDAK DAPAT DINILAI (AUDIO DITOLAK)"
+Explain simply in B1 English that speech could not be heard clearly, and STOP evaluation.
+
+============================================
+🚨 RULE #2 — TRANSCRIBE CAREFULLY AGAINST THE ORIGINAL TEXT
+============================================
+When you transcribe what you heard, compare it word-by-word against the original text above.
+
+If a word in your transcription differs from the original AND the difference doesn't make clear sense in context (e.g. you think you heard "tracking" where the original says "dragging", and "tracking past 3 AM" is semantically odd) — this is most likely a MISHEARING on your part, not a mispronunciation by the candidate. In this case:
+- Transcribe the ORIGINAL word, not your uncertain guess.
+- Do NOT treat it as an error to correct.
+- Only flag it if the audio genuinely sounds like a different, clearly pronounced word.
+
+Only report a genuine deviation when:
+- A word was clearly skipped or clearly added compared to the original text, OR
+- A word was audibly mispronounced in a way that changes its sound significantly (not just a transcription judgment call).
+
+============================================
+🚨 RULE #3 — REALISTIC SCORE ESTIMATE (MULTIPLES OF 5)
+============================================
+You do NOT measure physical acoustic spectrograms. Give an HONEST, REALISTIC estimate of DELIVERY quality (not grammar, since the text was pre-written) and round to the nearest multiple of 5.
+- 90-100%: Highly fluent, natural rhythm, crisp vowels matching ${accent}, natural stress/intonation on target vocabulary.
+- 75-89%: Clear, communicative delivery. Slight vowel nuance or minor pacing issue, but easy to understand without strain.
+- 55-74%: Understandable, but noticeable hesitations, flat intonation, or dropped final consonants.
+- 35-54%: Heavy hesitation, word-by-word reading instead of natural flow, or severe distortion impeding comprehension.
+- 0-30%: Barely intelligible or damaged audio.
+
+============================================
+🚨 RULE #4 — TIERED PHONETIC OUTPUT DEPTH
+============================================
+- If score >=90%: Praise clean articulation and natural rhythm. Do NOT invent fake errors.
+- If score 75-89%: Provide 1 gentle, concrete fine-tuning tip.
+- If score <75%: Identify top issues heard by importance (max 3 words).
+
+============================================
+🚨 RULE #5 — PRACTICAL PHONETIC GUIDANCE (NO COMPLICATED IPA)
+============================================
+1. Syllable Breakdown with CAPITAL letters for stress (e.g. ar-TI-cu-late ↘).
+2. Simple English Word Match: compare with extremely common everyday words.
+3. Mouth & Tongue Position: 1 actionable physical tip.
+4. Word Endings Audit: check if -s/-es and -ed sounds were audible or dropped.
+5. Prioritize feedback on the injected target vocabulary words (given below), since these are the words the candidate is specifically practicing.
+
+Target vocabulary in this text: ${vocabs}
+
+MANDATORY MARKDOWN OUTPUT STRUCTURE:
+
+# 📊 Delivery & Fluency Score
+**[Score rounded to multiple of 5]%** — [1 concise sentence in B1 English summarizing delivery performance]
+- **Target Accent**: ${accent}
+- **Accent Match Assessment**: [Honest B1 English review of vowel articulation and rhythm compared to target accent]
+
+# 📝 Audio Transcription
+"[Write what was heard. If uncertain about a word AND the original text is clear from context, use the original word rather than an uncertain guess — see Rule #2]"
+
+# ✅ Text Fidelity Check
+- **Words matched to original text**: [e.g. "38 of 40 words matched"]
+- **Skipped or added words**: [List any, or write "None — full text was read"]
+
+# 🔊 Phonetic Breakdown & Pronunciation Tips
+[Follow Rule #4 tiered instructions. Prioritize the target vocabulary words.]:
+- ❌ **"[Word]"**
+  - 👂 **What You Said**: "[How it sounded]"
+  - 🗣️ **Phonetic Breakdown**: **"[Syllable breakdown, e.g. im-PER-ti-nunt ↘]"**
+  - 🔍 **Simple English Word Match**: [1 common word with identical sound]
+  - 💡 **Mouth & Tongue Position**: [Simple physical cue]
+
+# 🛑 Word Endings Audit (-S/-ES & -ED)
+- **-S/-ES Endings**: [Audible or dropped]
+- **-ED Endings**: [Audible or dropped]
+- 🗣️ **Quick Speed Drill**: [1 short practice phrase, e.g. "She complete**s** /s/ her project**s** /s/ on time."]`;
+        }
+
+        function buildPart2CueCardSystemPrompt(cueCardPromptText, targetAccentName) {
+            const cleanCueCard = cueCardPromptText || 'IELTS Speaking Part 2 Cue Card Task';
+            const accent = targetAccentName || 'British RP';
+
+            return `You are a direct, honest, and supportive AI IELTS Speaking Coach and Examiner. All feedback MUST be written strictly in clear, accessible B1-level English (simple, friendly, and practical).
+
+Your top priority: HONESTY & ACCURATE DIAGNOSIS. Do NOT inflate scores, do NOT use empty flattery, and do NOT fabricate errors that were not audible.
+
+============================================
+CONTEXT — THIS IS A SPONTANEOUS CUE CARD MONOLOGUE (IELTS PART 2)
+============================================
+The candidate was given this cue card and spoke spontaneously (with ~1 minute preparation, no script):
+
+Cue Card Topic & Points:
+"${cleanCueCard}"
+
+Unlike a read-aloud task, the candidate composed these sentences themselves in real time. This means:
+- Grammar, vocabulary choice, and sentence structure ARE the candidate's own — feel free to correct and upgrade them (unlike Part 1 shadowing).
+- Natural spontaneous speech includes self-corrections, filler words ("um", "well", "you know"), and minor restarts. Do NOT penalize these heavily — real IELTS examiners tolerate natural hesitation markers used at a reasonable frequency. Only flag hesitation as a problem if it is frequent enough to break comprehension.
+
+Target Accent: ${accent}
+
+============================================
+🚨 RULE #1 — CHECK AUDIO QUALITY FIRST
+============================================
+If the audio is completely silent, background noise dominates, or speech is too faint to hear:
+Write exactly: "# ⚠️ REKAMAN TIDAK DAPAT DINILAI (AUDIO DITOLAK)"
+Explain simply in B1 English that speech could not be heard clearly, and STOP evaluation.
+
+============================================
+🚨 RULE #2 — TASK FULFILLMENT CHECK (IELTS-SPECIFIC)
+============================================
+Compare what the candidate said against the cue card points listed above. For each point on the cue card, note whether it was addressed, partially addressed, or missed. This is a real IELTS Part 2 scoring criterion — a fluent answer that skips half the cue card points should not receive a top score.
+
+============================================
+🚨 RULE #3 — REALISTIC SCORE ESTIMATE (MULTIPLES OF 5)
+============================================
+You do NOT measure physical acoustic spectrograms. Give an HONEST, REALISTIC estimate covering fluency, coherence, and delivery combined, rounded to the nearest multiple of 5.
+- 90-100%: Highly fluent, natural rhythm, wide vocabulary range, all cue card points covered coherently, natural compound-complex sentences.
+- 75-89%: Clear, communicative delivery. Most cue card points covered. 1-2 minor grammar slips or vocabulary gaps, but flow is easy to follow.
+- 55-74%: Understandable ideas, but noticeable spoken grammar errors, some cue card points missed or underdeveloped, or frequent hesitation.
+- 35-54%: Heavy hesitation, fragmented sentences, most cue card points missed, or severe distortion impeding comprehension.
+- 0-30%: Barely intelligible or damaged audio.
+
+============================================
+🚨 RULE #4 — TIERED PHONETIC OUTPUT DEPTH
+============================================
+- If score >=90%: Praise clean articulation and natural rhythm. Do NOT invent fake errors.
+- If score 75-89%: Provide 1 gentle, concrete fine-tuning tip.
+- If score <75%: Identify top issues heard by importance (max 3 words).
+
+============================================
+🚨 RULE #5 — PRACTICAL PHONETIC GUIDANCE (NO COMPLICATED IPA)
+============================================
+1. Syllable Breakdown with CAPITAL letters for stress (e.g. ar-TI-cu-late ↘).
+2. Simple English Word Match: compare with extremely common everyday words.
+3. Mouth & Tongue Position: 1 actionable physical tip.
+4. Word Endings Audit: check if -s/-es and -ed sounds were audible or dropped.
+
+============================================
+🚨 RULE #6 — GRAMMAR, COHERENCE & BAND 7.5+ UPGRADE
+============================================
+1. Evaluate spoken grammar accuracy AND coherence/cohesion (how well ideas connect — linking words, logical flow between points) as two distinct aspects.
+2. Provide concise, clear grammar corrections only for genuine errors (not filler words or natural self-corrections).
+3. Provide a 2-3 sentence exemplary Band 7.5+ Model Upgrade expressing the candidate's main idea, staying faithful to what they actually said.
+4. Mark high-tier (C1/C2) words/collocations with [VOCAB: word].
+5. Explain briefly WHY each change was made.
+
+MANDATORY MARKDOWN OUTPUT STRUCTURE:
+
+# 📊 Fluency & Delivery Score
+**[Score rounded to multiple of 5]%** — [1 concise sentence in B1 English summarizing performance]
+- **Target Accent**: ${accent}
+- **Accent Match Assessment**: [Honest B1 English review of vowel articulation and rhythm compared to target accent]
+
+# 📝 Audio Transcription
+"[Write word-for-word what was heard]"
+
+# ✅ Task Fulfillment Check
+- **Point 1**: [Addressed / Partially addressed / Missed] — [1 short note]
+- **Point 2**: [Addressed / Partially addressed / Missed] — [1 short note]
+- **Point 3**: [Addressed / Partially addressed / Missed] — [1 short note]
+(list all points from the cue card)
+
+# 🔍 Grammar & Coherence Feedback
+- **Coherence & Cohesion**: [Comment on how well ideas connected and flowed between cue card points]
+- **Grammar Corrections**:
+  * ❌ *"[Part of original sentence with genuine error]"*
+  * 💡 *"[Corrected version]"* — [Explain simply in B1 English]
+
+# 🚀 Band 7.5+ Model Upgrade & Vocabulary
+- **Band 7.5+ Model Upgrade**:
+  "[2-3 exemplary sentences reconstructing the candidate's own idea. Insert 1-3 C1/C2 words marked with [VOCAB: word]]"
+- **Why We Upgraded It**:
+  * 1️⃣ **[Original] ➔ [Upgraded]**: [Explanation]
+  * 2️⃣ **[Original] ➔ [Upgraded]**: [Explanation]
+- **New Vocabulary to Learn**:
+  * [VOCAB: word1] = [simple B1 English definition]
+  * [VOCAB: word2] = [simple B1 English definition]
+
+# 🔊 Phonetic Breakdown & Pronunciation Tips
+[Follow Rule #4 tiered instructions]
+
+# 🛑 Word Endings Audit (-S/-ES & -ED)
+- **-S/-ES Endings**: [Audible or dropped]
+- **-ED Endings**: [Audible or dropped]
+- 🗣️ **Quick Speed Drill**: [1 short practice phrase]`;
+        }
+
+        function buildPart3DiscussionSystemPrompt(discussionQuestionsText, targetAccentName) {
+            const cleanQuestions = discussionQuestionsText || 'IELTS Speaking Part 3 Discussion Question';
+            const accent = targetAccentName || 'British RP';
+
+            return `You are a direct, honest, and supportive AI IELTS Speaking Coach and Examiner. All feedback MUST be written strictly in clear, accessible B1-level English (simple, friendly, and practical).
+
+Your top priority: HONESTY & ACCURATE DIAGNOSIS. Do NOT inflate scores, do NOT use empty flattery, and do NOT fabricate errors that were not audible.
+
+============================================
+CONTEXT — THIS IS AN IELTS PART 3 DISCUSSION (SPONTANEOUS Q&A)
+============================================
+The candidate answered the following discussion question(s) spontaneously, in real time, with no script:
+
+Question(s) Given:
+"${cleanQuestions}"
+
+Unlike Part 2 (a single monologue), Part 3 is an interactive discussion. What matters most here — more than in Part 1 or 2 — is IDEA DEVELOPMENT: does the candidate give a real opinion with reasons/examples, or just a short surface-level answer? A fluent but shallow answer ("I think it's good because it's good") should score lower on content even if pronunciation is perfect.
+
+Natural spontaneous speech includes self-corrections, filler words, and minor restarts. Do NOT penalize these heavily unless frequent enough to break comprehension.
+
+Target Accent: ${accent}
+
+============================================
+🚨 RULE #1 — CHECK AUDIO QUALITY FIRST
+============================================
+If the audio is completely silent, background noise dominates, or speech is too faint to hear:
+Write exactly: "# ⚠️ REKAMAN TIDAK DAPAT DINILAI (AUDIO DITOLAK)"
+Explain simply in B1 English that speech could not be heard clearly, and STOP evaluation.
+
+============================================
+🚨 RULE #2 — IDEA DEVELOPMENT CHECK (IELTS-SPECIFIC, PART 3 PRIORITY)
+============================================
+For each question answered, classify the response as one of:
+- **Developed**: gives an opinion/answer AND supports it with a reason, example, or elaboration.
+- **Basic**: gives an opinion/answer but with little or no supporting reason.
+- **Minimal**: very short response, unclear stance, or doesn't really answer the question asked.
+Be honest here — this is usually the single biggest gap between Band 6 and Band 7.5+ candidates, more than grammar or pronunciation.
+
+============================================
+🚨 RULE #3 — REALISTIC SCORE ESTIMATE (MULTIPLES OF 5)
+============================================
+You do NOT measure physical acoustic spectrograms. Give an HONEST, REALISTIC estimate covering idea development, coherence, grammar, and delivery combined, rounded to the nearest multiple of 5.
+- 90-100%: Well-developed, well-justified answers with natural complex grammar (conditionals, passives, subordinate clauses), fluent delivery, wide vocabulary.
+- 75-89%: Clear answers with reasons/examples, occasional grammar slip, generally fluent, minor vocabulary gaps.
+- 55-74%: Answers given but often under-developed or repetitive reasoning, some spoken grammar errors, noticeable hesitation.
+- 35-54%: Mostly minimal/surface answers, fragmented sentences, or severe distortion impeding comprehension.
+- 0-30%: Barely intelligible or damaged audio.
+
+============================================
+🚨 RULE #4 — TIERED PHONETIC OUTPUT DEPTH
+============================================
+- If score >=90%: Praise clean articulation and natural rhythm. Do NOT invent fake errors.
+- If score 75-89%: Provide 1 gentle, concrete fine-tuning tip.
+- If score <75%: Identify top issues heard by importance (max 3 words).
+Keep this section brief for Part 3 — content/argumentation matters more here than in Part 1/2, so don't let phonetic detail dominate the feedback.
+
+============================================
+🚨 RULE #5 — GRAMMAR & BAND 7.5+ UPGRADE (INCLUDING COMPLEX STRUCTURES)
+============================================
+1. Evaluate spoken grammar accuracy. Part 3 is a good place to check for complex structures (conditionals, passive voice, subordinate clauses) since abstract questions naturally invite them — note if the candidate attempted these or stayed only in simple sentences.
+2. Provide concise, clear grammar corrections only for genuine errors (not filler words or natural self-corrections).
+3. Provide a 2-3 sentence exemplary Band 7.5+ Model Upgrade for one of the candidate's answers, staying faithful to their actual opinion/reasoning.
+4. Mark high-tier (C1/C2) words/collocations with [VOCAB: word].
+5. Explain briefly WHY each change was made.
+
+MANDATORY MARKDOWN OUTPUT STRUCTURE:
+
+# 📊 Discussion & Delivery Score
+**[Score rounded to multiple of 5]%** — [1 concise sentence in B1 English summarizing performance]
+- **Target Accent**: ${accent}
+- **Accent Match Assessment**: [Honest B1 English review of vowel articulation and rhythm compared to target accent]
+
+# 📝 Audio Transcription
+"[Write word-for-word what was heard, organized by question if multiple questions were asked]"
+
+# 💡 Idea Development Check
+- **Question 1**: [Developed / Basic / Minimal] — [1 short note on why]
+- **Question 2**: [Developed / Basic / Minimal] — [1 short note on why]
+(list all questions answered)
+
+# 🔍 Grammar & Structure Feedback
+- **Complex Structure Attempts**: [Note whether candidate used conditionals, passive voice, or subordinate clauses, and whether they were used correctly]
+- **Grammar Corrections**:
+  * ❌ *"[Part of original sentence with genuine error]"*
+  * 💡 *"[Corrected version]"* — [Explain simply in B1 English]
+
+# 🚀 Band 7.5+ Model Upgrade & Vocabulary
+- **Band 7.5+ Model Upgrade** (for one answer):
+  "[2-3 exemplary sentences reconstructing the candidate's own opinion/reasoning. Insert 1-3 C1/C2 words marked with [VOCAB: word]]"
+- **Why We Upgraded It**:
+  * 1️⃣ **[Original] ➔ [Upgraded]**: [Explanation]
+  * 2️⃣ **[Original] ➔ [Upgraded]**: [Explanation]
+- **New Vocabulary to Learn**:
+  * [VOCAB: word1] = [simple B1 English definition]
+  * [VOCAB: word2] = [simple B1 English definition]
+
+# 🔊 Phonetic Breakdown & Pronunciation Tips
+[Follow Rule #4 tiered instructions — keep concise for Part 3]
+
+# 🛑 Word Endings Audit (-S/-ES & -ED)
+- **-S/-ES Endings**: [Audible or dropped]
+- **-ED Endings**: [Audible or dropped]
+- 🗣️ **Quick Speed Drill**: [1 short practice phrase]`;
+        }
+
+        function buildSpeakingUserQuery(mode, targetAccentName) {
+            const accent = targetAccentName || 'British RP';
+            if (mode === 'part1') {
+                return `Please listen to my read-aloud recording. Check my delivery, rhythm, text fidelity against the original script, word endings, and pronunciation of target words in ${accent}. Do NOT check sentence grammar since the script was provided.`;
+            }
+            if (mode === 'part2') {
+                return `Please evaluate my spontaneous 2-minute cue card monologue in ${accent}. Check task fulfillment of the cue card points, coherence, spoken grammar, and pronunciation.`;
+            }
+            if (mode === 'part3') {
+                return `Please evaluate my spontaneous discussion answer in ${accent}. Check my idea development, complex structure usage, grammar accuracy, and pronunciation.`;
+            }
+            return `Please listen to my spoken voice recording. Evaluate my speech in ${accent}, checking pronunciation, fluency, and grammatical structure in clear B1 English.`;
+        }
+
+        function parseGeneratedSpeakingPrompt(rawText, mode = 'part1') {
+            if (!rawText || typeof rawText !== 'string') {
+                return { topicTitle: '', cleanMonologue: '', targetGrammarNotes: '' };
+            }
+
+            let text = rawText.trim();
+            let topicTitle = '';
+            let cleanMonologue = '';
+            let targetGrammarNotes = '';
+
+            // Extract target grammar / strategy tip / formula notes section
+            const grammarSplitRegex = /(?:\n|^)(#+\s*(?:🎯|💡|📚|🔍)?\s*(?:Target Grammar|Suggested Grammar|Strategy Tip|Grammar Formula)[^\n]*\n+)([\s\S]*)$/i;
+            const grammarMatch = text.match(grammarSplitRegex);
+            if (grammarMatch) {
+                targetGrammarNotes = (grammarMatch[1] + (grammarMatch[2] || '')).trim();
+                text = text.substring(0, grammarMatch.index).trim();
+            }
+
+            // Extract topic title
+            const topicMatch = text.match(/#+\s*(?:🎙️|📋|❓)?\s*(?:Topic|Candidate Task Card|Part 3 Discussion Question)[:\s]*(.*)/i);
+            if (topicMatch) {
+                topicTitle = topicMatch[1].trim();
+                // Remove the header line
+                text = text.replace(/#+\s*(?:🎙️|📋|❓)?\s*(?:Topic|Candidate Task Card|Part 3 Discussion Question)[:\s]*.*?\n+/i, '').trim();
+            }
+
+            cleanMonologue = text.trim();
+            if (mode === 'part1' || mode === 'part3') {
+                // Strip wrapping quotes if entire text is wrapped in quotes
+                cleanMonologue = cleanMonologue.replace(/^["“”]([\s\S]+)["“”]$/, '$1').trim();
+            }
+
+            return {
+                topicTitle,
+                cleanMonologue,
+                targetGrammarNotes
             };
         }
 
@@ -196,15 +664,31 @@
             if (btn) btn.disabled = true;
             if (textEl) textEl.innerHTML = `<div class="py-4 text-center text-rose-400 font-mono text-xs"><i class="fa-solid fa-spinner animate-spin mr-2"></i> Merancang materi speaking berbasis stage yang Anda kuasai...</div>`;
 
-            const grammarCtx = getUnlockedGrammarContext();
+            // Monologue Length Constraint (Short / Medium / Long)
+            const lengthChoice = document.getElementById(`select-speaking-length-${mode}`)?.value || 'medium';
+            let lengthInstruction = '';
+            let targetWords = '60-80 words (6-8 sentences)';
+            if (lengthChoice === 'short') {
+                lengthInstruction = 'Generate a CONCISE model monologue of exactly 3 to 4 clear, impactful sentences (approx 35-50 words). Focus on crisp phonemes and natural clarity.';
+                targetWords = '35-50 words (3-4 sentences)';
+            } else if (lengthChoice === 'long') {
+                lengthInstruction = 'Generate a RICH, EXTENDED model monologue of 10 to 14 complex sentences (approx 120-160 words). Provide full descriptive depth, varied sentence structures, and stamina drill.';
+                targetWords = '120-160 words (10-14 sentences)';
+            } else {
+                lengthInstruction = 'Generate an authentic model monologue of 6 to 8 well-developed sentences (approx 70-90 words), standard IELTS Part 1 length.';
+                targetWords = '70-90 words (6-8 sentences)';
+            }
+
+            const grammarMode = document.getElementById('select-speaking-grammar-mode')?.value || localStorage.getItem('ielts_speaking_grammar_mode') || 'ielts_natural';
+            const grammarCtx = getUnlockedGrammarContext(grammarMode);
 
             // Check if Vocab Logger integration is enabled
             const useVocab = document.getElementById('toggle-speaking-use-vocab')?.checked;
             let injectedVocabs = [];
             if (useVocab) {
-                injectedVocabs = getRandomVocabsForSpeaking(speakingVocabFilter, 3);
+                injectedVocabs = getRandomVocabsForSpeaking(speakingVocabFilter, lengthChoice);
                 if (injectedVocabs.length === 0) {
-                    showToast(`Tidak ditemukan kata 'learning' untuk filter ${speakingVocabFilter}. Menghasilkan materi tanpa injeksi vocab.`, "info");
+                    showToast(`Tidak ditemukan kata 'learning' (Feynman Lv.1+) untuk filter ${speakingVocabFilter}. Menghasilkan materi tanpa injeksi vocab.`, "info");
                 }
             }
 
@@ -219,32 +703,16 @@ Make sure each of these target vocabulary words is formatted in **bold** in the 
             let systemPrompt = '';
             let userPrompt = '';
 
-            // Monologue Length Constraint (Short / Medium / Long)
-            const lengthChoice = document.getElementById(`select-speaking-length-${mode}`)?.value || 'medium';
-            let lengthInstruction = '';
-            let targetWords = '60-80 words (6-8 sentences)';
-            if (lengthChoice === 'short') {
-                lengthInstruction = 'Generate a CONCISE model monologue of exactly 3 to 4 clear, impactful sentences (approx 35-50 words). Focus on crisp phonemes and SVO clarity.';
-                targetWords = '35-50 words (3-4 sentences)';
-            } else if (lengthChoice === 'long') {
-                lengthInstruction = 'Generate a RICH, EXTENDED model monologue of 10 to 14 complex sentences (approx 120-160 words). Provide full descriptive depth, varied sentence structures, and stamina drill.';
-                targetWords = '120-160 words (10-14 sentences)';
-            } else {
-                lengthInstruction = 'Generate an authentic model monologue of 6 to 8 well-developed sentences (approx 70-90 words), standard IELTS Part 1 length.';
-                targetWords = '70-90 words (6-8 sentences)';
-            }
-
             if (mode === 'part1') {
                 systemPrompt = `You are an elite IELTS Speaking Coach creating a Read-Aloud / Shadowing monologue for IELTS Speaking Part 1.
-Scaffolding constraint: The student has unlocked these grammar stages: [${grammarCtx.rulesSummary}].
-DO NOT use grammatical structures beyond their unlocked level.${vocabPromptInstruction}
+${grammarCtx.promptConstraint}${vocabPromptInstruction}
 
 Length Constraint:
 ${lengthInstruction}
 
 Task:
-Generate an authentic IELTS Speaking Part 1 model monologue (${targetWords}) on a familiar topic (e.g. Work/Study, Daily Routine, Hometown, Hobbies, Technology).
-The monologue must naturally integrate the target grammar structures from their unlocked stages and any specified vocabulary words.
+Generate an authentic IELTS Speaking Part 1 model monologue (${targetWords}) on an engaging IELTS topic (e.g. Work/Study, Daily Routine, Hometown, Hobbies, Technology, Nature, Social Life).
+The monologue must sound completely authentic and conversational (Band 7.5+), naturally weaving in any injected vocabulary words without awkward stiffness.
 
 Format your response in Markdown:
 # 🎙️ Topic: [Topic Title]
@@ -252,14 +720,14 @@ Format your response in Markdown:
 
 # 🎯 Target Grammar & Vocab Applied:
 - [List 2-3 target rules or vocabulary embedded]`;
-                userPrompt = `Generate a Part 1 shadowing monologue (${lengthChoice} length: ${targetWords}) using unlocked grammar: ${grammarCtx.rulesSummary}${injectedVocabs.length > 0 ? ` and including target words: ${injectedVocabs.map(v => v.word).join(', ')}` : ''}`;
+                userPrompt = `Generate a Part 1 shadowing monologue (${lengthChoice} length: ${targetWords}) matching grammar mode: ${grammarCtx.label} (${grammarCtx.rulesSummary})${injectedVocabs.length > 0 ? ` and including target words: ${injectedVocabs.map(v => v.word).join(', ')}` : ''}`;
 
             } else if (mode === 'part2') {
                 systemPrompt = `You are a certified IELTS Speaking Examiner creating an authentic IELTS Speaking Part 2 Candidate Task Card (Cue Card).
-Scaffolding constraint: Student unlocked grammar: [${grammarCtx.rulesSummary}].${vocabPromptInstruction}
+${grammarCtx.promptConstraint}${vocabPromptInstruction}
 
 Task:
-Create a full IELTS Speaking Part 2 Cue Card that naturally prompts the candidate to use their unlocked grammar structures and target vocabulary.
+Create a full IELTS Speaking Part 2 Cue Card that naturally prompts the candidate to use varied sentence structures and target vocabulary.
 
 Format your response in Markdown:
 # 📋 Topic: Describe [Topic Name]
@@ -271,11 +739,11 @@ You should say:
 
 # 🎯 Suggested Grammar Formula & Vocab to Demonstrate:
 - [List 2-3 specific techniques/vocabulary to use in the 2-minute monologue]`;
-                userPrompt = `Generate a Part 2 Cue Card task matching unlocked grammar: ${grammarCtx.rulesSummary}${injectedVocabs.length > 0 ? ` and highlighting target words: ${injectedVocabs.map(v => v.word).join(', ')}` : ''}`;
+                userPrompt = `Generate a Part 2 Cue Card task matching grammar mode: ${grammarCtx.label}${injectedVocabs.length > 0 ? ` and highlighting target words: ${injectedVocabs.map(v => v.word).join(', ')}` : ''}`;
 
             } else {
                 systemPrompt = `You are an IELTS Speaking Examiner conducting Part 3 Analytical Discussion.
-Scaffolding constraint: Student unlocked grammar: [${grammarCtx.rulesSummary}].${vocabPromptInstruction}
+${grammarCtx.promptConstraint}${vocabPromptInstruction}
 
 Task:
 Create 1 deep, analytical IELTS Speaking Part 3 discussion question that requires the candidate to express reasoned opinions, compare trends, or analyze causes/effects, using the target vocabulary.
@@ -285,8 +753,8 @@ Format in Markdown:
 "[Write the question in quotes]"
 
 # 💡 Strategy Tip & Grammar Anchor
-- [Brief tip on how to structure a natural Band 7.5+ answer using: ${grammarCtx.rulesSummary}${injectedVocabs.length > 0 ? ` and applying vocabularies (${injectedVocabs.map(v => v.word).join(', ')})` : ''}]`;
-                userPrompt = `Generate a challenging Part 3 question matching unlocked grammar: ${grammarCtx.rulesSummary}${injectedVocabs.length > 0 ? ` and integrating words: ${injectedVocabs.map(v => v.word).join(', ')}` : ''}`;
+- [Brief tip on how to structure a natural Band 7.5+ answer using: ${grammarCtx.mode === 'ielts_natural' ? 'subordinate clauses, evaluative adjectives, and balanced hedging' : grammarCtx.rulesSummary}${injectedVocabs.length > 0 ? ` and applying vocabularies (${injectedVocabs.map(v => v.word).join(', ')})` : ''}]`;
+                userPrompt = `Generate a challenging Part 3 question matching grammar mode: ${grammarCtx.label}${injectedVocabs.length > 0 ? ` and integrating words: ${injectedVocabs.map(v => v.word).join(', ')}` : ''}`;
             }
 
             try {
@@ -351,13 +819,42 @@ You should say:
                 }
 
                 speakingState.generatedPrompts[mode] = resText;
+                const parsed = parseGeneratedSpeakingPrompt(resText, mode);
+                speakingState.cleanMonologues[mode] = parsed.cleanMonologue;
+                speakingState.injectedVocabs[mode] = injectedVocabs;
 
-                if (textEl) textEl.innerHTML = renderMarkdown(resText);
-                if (topicTag) topicTag.innerText = `Active (${grammarCtx.count} Stage${injectedVocabs.length > 0 ? ` • ${injectedVocabs.length} Vocabs` : ''})`;
+                if (textEl) {
+                    textEl.innerHTML = (typeof renderMarkdown === 'function') ? renderMarkdown(parsed.cleanMonologue || resText) : (parsed.cleanMonologue || resText);
+                }
+
+                // Render grammar notes in separate container if present
+                const grammarNotesEl = document.getElementById(`speaking-grammar-notes-${mode}`);
+                if (grammarNotesEl) {
+                    if (parsed.targetGrammarNotes) {
+                        grammarNotesEl.innerHTML = (typeof renderMarkdown === 'function') ? renderMarkdown(parsed.targetGrammarNotes) : parsed.targetGrammarNotes;
+                        grammarNotesEl.classList.remove('hidden');
+                    } else {
+                        grammarNotesEl.innerHTML = '';
+                        grammarNotesEl.classList.add('hidden');
+                    }
+                }
+
+                if (topicTag) {
+                    const tagTitle = parsed.topicTitle ? `Topic: ${parsed.topicTitle}` : `Active (${grammarCtx.badgeText})`;
+                    topicTag.innerText = `${tagTitle}${injectedVocabs.length > 0 ? ` • ${injectedVocabs.length} Vocabs` : ''}`;
+                }
 
                 // Update grammar tags
                 if (tagsEl) {
-                    tagsEl.innerHTML = grammarCtx.stageTitles.slice(0, 4).map(t => `<span class="text-[10px] font-mono bg-rose-950/80 text-rose-300 px-2 py-0.5 rounded border border-rose-500/20">${t}</span>`).join('');
+                    if (grammarCtx.mode === 'ielts_natural') {
+                        tagsEl.innerHTML = `
+                            <span class="text-[10px] font-mono bg-emerald-950/80 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30 font-bold"><i class="fa-solid fa-sparkles mr-1"></i> Band 7.5+ Natural Flow</span>
+                            <span class="text-[10px] font-mono bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-slate-700">Compound-Complex Syntax</span>
+                            <span class="text-[10px] font-mono bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-slate-700">Native Idiomatic Markers</span>
+                        `;
+                    } else {
+                        tagsEl.innerHTML = (grammarCtx.stageTitles || []).slice(0, 4).map(t => `<span class="text-[10px] font-mono bg-rose-950/80 text-rose-300 px-2 py-0.5 rounded border border-rose-500/20">${t}</span>`).join('');
+                    }
                 }
 
                 // Update vocab tags
@@ -410,8 +907,11 @@ You should say:
                        .replace(/`([^`]+)`/g, '$1')
                        .replace(/^#+\s+/gm, '')
                        .replace(/^>\s+/gm, '')
+                       .replace(/^["“”]+|["“”]+$/g, '')
                        .replace(/Klik tombol[\s\S]*/i, '')
                        .trim();
+            // Ensure any residual outer quotes after trimming are stripped
+            text = text.replace(/^["“”]+|["“”]+$/g, '').trim();
             return text;
         }
 
@@ -463,7 +963,7 @@ You should say:
             showToast(`Pengisi suara TTS diperbarui!`, "info");
         }
 
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        if (typeof window !== 'undefined' && typeof document !== 'undefined' && 'speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = populateTTSVoiceOptions;
             setTimeout(populateTTSVoiceOptions, 500);
         }
@@ -514,8 +1014,8 @@ You should say:
             const textEl = document.getElementById(`speaking-text-${mode}`);
             if (!textEl) return;
 
-            // Extract strictly cleaned text (no Target Grammar, no headers)
-            let rawText = speakingState.generatedPrompts[mode] || textEl.innerText || '';
+            // Extract strictly cleaned text (prefer cleanMonologues)
+            let rawText = speakingState.cleanMonologues?.[mode] || speakingState.generatedPrompts[mode] || textEl.innerText || '';
             let cleanText = cleanSpeakingTextForTTS(rawText);
 
             if (!cleanText || cleanText.length < 5) {
@@ -820,6 +1320,7 @@ You should say:
                 word: cleanWord,
                 pos: 'noun',
                 cefr: 'B2',
+                lockStatus: 'unlocked',
                 meaningId: `Menganalisis arti dan konteks IELTS untuk ${cleanWord}...`,
                 meaningEn: `Analyzing Cambridge definition and IELTS context for ${cleanWord}...`,
                 indonesianGuide: `${cleanWord.toUpperCase()}`,
@@ -828,8 +1329,14 @@ You should say:
                 ipa: '',
                 dateAdded: Date.now(),
                 srInterval: 1,
-                srNextReview: Date.now() + (1 * 86400000),
+                srNextReview: null,
                 srReviewCount: 0,
+                feynmanLevel: 0,
+                feynmanStatus: 'unlearned',
+                feynmanLastExplanation: '',
+                feynmanLastSentence: '',
+                feynmanFeedback: null,
+                consecutiveMasteryCount: 0,
                 status: 'learning'
             };
             
@@ -942,12 +1449,20 @@ You should say:
                 if (!trimmed) return;
 
                 // Check if this is the Hero Score section
-                if (trimmed.includes('Skor Pelafalan') || trimmed.includes('Skor Resmi IELTS') || trimmed.includes('Official IELTS Speaking Band Score') || trimmed.includes('Pronunciation & Fluency Score')) {
+                const isHeroScore = trimmed.includes('Skor Pelafalan') || 
+                                   trimmed.includes('Skor Resmi IELTS') || 
+                                   trimmed.includes('Official IELTS Speaking Band Score') || 
+                                   trimmed.includes('Pronunciation & Fluency Score') ||
+                                   trimmed.includes('Delivery & Fluency Score') ||
+                                   trimmed.includes('Fluency & Delivery Score') ||
+                                   trimmed.includes('Discussion & Delivery Score');
+
+                if (isHeroScore) {
                     const cardBorder = isRejected ? 'border-red-500/60 bg-red-950/20' : 'border-rose-500/40';
                     bandScoreHtml = `
                         ${rejectionBannerHtml}
                         <div class="speaking-audit-band-card p-4 sm:p-5 rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 border border-slate-200 dark:border-rose-500/40 shadow-md dark:shadow-lg mb-4 space-y-2.5 text-slate-800 dark:text-slate-100">
-                            ${renderMarkdown(trimmed)}
+                            ${(typeof renderMarkdown === 'function') ? renderMarkdown(trimmed) : trimmed}
                         </div>
                     `;
                     return;
@@ -969,7 +1484,23 @@ You should say:
                 let bgClass = 'bg-slate-900/60';
                 let titleColor = 'text-slate-200';
 
-                if (title.includes('Transkripsi') || title.includes('Transcription')) {
+                if (title.includes('Text Fidelity')) {
+                    iconClass = 'fa-solid fa-square-check text-emerald-400';
+                    borderClass = 'border-emerald-500/30';
+                    titleColor = 'text-emerald-300';
+                } else if (title.includes('Task Fulfillment')) {
+                    iconClass = 'fa-solid fa-clipboard-check text-teal-400';
+                    borderClass = 'border-teal-500/30';
+                    titleColor = 'text-teal-300';
+                } else if (title.includes('Idea Development')) {
+                    iconClass = 'fa-solid fa-lightbulb text-amber-400';
+                    borderClass = 'border-amber-500/30';
+                    titleColor = 'text-amber-300';
+                } else if (title.includes('Grammar & Coherence') || title.includes('Grammar & Structure')) {
+                    iconClass = 'fa-solid fa-diagram-project text-cyan-400';
+                    borderClass = 'border-cyan-500/30';
+                    titleColor = 'text-cyan-300';
+                } else if (title.includes('Transkripsi') || title.includes('Transcription')) {
                     iconClass = 'fa-solid fa-microphone-lines text-sky-400';
                     borderClass = 'border-sky-500/30';
                     titleColor = 'text-sky-300';
@@ -981,14 +1512,27 @@ You should say:
                     iconClass = 'fa-solid fa-rocket text-amber-400';
                     borderClass = 'border-amber-500/30';
                     titleColor = 'text-amber-300';
-                } else if (title.includes('Ringkasan Diagnosa') || title.includes('Roadmap') || title.includes('Urutan')) {
-                    iconClass = 'fa-solid fa-list-check text-rose-400';
-                    borderClass = 'border-rose-500/30';
-                    titleColor = 'text-rose-300';
-                } else if (title.includes('Keunggulan') || title.includes('Strengths')) {
-                    iconClass = 'fa-solid fa-star text-amber-400';
-                    borderClass = 'border-amber-500/30';
-                    titleColor = 'text-amber-300';
+
+                    // Extract the standard English text for 1-Click Retest Drill
+                    let cleanRetest = '';
+                    const modelMatch = contentBody.match(/-\s*\*\*Band 7\.5\+ Model Upgrade\*\*[^\n]*:\s*\n*>?\s*"([^"]+)"/i)
+                                    || contentBody.match(/Band 7\.5\+ Model Upgrade[^\n]*\n+>?\s*"([^"]+)"/i)
+                                    || contentBody.match(/Model Kalimat[^\n]*\n+>?\s*"([^"]+)"/i);
+                    const hMatch = contentBody.match(/#{1,4}\s*📝?\s*Teks\s+(?:Asli\s+)?Bahasa\s+Inggris[^\n]*\n+([\s\S]*?)(?=\n#{1,4}|\n\n#{1,4}|$)/i)
+                                || contentBody.match(/#{1,4}\s*📝?\s*Teks[^\n]*\n+([\s\S]*?)(?=\n#{1,4}|$)/i);
+                    if (modelMatch && modelMatch[1]) {
+                        cleanRetest = modelMatch[1].trim();
+                    } else if (hMatch && hMatch[1]) {
+                        cleanRetest = hMatch[1].trim().replace(/^[>\s"]+|["]+$/g, '').replace(/^>\s*/gm, '').trim();
+                    } else {
+                        const quoteMatch = contentBody.match(/"([^"\n]{25,})"/);
+                        if (quoteMatch) cleanRetest = quoteMatch[1].trim();
+                    }
+                    if (cleanRetest) {
+                        cleanRetest = cleanRetest.replace(/\[VOCAB:\s*([^\]]+)\]/gi, '$1').replace(/\s+/g, ' ').trim();
+                        contentBody += `\n\n<div class="pt-3 mt-3 border-t border-slate-800 flex flex-wrap gap-2"><button type="button" onclick="loadRetestScriptToSpeakingBox('${mode}', '${encodeURIComponent(cleanRetest)}')" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white font-bold text-xs rounded-xl shadow-lg flex items-center gap-2 border border-emerald-400/30 transition-all cursor-pointer"><i class="fa-solid fa-rotate-right"></i> <span>Muat Teks Ini ke Player & Rekam Ulang Sekarang</span></button></div>`;
+                    }
+
                 } else if (title.includes('Salah') || title.includes('Mispronounced') || title.includes('Fonetik') || title.includes('Lidah Indonesia') || title.includes('Phonetic Breakdown') || title.includes('Pronunciation Tips')) {
                     iconClass = 'fa-solid fa-triangle-exclamation text-rose-400';
                     borderClass = 'border-rose-500/30';
@@ -1003,7 +1547,7 @@ You should say:
                         }
                     );
 
-                } else if (title.includes('+S') || title.includes('+ED') || title.includes('Akhiran')) {
+                } else if (title.includes('+S') || title.includes('+ED') || title.includes('Akhiran') || title.includes('Word Endings')) {
                     iconClass = 'fa-solid fa-spell-check text-indigo-400';
                     borderClass = 'border-indigo-500/30';
                     titleColor = 'text-indigo-300';
@@ -1015,29 +1559,6 @@ You should say:
                     iconClass = 'fa-solid fa-code-compare text-emerald-400';
                     borderClass = 'border-emerald-500/30';
                     titleColor = 'text-emerald-300';
-                } else if (title.includes('Latihan Ulang') || title.includes('Retest') || title.includes('Band 7.5') || title.includes('Model')) {
-                    iconClass = 'fa-solid fa-award text-amber-400';
-                    borderClass = 'border-amber-500/30';
-                    titleColor = 'text-amber-300';
-
-                    // Extract the standard English text for 1-Click Retest Drill
-                    let cleanRetest = '';
-                    const modelMatch = contentBody.match(/Model Kalimat[^\n]*\n+>?\s*"([^"]+)"/i);
-                    const hMatch = contentBody.match(/#{1,4}\s*📝?\s*Teks\s+(?:Asli\s+)?Bahasa\s+Inggris[^\n]*\n+([\s\S]*?)(?=\n#{1,4}|\n\n#{1,4}|$)/i)
-                                || contentBody.match(/#{1,4}\s*📝?\s*Teks[^\n]*\n+([\s\S]*?)(?=\n#{1,4}|$)/i);
-                    if (modelMatch && modelMatch[1]) {
-                        cleanRetest = modelMatch[1].trim();
-                    } else if (hMatch && hMatch[1]) {
-                        cleanRetest = hMatch[1].trim().replace(/^[>\s"]+|["]+$/g, '').replace(/^>\s*/gm, '').trim();
-                    } else {
-                        const quoteMatch = contentBody.match(/"([^"\n]{25,})"/);
-                        if (quoteMatch) cleanRetest = quoteMatch[1].trim();
-                    }
-                    if (cleanRetest) {
-                        cleanRetest = cleanRetest.replace(/\[VOCAB:\s*([^\]]+)\]/gi, '$1').replace(/\s+/g, ' ').trim();
-                        contentBody += `\n\n<div class="pt-3 mt-3 border-t border-slate-800 flex flex-wrap gap-2"><button type="button" onclick="loadRetestScriptToSpeakingBox('${mode}', '${encodeURIComponent(cleanRetest)}')" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white font-bold text-xs rounded-xl shadow-lg flex items-center gap-2 border border-emerald-400/30 transition-all"><i class="fa-solid fa-rotate-right"></i> <span>Muat Teks Ini ke Player & Rekam Ulang Sekarang</span></button></div>`;
-                    }
-
                 } else if (title.includes('Rekomendasi') || title.includes('Latihan')) {
                     iconClass = 'fa-solid fa-lightbulb text-violet-400';
                     borderClass = 'border-violet-500/30';
@@ -1096,22 +1617,24 @@ You should say:
                 return '';
             };
 
-            const bandScore = extractSection(/(?:^|\n)(#\s*(?:🏆)?\s*Skor Resmi IELTS Speaking[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
-            const summaryRoadmap = extractSection(/(?:^|\n)(#\s*(?:📋)?\s*Ringkasan Diagnosa & Roadmap[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
-            const mispronounced = extractSection(/(?:^|\n)(#\s*(?:🔊)?\s*Bedah Kata Salah[\s\S]*?)(?=\n#\s+[^\#]|$)/i) || extractSection(/(?:^|\n)(#\s*(?:🔊)?\s*Bedah Kata yang Salah[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
-            const suffixes = extractSection(/(?:^|\n)(#\s*(?:🛑)?\s*Audit Khusus Akhiran[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
-            const grammarGlitches = extractSection(/(?:^|\n)(#\s*(?:🔍)?\s*Bedah Kesalahan Grammar Spoken[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
-            const fluencyNotes = extractSection(/(?:^|\n)(#\s*(?:⏱️)?\s*Audit Kelancaran[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
+            const bandScore = extractSection(/(?:^|\n)(#\s*(?:📊|🏆)?\s*(?:Delivery & Fluency Score|Fluency & Delivery Score|Discussion & Delivery Score|Pronunciation & Fluency Score|Skor Resmi IELTS Speaking)[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
+            const summaryRoadmap = extractSection(/(?:^|\n)(#\s*(?:📋)?\s*(?:Ringkasan Diagnosa|Roadmap)[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
+            const mispronounced = extractSection(/(?:^|\n)(#\s*(?:🔊)?\s*(?:Phonetic Breakdown|Pronunciation Tips|Bedah Kata Salah)[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
+            const suffixes = extractSection(/(?:^|\n)(#\s*(?:🛑)?\s*(?:Word Endings Audit|Audit Khusus Akhiran)[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
+            const grammarGlitches = extractSection(/(?:^|\n)(#\s*(?:🔍)?\s*(?:Grammar & Coherence Feedback|Grammar & Structure Feedback|Spoken Grammar|Bedah Kesalahan Grammar Spoken)[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
+            const contentFeedback = extractSection(/(?:^|\n)(#\s*(?:✅|💡|⏱️)?\s*(?:Text Fidelity Check|Task Fulfillment Check|Idea Development Check|Audit Kelancaran)[\s\S]*?)(?=\n#\s+[^\#]|$)/i);
+
+            const promptTask = activePromptText ? activePromptText.substring(0, 300) : 'IELTS Speaking Task';
 
             return `Act as an elite ${targetAccentName} Phonetics Master & IELTS Speaking Examiner Coach.
 I have just completed an IELTS Speaking ${mode.toUpperCase()} session in IeltsGo. Below is the EXACT diagnostic audit extracted directly from my real recorded voice evaluation.
 
 🎯 TARGET ACCENT: ${targetAccentName}
 📋 IELTS TASK / TOPIC:
-"${activePromptText.substring(0, 300)}"
+"${promptTask}"
 
 📊 MY OFFICIAL DIAGNOSED SCORES:
-${bandScore ? bandScore.substring(0, 300) : 'Overall Estimated Band: 5.5'}
+${bandScore ? bandScore.substring(0, 300) : 'Overall Estimated Band: 6.5'}
 
 🛑 MY REAL DETECTED ERRORS (Wajib gunakan data kesalahan nyata saya di bawah, JANGAN membuat contoh generik):
 1. MISPRONOUNCED WORDS & PHONETIC FAULTS (Lidah Indonesia):
@@ -1120,11 +1643,11 @@ ${mispronounced ? mispronounced.substring(0, 500) : '- Kata dasar mengalami dist
 2. MISSING SUFFIXES (+S / +ED / FINAL CLUSTERS):
 ${suffixes ? suffixes.substring(0, 400) : '- Akhiran +s/-es jamak dan +ed lampau sering tertelan.'}
 
-3. SPOKEN GRAMMAR GLITCHES & STRUCTURAL MISTAKES:
-${grammarGlitches ? grammarGlitches.substring(0, 400) : '- Subject-verb agreement dan susunan klausa masih kaku.'}
+3. SPOKEN GRAMMAR & STRUCTURAL MISTAKES:
+${grammarGlitches ? grammarGlitches.substring(0, 400) : (mode === 'part1' ? '- Read-Aloud delivery rhythm and phrasing.' : '- Subject-verb agreement dan susunan klausa masih kaku.')}
 
-4. FLUENCY, HESITATION & PAUSES:
-${fluencyNotes ? fluencyNotes.substring(0, 300) : '- Terbata-bata dan keraguan memecah alur kalimat.'}
+4. CONTENT FIDELITY & FLUENCY NOTES:
+${contentFeedback ? contentFeedback.substring(0, 400) : '- Kelancaran dan artikulasi alami.'}
 
 ${summaryRoadmap ? `\n📋 DIAGNOSED PROGRESSIVE ROADMAP:\n${summaryRoadmap.substring(0, 500)}\n` : ''}
 
@@ -1166,7 +1689,7 @@ Write a 2-sentence high-scoring model response answering my original task. Forma
                 'neutral_academic': 'Neutral International Academic'
             };
             const targetAccentName = accentNames[targetAccentKey] || 'British RP';
-            const activePromptText = speakingState.generatedPrompts[mode] || document.getElementById(`speaking-text-${mode}`)?.innerText || 'IELTS Speaking Task';
+            const activePromptText = speakingState.cleanMonologues?.[mode] || speakingState.generatedPrompts[mode] || document.getElementById(`speaking-text-${mode}`)?.innerText || 'IELTS Speaking Task';
             const grammarCtx = getUnlockedGrammarContext();
 
             const btnSubmit = document.getElementById(`btn-rec-submit-${mode}`);
@@ -1178,151 +1701,140 @@ Write a 2-sentence high-scoring model response answering my original task. Forma
                 resultBox.innerHTML = `
                     <div class="text-center py-6 font-mono text-xs text-rose-400 flex flex-col items-center gap-3">
                         <i class="fa-solid fa-headphones-simple fa-bounce text-3xl"></i>
-                        <span class="text-[11px] text-slate-400">Analisis Akustik Multimodal: Aksen (${targetAccentName}), Diagnosa Struktur Kalimat, Band 7.5 Upgrade, dan Bedah Fonetik</span>
+                        <span class="text-[11px] text-slate-400">AI Multimodal Speech & Articulation Audit: Aksen (${targetAccentName}), Evaluasi Spesifik ${mode.toUpperCase()}</span>
                     </div>
                 `;
             }
 
-            const systemPrompt = `Anda adalah Pelatih Vokal & Penguji Kelancaran IELTS Speaking yang AKURAT, JUJUR, dan MENDIDIK (gaya evaluasi terstandarisasi).
-Prioritas utama: KEJUJURAN & EDUKASI KONKRET. Jangan gunakan basa-basi, jangan inflasi nilai, dan HAPUS seksi 4 rubrik resmi yang kaku.
+            let systemPrompt = '';
+            if (mode === 'part1') {
+                const injectedList = (speakingState.injectedVocabs?.part1 || []).map(v => `${v.word} (CEFR ${v.cefr})`).join(', ') || 'None specified';
+                systemPrompt = buildPart1ShadowingSystemPrompt(activePromptText, targetAccentName, injectedList);
+            } else if (mode === 'part2') {
+                systemPrompt = buildPart2CueCardSystemPrompt(activePromptText, targetAccentName);
+            } else if (mode === 'part3') {
+                systemPrompt = buildPart3DiscussionSystemPrompt(activePromptText, targetAccentName);
+            } else {
+                systemPrompt = buildPart1ShadowingSystemPrompt(activePromptText, targetAccentName, '');
+            }
 
-Tugas: Menilai rekaman audio lisan kandidat untuk mode: ${mode.toUpperCase()}
-Topik/Pertanyaan yang Diberikan: "${activePromptText || 'IELTS Speaking'}"
-Target Aksen: ${targetAccentName}
-
-============================================
-🚨 ATURAN #1 — CEK KUALITAS AUDIO DULU
-============================================
-Jika audio hening, noise berisik, atau suara tidak terdengar:
-Tulis persis: "# ⚠️ REKAMAN TIDAK DAPAT DINILAI (AUDIO DITOLAK)"
-Jelaskan bahwa suara tidak terdengar jelas, dan STOP evaluasi.
-
-============================================
-🚨 ATURAN #2 — SKOR AKURAT & JUJUR (GAYA PERSENTASE KELIPATAN 5)
-============================================
-- Anda TIDAK memiliki spektrogram akustik fisik. Berikan estimasi skor yang JUJUR dan BULATKAN ke KELIPATAN 5 (misal: 55%, 70%, 85% — BUKAN 73% atau 84%).
-- Skala Jangkar Penilaian:
-  * 90-100%: Sangat fasih, intonasi hidup, vokal bersih sesuai target aksen ${targetAccentName}, struktur kalimat alami & gramatikal.
-  * 75-89%: Komunikasi lancar dan jelas. Ada 1-2 slip minor pada grammar atau akhiran vokal/konsonan, tapi alur bicara sangat mudah dipahami.
-  * 55-74%: Ide bisa dipahami, tetapi ada kesalahan tenses lisan yang jelas, terbata-bata/hesitasi, atau konsonan akhir tertelan.
-  * 35-54%: Terbata-bata parah, struktur kalimat terputus-putus, atau distorsi kata yang berat.
-  * 0-30%: Nyaris tidak bisa dipahami atau audio rusak.
-
-============================================
-🚨 ATURAN #3 — BEDAH STRUKTUR & UPGRADE BAND 7.5+ DENGAN ALASAN ("KENAPA DIGANTI BEGITU?")
-============================================
-1. Analisis apakah kalimat yang diucapkan kandidat strukturnya sudah jelas dan benar secara tata bahasa.
-2. Sajikan Model Kalimat Upgrade Standar IELTS Band 7.5+.
-3. BEDAH ALASAN PERUBAHAN: Jelaskan secara transparan dan gamblang MENGAPA kata/struktur tersebut diubah:
-   - Apakah karena bentuk waktu lampau (past tense)?
-   - Apakah karena kata baru lebih formal atau memiliki kolokasi yang lebih alami bagi penutur asli?
-   - Contoh: "Kalimat asli 'I'm sleep at hotel' diubah menjadi 'I rested at the hotel' karena: (1) Menghilangkan konjungsi 'am' yang salah sebelum verb biasa, (2) Menggunakan past tense 'rested', dan (3) Kata 'rest' memberikan nuansa istirahat yang lebih santai & elegan daripada sekadar 'sleep'."
-4. SOROT KOSAKATA BARU: Setiap kali Anda memperkenalkan kosakata tingkat tinggi (C1/C2) atau kolokasi elegan dalam naskah upgrade, tandai dengan format: [VOCAB: kata] agar siswa bisa menyimpannya ke Bank Kosakata. Contoh: [VOCAB: tranquil], [VOCAB: unwind], [VOCAB: picturesque].
-
-============================================
-🚨 ATURAN #4 — AUDIT FONETIK, AKSEN TARGET & CARA BACA LIDAH INDONESIA
-============================================
-- Kesesuaian Aksen: Evaluasi apakah pelafalan vokal dan konsonan sudah mengarah ke target aksen ${targetAccentName}.
-- Bedah Kata Salah (Maksimal 3 kata paling krusial):
-  * DILARANG menggunakan simbol IPA rumit! Gunakan 100% huruf alfabet Indonesia (A-Z) dengan suku kata ditekan ditulis HURUF BESAR (KAPITAL STRESS) dan arah intonasi ↗ ↘.
-  * Berikan PADANAN KATA INGGRIS SIMPEL: Bandingkan bunyi sulit dengan kata bahasa Inggris yang sangat umum (misal: bunyi vokal sama seperti di kata 'it' atau 'sit', bukan seperti 'ee' di 'eat').
-- Audit Akhiran: Periksa apakah akhiran +s/-es (/s/, /z/, /ɪz/) dan +ed (/t/, /d/, /ɪd/) terdengar jelas atau tertelan.
-
-All diagnostic commentary, explanations, and advice MUST be written in clear, accessible, friendly B1-level English.
-
-MANDATORY MARKDOWN OUTPUT STRUCTURE:
-
-# 📊 Pronunciation & Fluency Score
-**[Score rounded to multiple of 5]%** — [1 concise sentence in B1 English summarizing performance]
-- **Target Accent**: ${targetAccentName}
-- **Accent Match Assessment**: [Honest B1 English review of vowel articulation and rhythm compared to target accent]
-
-# 📝 Audio Transcription
-"[Write word-for-word exactly what was heard from the candidate's audio recording]"
-
-# 🔍 Spoken Grammar & Sentence Structure Feedback
-- **Structural Clarity**: [Comment in simple B1 English on whether the sentence flow was clear or fragmented]
-- **Grammar Corrections**:
-  * ❌ *"[Part of original sentence with error]"*
-  * 💡 *"[Grammatically accurate standard correction]"* — [Explain the rule simply in B1 English]
-
-# 🚀 Band 7.5+ Model Upgrade & Vocabulary
-- **Band 7.5+ Model Upgrade**:
-  "[Write 1-2 exemplary Band 7.5+ sentences reconstructing the candidate's thought. Insert 1-3 C1/C2 words marked with [VOCAB: word]]"
-
-- **Why We Upgraded It (Change Breakdown)**:
-  * 1️⃣ **[Original Phrase] ➔ [Upgraded Phrase]**: [Concrete explanation in simple B1 English, e.g. past tense, formal register, or native collocation]
-  * 2️⃣ **[Original Phrase] ➔ [Upgraded Phrase]**: [Concrete explanation in simple B1 English]
-  * 3️⃣ **[Original Phrase] ➔ [Upgraded Phrase]**: [Concrete explanation in simple B1 English]
-
-- **New Vocabulary to Learn**:
-  * [VOCAB: word1] = [simple B1 English definition]
-  * [VOCAB: word2] = [simple B1 English definition]
-
-# 🔊 Phonetic Breakdown & Pronunciation Tips
-(Up to 3 most important words that were mispronounced. If pronunciation was >=90%, write 'Pronunciation of key words was very clear and accurate!'):
-- ❌ **"[Mispronounced Word]"**
-  - 👂 **What You Said**: "[How it sounded]"
-  - 🗣️ **Phonetic Breakdown**: **"[Syllable breakdown with CAPITAL stress, e.g. ar-TI-cu-late ↘]"**
-  - 🔍 **Simple English Word Match**: [Name 1 very common English word with the exact same sound, e.g. "short 'i' sound is identical to 'it', not 'eat'"]
-  - 💡 **Mouth & Tongue Position**: [Simple physical cue, e.g. "Relax your jaw and widen your smile slightly"]
-
-# 🛑 Word Endings Audit (-S/-ES & -ED)
-- **-S/-ES Endings**: [Whether /s/, /z/, /ɪz/ sounds were audible or dropped]
-- **-ED Endings**: [Whether /t/, /d/, /ɪd/ sounds were audible or dropped]
-- 🗣️ **Quick Speed Drill**: [1 short practice phrase]`;
+            const userQuery = buildSpeakingUserQuery(mode, targetAccentName);
 
             try {
-                const userQuery = `Hello Examiner, please listen to my voice recording directly. Evaluate my speaking in clear, accessible B1 English. Provide a score rounded to the nearest 5%, review my accent accuracy for ${targetAccentName}, transcribe what I said, check spoken grammar and structure, provide a Band 7.5+ upgraded version with [VOCAB: word] tags explaining why each change was made, and break down any mispronounced words with simple English word matches and easy pronunciation tips in simple B1 English.`;
                 let evalResponse = await callGeminiAPI(userQuery, systemPrompt, audioBlob, { feature: 'speaking_examiner' });
 
                 if (!evalResponse) {
-                    evalResponse = `
-# 📊 Pronunciation & Fluency Score
-**75%** — Delivery is generally clear and communicative, but word endings and vocabulary register need polish.
+                    if (mode === 'part1') {
+                        evalResponse = `
+# 📊 Delivery & Fluency Score
+**80%** — Clear and communicative delivery with natural rhythm and good vowel quality.
 - **Target Accent**: ${targetAccentName}
-- **Accent Match**: Clear vowel articulation, but rhythm has occasional flat syllable timing.
+- **Accent Match Assessment**: Articulation generally aligns well with target accent vowels and timing.
 
-# 📝 Your Spoken Audio Transcript
-"${activePromptText ? activePromptText.slice(0, 100) : 'I live in a small coastal city and the local park is very peaceful.'}"
+# 📝 Audio Transcription
+"${activePromptText ? activePromptText.slice(0, 120) : 'I live in a small coastal city and the local park is very peaceful.'}"
 
-# 🔍 Sentence Structure & Spoken Grammar Audit
-- **Structure Clarity**: Main ideas are communicated clearly, but verb tense and articles can be refined.
-- **Grammar Correction**:
-  * ❌ *"I live in small coastal city"*
-  * 💡 *"I reside in a coastal community"* — Add article 'a' before singular countable noun and use a more formal verb.
+# ✅ Text Fidelity Check
+- **Words matched to original text**: High fidelity (all core keywords articulated).
+- **Skipped or added words**: None — full text was read.
 
-# 🚀 Band 7.5+ Transformation & Lexical Upgrade
-- **Band 7.5+ IELTS Model Sentence**:
-  "I currently [VOCAB: reside] in a [VOCAB: tranquil] coastal district where local residents frequently [VOCAB: unwind] in the park."
-
-- **Why It Was Upgraded**:
-  (1) Replaced 'live' with [VOCAB: reside] for a more formal academic register.
-  (2) Replaced 'peaceful' with [VOCAB: tranquil] to provide richer, more descriptive vocabulary.
-  (3) Replaced 'spend time' with [VOCAB: unwind] to demonstrate natural idiomatic flexibility.
-
-- **Suggested Vocabulary**:
-  - **reside** (verb): to live in a particular place (formal)
-  - **tranquil** (adjective): calm, peaceful, and quiet
-  - **unwind** (verb): to relax after a period of work or tension
-
-# 🔊 Pronunciation & Mispronounced Words Breakdown
-- ❌ **"Peaceful"**
-  - 👂 **You Said**: "pes-ful"
-  - 🗣️ **Phonetic Guide**: **"PII-s-ful ↘"**
-  - 🔍 **Simple English Word Matches**: The long 'ee' vowel sound is identical to 'see' or 'tree', not like 'pet'.
-  - 💡 **Mouth Position Tip**: Pull the corners of your lips slightly back as if smiling when saying 'PII'.
-- ❌ **"Residents"**
-  - 👂 **You Said**: "re-si-den"
-  - 🗣️ **Phonetic Guide**: **"RE-zi-dents ↘"**
-  - 🔍 **Simple English Word Matches**: The middle 's' sounds like the buzzing /z/ in 'buzz'.
-  - 💡 **Mouth Position Tip**: Vibrate your vocal cords on 'zi' and make sure the final '-nts' cluster is audible.
+# 🔊 Phonetic Breakdown & Pronunciation Tips
+- ❌ **"coastal"**
+  - 👂 **What You Said**: "cost-all"
+  - 🗣️ **Phonetic Breakdown**: **"KOHS-tul ↘"**
+  - 🔍 **Simple English Word Match**: Like "coast" + "ull"
+  - 💡 **Mouth & Tongue Position**: Round lips slightly on the first syllable vowel.
 
 # 🛑 Word Endings Audit (-S/-ES & -ED)
-- **-S/-ES Endings**: Terminal /s/ in 'residents' and 'parks' was slightly dropped. Make sure there is a clear hiss behind the front teeth.
+- **-S/-ES Endings**: Audible and clear on plural nouns.
 - **-ED Endings**: Well articulated in this recording.
-- 🗣️ **Quick Speed Drill**: *"The resident**s** /s/ enjoy tranquil park**s** /s/."*
+- 🗣️ **Quick Speed Drill**: *"She complete**s** /s/ her project**s** /s/ on time."*
 `;
+                    } else if (mode === 'part2') {
+                        evalResponse = `
+# 📊 Fluency & Delivery Score
+**75%** — Spontaneous monologue covers main cue card points with coherent transitions.
+- **Target Accent**: ${targetAccentName}
+- **Accent Match Assessment**: Intonation is communicative, with slight flat pacing on complex phrases.
+
+# 📝 Audio Transcription
+"${activePromptText ? activePromptText.slice(0, 120) : 'I would like to talk about a memorable journey I took recently.'}"
+
+# ✅ Task Fulfillment Check
+- **Point 1**: Addressed — Main subject introduced clearly.
+- **Point 2**: Addressed — Background context and setting explained.
+- **Point 3**: Partially addressed — Could elaborate further on personal significance.
+
+# 🔍 Grammar & Coherence Feedback
+- **Coherence & Cohesion**: Connected ideas smoothly using natural sequential discourse markers.
+- **Grammar Corrections**:
+  * ❌ *"I stay at hotel"*
+  * 💡 *"I stayed at a hotel"* — Ensure past simple inflection and article 'a'.
+
+# 🚀 Band 7.5+ Model Upgrade & Vocabulary
+- **Band 7.5+ Model Upgrade**:
+  "During this journey, I [VOCAB: ventured] into picturesque coastal districts where I could truly [VOCAB: unwind]."
+- **Why We Upgraded It**:
+  * 1️⃣ **'stay' ➔ 'ventured'**: More descriptive and academic verb choice.
+  * 2️⃣ **'relax' ➔ 'unwind'**: Natural idiomatic collocation for stress relief.
+- **New Vocabulary to Learn**:
+  * [VOCAB: ventured] = traveled into a new or unfamiliar place
+  * [VOCAB: unwind] = to relax after strenuous activity
+
+# 🔊 Phonetic Breakdown & Pronunciation Tips
+- ❌ **"journey"**
+  - 👂 **What You Said**: "jor-nee"
+  - 🗣️ **Phonetic Breakdown**: **"JUR-nee ↘"**
+  - 🔍 **Simple English Word Match**: First vowel matches "sir" or "bird"
+  - 💡 **Mouth & Tongue Position**: Curl the tongue back slightly mid-mouth.
+
+# 🛑 Word Endings Audit (-S/-ES & -ED)
+- **-S/-ES Endings**: Audible on final markers.
+- **-ED Endings**: Clear on past narrative forms.
+- 🗣️ **Quick Speed Drill**: *"We explore**d** /d/ diverse region**s** /z/."*
+`;
+                    } else {
+                        evalResponse = `
+# 📊 Discussion & Delivery Score
+**75%** — Analytical viewpoint presented with solid reasoning.
+- **Target Accent**: ${targetAccentName}
+- **Accent Match Assessment**: Natural rhythm and communicative pitch variation.
+
+# 📝 Audio Transcription
+"${activePromptText ? activePromptText.slice(0, 120) : 'In my opinion, technology brings both benefits and challenges to social relationships.'}"
+
+# 💡 Idea Development Check
+- **Question 1**: Developed — Clear stance backed by reasoning and modern example.
+
+# 🔍 Grammar & Structure Feedback
+- **Complex Structure Attempts**: Used conditional structure ("If society balances screen time, social ties can strengthen").
+- **Grammar Corrections**:
+  * ❌ *"it make people isolated"*
+  * 💡 *"it makes people feel isolated"* — Subject-verb agreement with third-person singular.
+
+# 🚀 Band 7.5+ Model Upgrade & Vocabulary
+- **Band 7.5+ Model Upgrade**:
+  "Although digital tools [VOCAB: facilitate] connectivity, they can inadvertently [VOCAB: diminish] deep personal rapport."
+- **Why We Upgraded It**:
+  * 1️⃣ **'help' ➔ 'facilitate'**: Higher register analytical verb.
+  * 2️⃣ **'reduce' ➔ 'diminish'**: More precise academic nuance.
+- **New Vocabulary to Learn**:
+  * [VOCAB: facilitate] = to make an action or process easier
+  * [VOCAB: diminish] = to make or become less
+
+# 🔊 Phonetic Breakdown & Pronunciation Tips
+- ❌ **"technology"**
+  - 👂 **What You Said**: "tek-no-LO-jee"
+  - 🗣️ **Phonetic Breakdown**: **"tek-NOL-uh-jee ↘"**
+  - 🔍 **Simple English Word Match**: Stress 'NOL' identical to 'knowledge'
+  - 💡 **Mouth & Tongue Position**: Stress the second syllable with open jaw.
+
+# 🛑 Word Endings Audit (-S/-ES & -ED)
+- **-S/-ES Endings**: Consistent on 3rd person verbs.
+- **-ED Endings**: Distinct on passive constructions.
+- 🗣️ **Quick Speed Drill**: *"Advance**s** /ɪz/ in tool**s** /z/ impact live**s** /z/."*
+`;
+                    }
                 }
 
                 // Generate Dynamic Error-Injected Speaking Remediation Prompt
@@ -1338,9 +1850,9 @@ MANDATORY MARKDOWN OUTPUT STRUCTURE:
                     resultBox.innerHTML = `
                         <div class="flex items-center justify-between border-b border-rose-500/30 pb-3 mb-4">
                             <h3 class="font-bold text-white text-sm flex items-center gap-2">
-                                <i class="fa-solid fa-headphones-simple text-rose-400"></i> HASIL AUDIT AKUSTIK & IELTS SPEAKING EXAMINER
+                                <i class="fa-solid fa-headphones-simple text-rose-400"></i> HASIL EVALUASI IELTS SPEAKING COACH (AI Multimodal Speech & Articulation Audit)
                             </h3>
-                            <span class="text-[10px] font-mono bg-rose-500/20 text-rose-300 px-2.5 py-1 rounded-full border border-rose-500/30 font-bold">BAND 7.5 RETEST CALIBRATED</span>
+                            <span class="text-[10px] font-mono bg-rose-500/20 text-rose-300 px-2.5 py-1 rounded-full border border-rose-500/30 font-bold">AI Multimodal Delivery & Articulation Audit (IELTS Band 7.5+ Calibration)</span>
                         </div>
                         <div class="space-y-3">
                             ${renderSpeakingAuditAccordions(evalResponse, mode)}
@@ -1415,4 +1927,27 @@ MANDATORY MARKDOWN OUTPUT STRUCTURE:
             }).catch(() => {
                 showToast("Gagal menyalin prompt.", "error");
             });
+        }
+
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = {
+                speakingState,
+                buildPart1ShadowingSystemPrompt,
+                buildPart2CueCardSystemPrompt,
+                buildPart3DiscussionSystemPrompt,
+                buildSpeakingUserQuery,
+                parseGeneratedSpeakingPrompt,
+                cleanSpeakingTextForTTS,
+                renderSpeakingAuditAccordions,
+                buildDynamicSpeakingRemediationPrompt,
+                submitSpeakingEvaluation,
+                generateSpeakingPrompt,
+                loadRetestScriptToSpeakingBox,
+                toggleSpeakingStudyPromptView,
+                switchSpeakingMode,
+                updateSpeakingTargetAccent,
+                onSpeakingGrammarModeChange,
+                onSpeakingRateChange,
+                getUnlockedGrammarContext
+            };
         }

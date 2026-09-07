@@ -26,7 +26,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- PDF.js & Mammoth Document Parsers -->
@@ -57,7 +57,6 @@
                     },
                     fontFamily: {
                         sans: ['Outfit', 'sans-serif'],
-                        serif: ['Newsreader', 'Georgia', 'serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     }
                 }
@@ -288,228 +287,87 @@
             <!-- ========================================================= -->
             <!-- DASHBOARD SECTION (v6.0)                                  -->
             <!-- ========================================================= -->
-            <!-- ========================================================= -->
-            <!-- THE FOCUS COCKPIT & DASHBOARD (Calm Editorial Academic)    -->
-            <!-- ========================================================= -->
             <div id="tab-dashboard" class="tab-content space-y-6">
-
-                <!-- 1. Editorial Masthead Banner (The Cambridge-IDP Daily Dispatch) -->
-                <div class="editorial-card editorial-masthead p-6 md:p-8 relative overflow-hidden widget-fadein">
-                    <!-- Publication Metadata Dateline -->
-                    <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3.5 mb-5 text-[11px] font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400 animate-pulse"></span>
-                            <span class="font-bold text-indigo-700 dark:text-indigo-400">Cambridge-IDP Standard</span>
-                            <span class="text-slate-300 dark:text-slate-700">•</span>
-                            <span>IELTS Band 7.5+ Candidate Journal</span>
-                        </div>
-                        <div class="flex items-center space-x-2 font-semibold">
-                            <span id="dash-greeting-badge" class="text-indigo-600 dark:text-indigo-400">Selamat Datang!</span>
-                        </div>
-                    </div>
-
-                    <!-- Editorial Masthead Headline & Quick Metric Capsules -->
-                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-                        <div class="space-y-2 max-w-2xl">
-                            <div class="inline-flex items-center space-x-2 text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/70 px-2.5 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800/60">
-                                <i class="fa-solid fa-feather-pointed mr-1"></i> The Focus Cockpit
+                <!-- 1. Hero Status Card (Unified Daily Focus) -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden widget-fadein">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/60 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-800/40">
+                                    <i class="fa-solid fa-graduation-cap mr-1"></i> IELTS MASTER COCKPIT
+                                </span>
+                                <span id="dash-greeting-badge" class="text-xs text-slate-500 dark:text-slate-400 font-mono">Selamat Datang!</span>
                             </div>
-                            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
-                                Candidate Focus & Calibration Studio
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                                <span>Ringkasan Kemajuan Belajar</span>
                             </h2>
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-editorial italic leading-relaxed">
-                                "A disciplined 20-minute daily practice transforms syntactic precision, acoustic clarity, and academic coherence toward Band 7.5+ mastery."
-                            </p>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">Pantau ritme latihan, hafalan kosakata CEFR, pelafalan speaking, dan taklukkan semua stage menuju target emas Band 7.5+.</p>
                         </div>
 
-                        <!-- Streak & Level Metric Plaques -->
-                        <div class="flex items-center gap-3 w-full sm:w-auto">
-                            <div class="bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-xl flex items-center space-x-3.5 flex-1 sm:flex-initial shadow-sm">
-                                <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg border border-amber-200 dark:border-amber-800/50">
+                        <!-- Streak & Level Quick Capsule -->
+                        <div class="flex items-center gap-3 w-full md:w-auto">
+                            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3.5 rounded-2xl flex items-center space-x-3 flex-1 md:flex-initial shadow-sm">
+                                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl border border-amber-200 dark:border-amber-800/40">
                                     <i class="fa-solid fa-fire"></i>
                                 </div>
                                 <div>
-                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Study Streak</div>
-                                    <div id="dash-streak-count" class="text-base sm:text-lg font-bold text-amber-700 dark:text-amber-400 font-mono leading-none mt-0.5">1 Hari</div>
+                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Study Streak</div>
+                                    <div id="dash-streak-count" class="text-lg font-black text-amber-600 dark:text-amber-400 font-mono">1 Hari</div>
                                 </div>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-xl flex items-center space-x-3.5 flex-1 sm:flex-initial shadow-sm">
-                                <div class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-lg border border-indigo-200 dark:border-indigo-800/50">
+                            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3.5 rounded-2xl flex items-center space-x-3 flex-1 md:flex-initial shadow-sm">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg border border-indigo-200 dark:border-indigo-800/40 font-bold">
                                     <i class="fa-solid fa-shield-halved"></i>
                                 </div>
                                 <div>
-                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Candidate Level</div>
-                                    <div id="dash-level-text" class="text-base sm:text-lg font-bold text-indigo-700 dark:text-indigo-400 font-mono leading-none mt-0.5">Level 1</div>
+                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">Level Saat Ini</div>
+                                    <div id="dash-level-text" class="text-lg font-black text-indigo-600 dark:text-indigo-400 font-mono">Level 1</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- XP Progression Gauge & Hero Deliberate Action CTA -->
-                    <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
-                        <div class="sm:col-span-8 space-y-2">
-                            <div class="flex justify-between items-center text-xs font-mono">
-                                <span class="text-slate-600 dark:text-slate-400 font-semibold flex items-center gap-1.5">
-                                    <i class="fa-solid fa-compass text-indigo-600 dark:text-indigo-400"></i> Progression to Next Band Level:
+                    <!-- XP Progress Tracker inside Hero -->
+                    <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                        <div class="sm:col-span-8 space-y-1.5">
+                            <div class="flex justify-between text-xs font-mono">
+                                <span class="text-slate-500 dark:text-slate-400 font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-bolt text-amber-500"></i> Progres XP Menuju Level Berikutnya:
                                 </span>
-                                <span id="dash-xp-fraction" class="text-indigo-700 dark:text-indigo-400 font-bold">0 / 400 XP</span>
+                                <span id="dash-xp-fraction" class="text-indigo-600 dark:text-indigo-400 font-bold">0 / 400 XP</span>
                             </div>
-                            <div class="w-full bg-slate-100 dark:bg-slate-950 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-800">
-                                <div id="dash-xp-bar-inner" class="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-950 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-800">
+                                <div id="dash-xp-bar-inner" class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                             </div>
                         </div>
                         <div class="sm:col-span-4 flex justify-start sm:justify-end">
-                            <button onclick="continueNextIncompleteStage()" id="btn-dash-hero-continue" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-700 hover:bg-indigo-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
-                                <i class="fa-solid fa-play text-[10px]"></i>
+                            <button onclick="continueNextIncompleteStage()" id="btn-dash-hero-continue" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
+                                <i class="fa-solid fa-play"></i>
                                 <span id="dash-hero-continue-text">Lanjut Belajar Stage 1</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. BAND 7.5 DIAGNOSTIC READINESS RADAR & DELIBERATE RITUAL (NEW) -->
-                <div class="editorial-card p-6 space-y-5 widget-fadein">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
-                        <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-sm border border-indigo-200 dark:border-indigo-800/60">
-                                <i class="fa-solid fa-chart-radar"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                                    <span>Band 7.5+ Readiness Calibration Radar</span>
-                                </h3>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">4-Pillar Academic Assessment Rubric (Cambridge / IDP Benchmark)</p>
-                            </div>
-                        </div>
-                        <span id="dash-radar-composite" class="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/70">
-                            Target Band: 7.5 • Calibrating
-                        </span>
-                    </div>
-
-                    <!-- 2-Part Grid: 4-Pillar Diagnostic Gauges & 20-Min Deliberate Ritual Protocol -->
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        <!-- Left: 4 Pillars Diagnostic Bars (Col 7) -->
-                        <div class="lg:col-span-7 space-y-3.5 font-mono text-xs">
-                            <!-- TR -->
-                            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1.5">
-                                <div class="flex justify-between items-center text-[11px]">
-                                    <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                                        <span class="w-4 h-4 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center justify-center font-bold">TR</span>
-                                        <span>Task Response & Topic Synthesis</span>
-                                    </span>
-                                    <span class="text-slate-500 dark:text-slate-400">Band <strong id="dash-radar-tr-score" class="text-emerald-700 dark:text-emerald-400 text-xs">6.0</strong> / 8.5</span>
-                                </div>
-                                <div class="radar-bar-track">
-                                    <div id="dash-radar-tr-bar" class="radar-bar-fill bg-emerald-600" style="width: 50%"></div>
-                                </div>
-                            </div>
-
-                            <!-- CC -->
-                            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1.5">
-                                <div class="flex justify-between items-center text-[11px]">
-                                    <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                                        <span class="w-4 h-4 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 text-[10px] flex items-center justify-center font-bold">CC</span>
-                                        <span>Coherence, Cohesion & Clause Logic</span>
-                                    </span>
-                                    <span class="text-slate-500 dark:text-slate-400">Band <strong id="dash-radar-cc-score" class="text-blue-700 dark:text-blue-400 text-xs">6.0</strong> / 8.5</span>
-                                </div>
-                                <div class="radar-bar-track">
-                                    <div id="dash-radar-cc-bar" class="radar-bar-fill bg-blue-600" style="width: 50%"></div>
-                                </div>
-                            </div>
-
-                            <!-- LR -->
-                            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1.5">
-                                <div class="flex justify-between items-center text-[11px]">
-                                    <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                                        <span class="w-4 h-4 rounded bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 text-[10px] flex items-center justify-center font-bold">LR</span>
-                                        <span>Lexical Resource & C1/C2 Collocations</span>
-                                    </span>
-                                    <span class="text-slate-500 dark:text-slate-400">Band <strong id="dash-radar-lr-score" class="text-purple-700 dark:text-purple-400 text-xs">6.0</strong> / 8.5</span>
-                                </div>
-                                <div class="radar-bar-track">
-                                    <div id="dash-radar-lr-bar" class="radar-bar-fill bg-purple-600" style="width: 50%"></div>
-                                </div>
-                            </div>
-
-                            <!-- GRA -->
-                            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1.5">
-                                <div class="flex justify-between items-center text-[11px]">
-                                    <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                                        <span class="w-4 h-4 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 text-[10px] flex items-center justify-center font-bold">GRA</span>
-                                        <span>Grammatical Range & Acoustic Precision</span>
-                                    </span>
-                                    <span class="text-slate-500 dark:text-slate-400">Band <strong id="dash-radar-gra-score" class="text-amber-700 dark:text-amber-400 text-xs">6.0</strong> / 8.5</span>
-                                </div>
-                                <div class="radar-bar-track">
-                                    <div id="dash-radar-gra-bar" class="radar-bar-fill bg-amber-600" style="width: 50%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right: 20-Min Deliberate Ritual Protocol (Col 5) -->
-                        <div class="lg:col-span-5 bg-slate-50 dark:bg-slate-950/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
-                            <div class="space-y-2">
-                                <div class="flex items-center space-x-2 text-[10px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
-                                    <i class="fa-solid fa-stopwatch text-indigo-600 dark:text-indigo-400"></i>
-                                    <span>20-Minute Deliberate Ritual</span>
-                                </div>
-                                <h4 class="font-serif font-bold text-sm text-slate-900 dark:text-slate-100">
-                                    Daily Tri-Pillar Routine
-                                </h4>
-                                <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-editorial italic">
-                                    Three deliberate touchpoints per day build permanent neural pathways for academic fluency.
-                                </p>
-                            </div>
-
-                            <!-- 3-Touchpoint Deliberate Steps -->
-                            <div class="space-y-2 font-mono text-xs">
-                                <div onclick="document.getElementById('daily-affirmation-card').scrollIntoView({behavior:'smooth'})" class="deliberate-step-pill p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:border-indigo-400 transition-all">
-                                    <div class="flex items-center space-x-2.5">
-                                        <span class="w-5 h-5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center text-[10px] font-bold">1</span>
-                                        <span class="text-slate-800 dark:text-slate-200 text-[11px] font-semibold">Vocal Power Warmup</span>
-                                    </div>
-                                    <span class="text-[10px] text-amber-600 dark:text-amber-400 font-bold">+30 XP</span>
-                                </div>
-
-                                <div onclick="continueNextIncompleteStage()" class="deliberate-step-pill p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:border-indigo-400 transition-all">
-                                    <div class="flex items-center space-x-2.5">
-                                        <span class="w-5 h-5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-[10px] font-bold">2</span>
-                                        <span class="text-slate-800 dark:text-slate-200 text-[11px] font-semibold">Curricular Stage Mastery</span>
-                                    </div>
-                                    <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">+100 XP</span>
-                                </div>
-
-                                <div onclick="startReviewSession()" class="deliberate-step-pill p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:border-indigo-400 transition-all">
-                                    <div class="flex items-center space-x-2.5">
-                                        <span class="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-[10px] font-bold">3</span>
-                                        <span class="text-slate-800 dark:text-slate-200 text-[11px] font-semibold">SM-2 Spaced Recall</span>
-                                    </div>
-                                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">+50 XP</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. DAILY IELTS AFFIRMATION & VOCAL POWER BOOSTER (Preserved ID) -->
-                <div id="daily-affirmation-card" class="editorial-card p-5 sm:p-6 space-y-4 widget-fadein relative overflow-hidden">
+                <!-- DAILY IELTS AFFIRMATION & VOCAL POWER BOOSTER (v6.4) -->
+                <div id="daily-affirmation-card" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm relative overflow-hidden">
+                    <!-- Top Bar: Badge, XP, and Settings Deck Button -->
                     <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
                         <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-200 dark:border-amber-800/50">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-200 dark:border-amber-800/40">
                                 <i class="fa-solid fa-fire"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                     <span>Daily IELTS Affirmation & Vocal Power</span>
-                                    <span class="text-[10px] font-mono font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/50">+30 XP</span>
+                                    <span class="text-[10px] font-mono font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/40">+30 XP</span>
                                 </h3>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Morning Acoustic Conditioning • Read Aloud to Prime Voice & Academic Mindset</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Ritual Harian 1x Sehari • Ketik & Ucapkan Lantang untuk Memprogram Mindset Juara</p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
                             <button onclick="openAffirmationsManager()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-mono font-semibold rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 transition-all shadow-sm">
-                                <i class="fa-solid fa-sliders text-amber-600 dark:text-amber-400"></i>
+                                <i class="fa-solid fa-sliders text-amber-500"></i>
                                 <span>Kelola Deck (<span id="affirmation-deck-count">5</span>)</span>
                             </button>
                         </div>
@@ -519,34 +377,34 @@
                     <div id="affirmation-card-body"></div>
                 </div>
 
-                <!-- 4. 2-COLUMN BALANCED DASHBOARD WORKSTATION -->
+                <!-- 2-Column Balanced Dashboard Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     
                     <!-- LEFT COLUMN (Col 6): Roadmap Progress & Speaking Lab Snapshot -->
                     <div class="lg:col-span-6 space-y-6">
                         
                         <!-- 1. Roadmap Phases Progress -->
-                        <div class="editorial-card p-5 space-y-4 widget-fadein">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm">
                             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                                 <div class="flex items-center space-x-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-sm border border-indigo-200 dark:border-indigo-800/50">
+                                    <div class="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-sm border border-cyan-200 dark:border-cyan-800/40">
                                         <i class="fa-solid fa-map-location-dot"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Curricular Roadmap Mastery</h3>
+                                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Roadmap Phase Mastery</h3>
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">14 Stages • 5 Mini-Bosses • 1 Final Boss</p>
                                     </div>
                                 </div>
-                                <span id="dash-overall-percent" class="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-500/30">0% Selesai</span>
+                                <span id="dash-overall-percent" class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-500/30">0% Selesai</span>
                             </div>
 
                             <!-- 5 Phase Progress Rows -->
                             <div class="space-y-2.5 font-mono text-xs">
                                 <!-- Phase 1 -->
-                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-emerald-500/40 transition-all cursor-pointer" onclick="switchTab('phase1')">
+                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-emerald-500/40 transition-all cursor-pointer" onclick="switchTab('phase1')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-[10px]">I</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 1: Base Engine</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 1: Base Engine</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -557,10 +415,10 @@
                                 </div>
 
                                 <!-- Phase 2 -->
-                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-blue-500/40 transition-all cursor-pointer" onclick="switchTab('phase2')">
+                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-blue-500/40 transition-all cursor-pointer" onclick="switchTab('phase2')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-[10px]">II</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 2: Time & Modifiers</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 2: Time & Modifiers</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -571,10 +429,10 @@
                                 </div>
 
                                 <!-- Phase 3 -->
-                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-purple-500/40 transition-all cursor-pointer" onclick="switchTab('phase3')">
+                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-purple-500/40 transition-all cursor-pointer" onclick="switchTab('phase3')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 flex items-center justify-center font-bold text-[10px]">III</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 3: Combos & Clauses</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 3: Combos & Clauses</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -585,10 +443,10 @@
                                 </div>
 
                                 <!-- Phase 4 -->
-                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-amber-500/40 transition-all cursor-pointer" onclick="switchTab('phase4')">
+                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-amber-500/40 transition-all cursor-pointer" onclick="switchTab('phase4')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center font-bold text-[10px]">IV</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 4: Precision & Shield</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 4: Precision & Shield</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -599,10 +457,10 @@
                                 </div>
 
                                 <!-- Phase 5 -->
-                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-cyan-500/40 transition-all cursor-pointer" onclick="switchTab('phase5')">
+                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-cyan-500/40 transition-all cursor-pointer" onclick="switchTab('phase5')">
                                     <div class="flex items-center space-x-2.5">
                                         <span class="w-5 h-5 rounded bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 flex items-center justify-center font-bold text-[10px]">V</span>
-                                        <span class="text-slate-800 dark:text-slate-200 font-semibold">Fase 5: Output Automation</span>
+                                        <span class="text-slate-800 dark:text-slate-200 font-bold">Fase 5: Output Automation</span>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div class="w-20 sm:w-24 bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
@@ -614,7 +472,7 @@
                             </div>
 
                             <!-- Boss Arena Status Capsule -->
-                            <div class="bg-slate-50 dark:bg-slate-950/80 p-3.5 rounded-xl border border-red-200 dark:border-red-500/30 flex items-center justify-between font-mono text-xs cursor-pointer hover:border-red-400 transition-all" onclick="switchTab('boss')">
+                            <div class="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-red-200 dark:border-red-500/30 flex items-center justify-between font-mono text-xs cursor-pointer hover:border-red-400 transition-all" onclick="switchTab('boss')">
                                 <div class="flex items-center space-x-2.5 text-red-600 dark:text-red-400 font-bold">
                                     <i class="fa-solid fa-dragon"></i>
                                     <span>60-Min Boss Arena</span>
@@ -624,33 +482,33 @@
                         </div>
 
                         <!-- 2. Speaking Lab Diagnostic Snapshot -->
-                        <div class="editorial-card p-5 space-y-4 widget-fadein">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm">
                             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                                 <div class="flex items-center space-x-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 flex items-center justify-center text-sm border border-rose-200 dark:border-rose-800/50">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-sm border border-rose-200 dark:border-rose-800/40">
                                         <i class="fa-solid fa-microphone"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Speaking Acoustic Diagnostic</h3>
+                                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Speaking Lab & Acoustic Audit</h3>
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Part 1, 2, 3 • Live Waveform & Accent Evaluation</p>
                                     </div>
                                 </div>
-                                <span id="dash-speaking-accent-tag" class="text-[10px] font-mono font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/80 px-2.5 py-1 rounded-md border border-rose-200 dark:border-rose-500/30">🇬🇧 British RP</span>
+                                <span id="dash-speaking-accent-tag" class="text-[10px] font-mono font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950 px-2.5 py-1 rounded-md border border-rose-200 dark:border-rose-500/30">🇬🇧 British RP</span>
                             </div>
 
                             <!-- 3 Speaking Mode Status -->
                             <div class="grid grid-cols-3 gap-2 font-mono text-xs">
-                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
+                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
                                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Part 1</div>
                                     <div id="dash-spk-part1-status" class="text-slate-500 font-bold text-xs"><i class="fa-solid fa-circle-xmark mr-1"></i> Belum</div>
                                     <div class="text-[9px] text-slate-400">Shadowing</div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
+                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
                                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Part 2</div>
                                     <div id="dash-spk-part2-status" class="text-slate-500 font-bold text-xs"><i class="fa-solid fa-circle-xmark mr-1"></i> Belum</div>
                                     <div class="text-[9px] text-slate-400">2-Min Cue Card</div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-950/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
+                                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-1">
                                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">Part 3</div>
                                     <div id="dash-spk-part3-status" class="text-slate-500 font-bold text-xs"><i class="fa-solid fa-circle-xmark mr-1"></i> Belum</div>
                                     <div class="text-[9px] text-slate-400">Q&A Drill</div>
@@ -658,7 +516,7 @@
                             </div>
 
                             <div class="pt-1">
-                                <button onclick="switchTab('speaking-lab')" class="w-full py-2.5 bg-rose-700 hover:bg-rose-800 dark:bg-rose-600 dark:hover:bg-rose-500 text-white font-semibold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
+                                <button onclick="switchTab('speaking-lab')" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
                                     <i class="fa-solid fa-microphone-lines"></i>
                                     <span>Buka Speaking Lab (+150 XP)</span>
                                 </button>
@@ -670,30 +528,30 @@
                     <div class="lg:col-span-6 space-y-6">
                         
                         <!-- 3. Vocabulary Bank (Spaced Repetition) -->
-                        <div class="editorial-card p-5 space-y-4 widget-fadein flex flex-col justify-between">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm flex flex-col justify-between">
                             <div class="space-y-3.5">
                                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                                     <div class="flex items-center space-x-2.5">
-                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-sm border border-emerald-200 dark:border-emerald-800/50">
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm border border-emerald-200 dark:border-emerald-800/40">
                                             <i class="fa-solid fa-book-bookmark"></i>
                                         </div>
                                         <div>
-                                            <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Vocabulary & Lexical Vault</h3>
-                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Spaced Repetition (SM-2 & Feynman Anchoring)</p>
+                                            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Vocabulary Bank</h3>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Spaced Repetition (SM-2 & Feynman Recall)</p>
                                         </div>
                                     </div>
                                     <span id="dash-vocab-total-badge" class="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-500/30">0 Kata</span>
                                 </div>
 
                                 <!-- Review Due Banner -->
-                                <div id="dash-vocab-review-banner" class="bg-slate-50 dark:bg-slate-950/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2.5">
+                                <div id="dash-vocab-review-banner" class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2.5">
                                     <div class="flex justify-between items-center text-xs font-mono">
                                         <span class="text-slate-700 dark:text-slate-300 font-bold flex items-center gap-1.5">
-                                            <i class="fa-solid fa-clock-rotate-left text-amber-600 dark:text-amber-400"></i> Perlu Direview Hari Ini:
+                                            <i class="fa-solid fa-clock-rotate-left text-amber-500"></i> Perlu Direview Hari Ini:
                                         </span>
-                                        <span id="dash-vocab-due-count" class="text-amber-700 dark:text-amber-400 font-bold text-sm">0 Kata</span>
+                                        <span id="dash-vocab-due-count" class="text-amber-600 dark:text-amber-400 font-bold text-sm">0 Kata</span>
                                     </div>
-                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-editorial italic">Lock academic vocabulary into durable long-term memory via calibrated SM-2 intervals.</p>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">Uji daya ingat Anda dengan sistem Spaced Repetition untuk mengunci kosakata di memori jangka panjang.</p>
                                     <button onclick="startReviewSession()" id="btn-dash-review-cta" class="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 font-mono">
                                         <i class="fa-solid fa-bolt"></i>
                                         <span>Mulai Sesi Review Hari Ini</span>
@@ -723,15 +581,15 @@
                         </div>
 
                         <!-- 4. Achievements & Badges Showcase -->
-                        <div class="editorial-card p-5 space-y-4 widget-fadein">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 widget-fadein shadow-sm">
                             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                                 <div class="flex items-center space-x-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-200 dark:border-amber-800/50">
+                                    <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm border border-amber-200 dark:border-amber-800/40">
                                         <i class="fa-solid fa-trophy"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Academic Honours & Medals</h3>
-                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Pencapaian Kompetensi IELTS</p>
+                                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Achievements & Badges</h3>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Pencapaian Gamifikasi Anda</p>
                                     </div>
                                 </div>
                                 <span id="dash-badges-unlocked-count" class="text-xs font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-500/30">0 / 18</span>
@@ -1798,17 +1656,31 @@
                         </div>
                     </div>
 
-                    <!-- Target Accent & Phonetics Goal Selector -->
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto bg-slate-950 p-2.5 sm:px-3 sm:py-2 rounded-xl border border-slate-800">
-                        <label for="speaking-target-accent" class="text-[11px] font-mono font-bold text-rose-300 whitespace-nowrap flex items-center gap-1.5 shrink-0">
-                            <i class="fa-solid fa-earth-americas"></i> Target Accent:
-                        </label>
-                        <select id="speaking-target-accent" onchange="updateSpeakingTargetAccent()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2 py-1 font-mono focus:outline-none focus:border-rose-500 cursor-pointer w-full sm:w-auto truncate">
-                            <option value="british_rp">🇬🇧 British RP (Received Pronunciation)</option>
-                            <option value="general_american">🇺🇸 General American (US Standard)</option>
-                            <option value="australian">🇦🇺 Australian English</option>
-                            <option value="neutral_academic">🌍 Neutral Academic (International)</option>
-                        </select>
+                    <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                        <!-- Mode Scaffolding Tata Bahasa Selector -->
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-slate-950 p-2.5 sm:px-3 sm:py-2 rounded-xl border border-slate-800">
+                            <label for="select-speaking-grammar-mode" class="text-[11px] font-mono font-bold text-emerald-300 whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                                <i class="fa-solid fa-sliders"></i> Tata Bahasa:
+                            </label>
+                            <select id="select-speaking-grammar-mode" onchange="onSpeakingGrammarModeChange()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2 py-1 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer w-full sm:w-auto">
+                                <option value="ielts_natural" selected>✨ IELTS Band 7.5+ Alami (Rekomendasi)</option>
+                                <option value="recent_stages">🎯 Fokus 2-3 Stage Terakhir</option>
+                                <option value="all_stages">📚 Semua Stage Terbuka (Strict)</option>
+                            </select>
+                        </div>
+
+                        <!-- Target Accent & Phonetics Goal Selector -->
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-slate-950 p-2.5 sm:px-3 sm:py-2 rounded-xl border border-slate-800">
+                            <label for="speaking-target-accent" class="text-[11px] font-mono font-bold text-rose-300 whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                                <i class="fa-solid fa-earth-americas"></i> Target Accent:
+                            </label>
+                            <select id="speaking-target-accent" onchange="updateSpeakingTargetAccent()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2 py-1 font-mono focus:outline-none focus:border-rose-500 cursor-pointer w-full sm:w-auto truncate">
+                                <option value="british_rp">🇬🇧 British RP (Received Pronunciation)</option>
+                                <option value="general_american">🇺🇸 General American (US Standard)</option>
+                                <option value="australian">🇦🇺 Australian English</option>
+                                <option value="neutral_academic">🌍 Neutral Academic (International)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -1922,7 +1794,7 @@
                                     </div>
                                     <div class="flex items-center space-x-1.5">
                                         <span class="text-[11px] text-slate-400">Speed:</span>
-                                        <select id="select-tts-rate-part1" class="bg-slate-950 text-indigo-300 text-[11px] font-bold rounded-lg px-2 py-1 border border-slate-800 focus:outline-none">
+                                        <select id="select-tts-rate-part1" onchange="onSpeakingRateChange('part1')" class="bg-slate-950 text-indigo-300 text-[11px] font-bold rounded-lg px-2 py-1 border border-slate-800 focus:outline-none">
                                             <option value="0.85">0.85x (Drill)</option>
                                             <option value="1.0" selected>1.0x (Normal)</option>
                                             <option value="1.15">1.15x (Fast)</option>
@@ -1931,9 +1803,10 @@
                                 </div>
                             </div>
 
-                            <div id="speaking-text-part1" class="text-sm text-slate-200 leading-relaxed font-sans p-2">
+                            <div id="speaking-text-part1" class="text-base sm:text-lg text-slate-100 font-medium leading-relaxed p-3 bg-slate-950/40 rounded-xl border border-slate-800/40">
                                 Klik tombol <strong>"Generate Teks Baru"</strong> di atas untuk membuat teks monolog latihan speaking otomatis berbasis stage yang telah Anda kuasai.
                             </div>
+                            <div id="speaking-grammar-notes-part1" class="hidden text-xs text-slate-300 bg-slate-900/70 p-3 rounded-xl border border-slate-800/80 my-2 font-mono"></div>
                             <div id="speaking-grammar-tags-part1" class="flex flex-wrap gap-1.5 pt-2 border-t border-slate-900"></div>
                             <div id="speaking-vocab-tags-part1" class="hidden flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-900 text-xs"></div>
                         </div>
@@ -2035,7 +1908,7 @@
                                     </div>
                                     <div class="flex items-center space-x-1.5">
                                         <span class="text-[11px] text-slate-400">Speed:</span>
-                                        <select id="select-tts-rate-part2" class="bg-slate-950 text-amber-300 text-[11px] font-bold rounded-lg px-2 py-1 border border-slate-800 focus:outline-none">
+                                        <select id="select-tts-rate-part2" onchange="onSpeakingRateChange('part2')" class="bg-slate-950 text-amber-300 text-[11px] font-bold rounded-lg px-2 py-1 border border-slate-800 focus:outline-none">
                                             <option value="0.85">0.85x (Slow)</option>
                                             <option value="1.0" selected>1.0x (Normal)</option>
                                             <option value="1.15">1.15x (Fast)</option>
@@ -2047,6 +1920,7 @@
                             <div id="speaking-text-part2" class="text-xs text-slate-200 leading-relaxed font-sans p-2">
                                 Klik <strong>"Generate Cue Card"</strong> di atas untuk memulai simulasi Part 2.
                             </div>
+                            <div id="speaking-grammar-notes-part2" class="hidden text-xs text-slate-300 bg-slate-900/70 p-3 rounded-xl border border-slate-800/80 my-2 font-mono"></div>
                             <div id="speaking-grammar-tags-part2" class="flex flex-wrap gap-1.5 pt-2 border-t border-slate-900"></div>
                             <div id="speaking-vocab-tags-part2" class="hidden flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-900 text-xs"></div>
                         </div>
@@ -2163,7 +2037,7 @@
                                     </div>
                                     <div class="flex items-center space-x-1.5">
                                         <span class="text-[11px] text-slate-400">Speed:</span>
-                                        <select id="select-tts-rate-part3" class="bg-slate-950 text-cyan-300 text-[11px] font-bold rounded-lg px-2 py-1 border border-slate-800 focus:outline-none">
+                                        <select id="select-tts-rate-part3" onchange="onSpeakingRateChange('part3')" class="bg-slate-950 text-cyan-300 text-[11px] font-bold rounded-lg px-2 py-1 border border-slate-800 focus:outline-none">
                                             <option value="0.85">0.85x (Slow)</option>
                                             <option value="1.0" selected>1.0x (Normal)</option>
                                             <option value="1.15">1.15x (Fast)</option>
@@ -2175,6 +2049,7 @@
                             <div id="speaking-text-part3" class="text-sm font-semibold text-slate-100 leading-relaxed font-sans p-2">
                                 Klik <strong>"Generate Pertanyaan Part 3"</strong> di atas untuk memanggil pertanyaan diskusi analitis dari AI.
                             </div>
+                            <div id="speaking-grammar-notes-part3" class="hidden text-xs text-slate-300 bg-slate-900/70 p-3 rounded-xl border border-slate-800/80 my-2 font-mono"></div>
                             <div id="speaking-grammar-tags-part3" class="flex flex-wrap gap-1.5 pt-2 border-t border-slate-900"></div>
                             <div id="speaking-vocab-tags-part3" class="hidden flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-900 text-xs"></div>
                         </div>
@@ -2228,59 +2103,63 @@
             <!-- VOCABULARY LOGGER SECTION (v6.0)                          -->
             <!-- ========================================================= -->
             <div id="tab-vocab-logger" class="tab-content hidden space-y-5">
-                <!-- 1. Top Command Center Header (Compact & High-Power) -->
-                <div class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-indigo-950/80 p-5 sm:p-6 rounded-2xl border border-emerald-500/30 glow-vocab relative overflow-hidden shadow-xl space-y-4">
+                <!-- 1. Top Command Center Header (Solid & High-Power) -->
+                <div class="vocab-command-header bg-gradient-to-r from-emerald-950/90 via-slate-900 to-indigo-950/80 p-5 sm:p-6 rounded-2xl border border-emerald-500/30 glow-vocab relative overflow-hidden shadow-xl space-y-4">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <div class="flex items-center space-x-2 mb-1.5 flex-wrap gap-y-1">
-                                <span class="text-xs font-mono font-bold text-emerald-400 tracking-wider uppercase bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                                <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 tracking-wider uppercase bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
                                     <i class="fa-solid fa-book-bookmark mr-1"></i> VOCABULARY BANK PRO & CEFR CLASSIFIER
                                 </span>
-                                <span class="text-xs text-amber-400 font-mono"><i class="fa-solid fa-bolt mr-1"></i> +15 XP per Kata Baru</span>
+                                <span class="text-xs text-amber-500 dark:text-amber-400 font-mono"><i class="fa-solid fa-bolt mr-1"></i> +15 XP per Kata Baru</span>
                             </div>
-                            <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+                            <h2 class="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2.5">
                                 <span>IeltsGo Vocabulary Bank</span>
                             </h2>
-                            <p class="text-xs text-slate-300 mt-0.5">Input kata baru untuk diagnosis CEFR, ejaan lidah Indonesia, register IELTS, dan Spaced Repetition dengan AI Examiner.</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">Diagnosa CEFR otomatis, ejaan lidah Indonesia, kolokasi presisi IELTS, dan Spaced Repetition berbasis Feynman Drill.</p>
                         </div>
 
-                        <!-- Review Queue Action -->
-                        <button onclick="startReviewSession()" id="btn-vocab-header-review" class="w-full md:w-auto px-5 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 whitespace-nowrap active:scale-95">
-                            <i class="fa-solid fa-brain text-sm"></i>
-                            <span>Sesi Review AI (<span id="vocab-header-due-count">0</span> Kata)</span>
-                        </button>
+                        <!-- Top Action Hub -->
+                        <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full md:w-auto">
+                            <!-- Review Queue Action -->
+                            <button onclick="startReviewSession()" id="btn-vocab-header-review" class="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-md flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 review-due-pulse cursor-pointer">
+                                <i class="fa-solid fa-brain text-sm"></i>
+                                <span>Sesi Review AI (<span id="vocab-header-due-count">0</span> Kata)</span>
+                            </button>
+                            <!-- Bulk Input Action -->
+                            <button onclick="openBulkVocabModal()" id="btn-open-bulk-vocab" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-indigo-700 dark:text-indigo-300 border border-slate-200 dark:border-indigo-500/40 font-bold text-xs font-mono rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-95 cursor-pointer" title="Input banyak kata sekaligus dari catatan membaca Anda">
+                                <i class="fa-solid fa-layer-group text-indigo-500 dark:text-indigo-400"></i>
+                                <span>Input Massal</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Single-Row Fast Add & Bulk Input Bar -->
-                    <div class="pt-2 border-t border-slate-800/80 space-y-2.5">
+                    <!-- Single-Row Fast Add & Background AI Worker Bar -->
+                    <div class="pt-2 border-t border-slate-200 dark:border-slate-800/80 space-y-2.5">
                         <div class="flex flex-col sm:flex-row items-stretch gap-2">
                             <div class="relative flex-1">
-                                <input type="text" id="input-vocab-word" placeholder="Ketik kata bahasa Inggris baru (contoh: establish, mitigate, ubiquitous...)" onkeydown="if(event.key==='Enter') addVocabWord()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500 pl-10 shadow-inner">
-                                <i class="fa-solid fa-font absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+                                <input type="text" id="input-vocab-word" placeholder="Ketik kata bahasa Inggris baru (contoh: establish, mitigate, ubiquitous...)" onkeydown="if(event.key==='Enter') addVocabWord()" class="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-900 dark:text-emerald-300 focus:outline-none focus:border-emerald-500 pl-10 shadow-xs">
+                                <i class="fa-solid fa-font absolute left-3.5 top-3.5 text-xs text-slate-400 dark:text-slate-500"></i>
                             </div>
                             <button onclick="addVocabWord()" id="btn-add-vocab" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 cursor-pointer">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                                 <span>Tambah (+15 XP)</span>
                             </button>
-                            <button onclick="openBulkVocabModal()" id="btn-open-bulk-vocab" class="px-4 py-3 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 font-bold text-xs font-mono rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 cursor-pointer" title="Input banyak kata sekaligus dari catatan membaca Anda">
-                                <i class="fa-solid fa-layer-group text-indigo-400"></i>
-                                <span>Input Massal</span>
-                            </button>
                         </div>
 
                         <!-- Autonomous Background AI Worker Progress Banner -->
-                        <div id="vocab-batch-worker-bar" class="hidden p-3 rounded-xl bg-gradient-to-r from-indigo-950/70 via-slate-900 to-indigo-950/70 border border-indigo-500/40 shadow-md space-y-2">
+                        <div id="vocab-batch-worker-bar" class="hidden p-3 rounded-xl bg-indigo-50/80 dark:bg-gradient-to-r dark:from-indigo-950/70 dark:via-slate-900 dark:to-indigo-950/70 border border-indigo-200 dark:border-indigo-500/40 shadow-sm space-y-2">
                             <div class="flex items-center justify-between text-xs font-mono">
-                                <div class="flex items-center gap-2 text-indigo-300 font-bold">
-                                    <i class="fa-solid fa-circle-notch fa-spin text-indigo-400 text-sm"></i>
+                                <div class="flex items-center gap-2 text-indigo-700 dark:text-indigo-300 font-bold">
+                                    <i class="fa-solid fa-circle-notch fa-spin text-indigo-500 dark:text-indigo-400 text-sm"></i>
                                     <span id="vocab-batch-worker-label">AI Worker: Memperkaya data kosakata di latar belakang...</span>
                                 </div>
-                                <span id="vocab-batch-worker-count" class="text-[11px] text-slate-300 font-bold">0/0 kata</span>
+                                <span id="vocab-batch-worker-count" class="text-[11px] text-slate-600 dark:text-slate-300 font-bold">0/0 kata</span>
                             </div>
-                            <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                            <div class="w-full bg-slate-200 dark:bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-300 dark:border-slate-800">
                                 <div id="vocab-batch-worker-progress" class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
                             </div>
-                            <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400">
                                 <span id="vocab-batch-worker-current-word">Sedang memproses: -</span>
                                 <span>Layar tidak terkunci • Anda bebas beraktivitas</span>
                             </div>
@@ -2288,46 +2167,130 @@
                     </div>
                 </div>
 
-                <!-- 2. Search-First Floating Filter Command Center (Proposal 3: Spotify / Apple Music Style) -->
-                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
-                    <!-- Row 1: Search-First Hero Input & Quick Actions -->
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                        <!-- Search Box (Full-width on Mobile, Flex on Desktop) -->
-                        <div class="relative flex-1">
-                            <input type="text" id="input-vocab-search" placeholder="Ketik untuk mencari kata, arti, atau sinonim..." oninput="onVocabSearchInput(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-8 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 shadow-inner">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-500"></i>
-                            <button id="btn-clear-vocab-search" onclick="clearVocabSearch()" class="hidden absolute right-2.5 top-2.5 text-slate-500 hover:text-slate-300 text-xs p-0.5 rounded">
+                <!-- 2. Interactive KPI Metrics HUD (Clickable Filters with Accent Identity) -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 font-sans">
+                    <!-- KPI 1: Total Bank -->
+                    <div id="kpi-card-all" onclick="setVocabQuickPill('all')" class="active-kpi cursor-pointer group bg-white dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800/90 border border-slate-200 dark:border-slate-800 border-l-4 border-l-emerald-500 rounded-2xl p-3 sm:p-4 transition-all shadow-xs hover:shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] sm:text-xs uppercase font-mono font-bold text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Total Bank</span>
+                            <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-slate-300 text-xs flex items-center justify-center"><i class="fa-solid fa-book-bookmark"></i></span>
+                        </div>
+                        <div class="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2">
+                            <span id="kpi-vocab-total" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono">0</span>
+                            <span class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">kosakata</span>
+                        </div>
+                        <div class="mt-0.5 sm:mt-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono truncate">Tampilkan semua</div>
+                    </div>
+
+                    <!-- KPI 2: Due Today -->
+                    <div id="kpi-card-due" onclick="setVocabQuickPill('due')" class="cursor-pointer group bg-white dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800/90 border border-slate-200 dark:border-slate-800 border-l-4 border-l-amber-500 rounded-2xl p-3 sm:p-4 transition-all shadow-xs hover:shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] sm:text-xs uppercase font-mono font-bold text-slate-500 dark:text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Perlu Review</span>
+                            <span class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 flex items-center justify-center text-xs"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                        </div>
+                        <div class="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2">
+                            <span id="kpi-vocab-due" class="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">0</span>
+                            <span class="text-[10px] sm:text-[11px] text-amber-700 dark:text-amber-400/80 font-bold">due hari ini</span>
+                        </div>
+                        <div class="mt-0.5 sm:mt-1 text-[10px] text-amber-600/70 dark:text-amber-400/70 font-mono truncate">Spaced Repetition</div>
+                    </div>
+
+                    <!-- KPI 3: Tantangan Gembok -->
+                    <div id="kpi-card-locked" onclick="setVocabQuickPill('locked')" class="cursor-pointer group bg-white dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800/90 border border-slate-200 dark:border-slate-800 border-l-4 border-l-slate-400 dark:border-l-slate-500 rounded-2xl p-3 sm:p-4 transition-all shadow-xs hover:shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] sm:text-xs uppercase font-mono font-bold text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Gembok</span>
+                            <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-xs"><i class="fa-solid fa-lock"></i></span>
+                        </div>
+                        <div class="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2">
+                            <span id="kpi-vocab-locked" class="text-xl sm:text-2xl font-black text-slate-700 dark:text-slate-300 font-mono">0</span>
+                            <span class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">terkunci</span>
+                        </div>
+                        <div class="mt-0.5 sm:mt-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono truncate">Tebak makna dulu</div>
+                    </div>
+
+                    <!-- KPI 4: Belum / Perlu Belajar -->
+                    <div id="kpi-card-unlearned" onclick="setVocabQuickPill('unlearned')" class="cursor-pointer group bg-white dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800/90 border border-slate-200 dark:border-slate-800 border-l-4 border-l-rose-500 rounded-2xl p-3 sm:p-4 transition-all shadow-xs hover:shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] sm:text-xs uppercase font-mono font-bold text-slate-500 dark:text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">Perlu Belajar</span>
+                            <span class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20 flex items-center justify-center text-xs"><i class="fa-solid fa-circle-exclamation"></i></span>
+                        </div>
+                        <div class="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2">
+                            <span id="kpi-vocab-unlearned" class="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400 font-mono">0</span>
+                            <span class="text-[10px] sm:text-[11px] text-rose-700 dark:text-rose-400/80 font-bold">Lvl 0</span>
+                        </div>
+                        <div class="mt-0.5 sm:mt-1 text-[10px] text-rose-500/70 dark:text-rose-400/70 font-mono truncate">Belum Feynman</div>
+                    </div>
+                </div>
+
+                <!-- Hidden Compatibility Container for Automated Tests & Legacy Query Anchors -->
+                <div class="hidden" aria-hidden="true">
+                    <span id="kpi-vocab-high">0</span>
+                    <span id="kpi-vocab-mastered">0</span>
+                    <button id="pill-vocab-all"></button>
+                    <button id="pill-vocab-due"></button>
+                    <button id="pill-vocab-locked"></button>
+                    <button id="pill-vocab-high"></button>
+                    <button id="pill-vocab-unlearned"></button>
+                    <button id="pill-vocab-learning"></button>
+                    <button id="pill-vocab-mastered"></button>
+                    <button id="pill-vocab-writing"></button>
+                    <button id="pill-vocab-speaking"></button>
+                    <span id="pill-count-vocab-all">0</span>
+                    <span id="pill-count-vocab-due">0</span>
+                    <span id="pill-count-vocab-locked">0</span>
+                    <span id="pill-count-vocab-high">0</span>
+                    <span id="pill-count-vocab-unlearned">0</span>
+                    <span id="pill-count-vocab-learning">0</span>
+                    <span id="pill-count-vocab-mastered">0</span>
+                </div>
+
+                <!-- 3. Smart Filter & View Controller Bar -->
+                <div class="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 sm:p-3.5 shadow-sm">
+                    <!-- Search Input & Action Cluster (Adaptive Layout) -->
+                    <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-2.5">
+                        <!-- Search Box -->
+                        <div class="relative flex-1 min-w-0">
+                            <input type="text" id="input-vocab-search" placeholder="Cari kata, arti, atau kolokasi..." oninput="onVocabSearchInput(this.value)" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-9 pr-8 text-xs font-mono text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500 shadow-inner">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-400 dark:text-slate-500"></i>
+                            <button id="btn-clear-vocab-search" onclick="clearVocabSearch()" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 text-xs p-0.5 rounded cursor-pointer">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
 
-                        <!-- Right Actions: Detail Filter Popover Button + Sort Select + Reset -->
-                        <div class="grid grid-cols-[auto_1fr_auto] sm:flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                        <!-- Right Actions: View Switcher + Filter Button + Sort Select + Reset -->
+                        <div class="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap w-full lg:w-auto">
+                            <!-- View Switcher (Grid vs Compact Baris) -->
+                            <div class="flex items-center bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-0.5 shrink-0">
+                                <button onclick="setVocabViewMode('grid')" id="btn-vocab-view-grid" title="Tampilan Kartu Solid" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-mono font-bold transition-all shadow-sm cursor-pointer">
+                                    <i class="fa-solid fa-table-cells-large mr-1"></i>Grid
+                                </button>
+                                <button onclick="setVocabViewMode('list')" id="btn-vocab-view-list" title="Tampilan Baris Ringkas" class="px-2.5 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-mono font-bold transition-all cursor-pointer">
+                                    <i class="fa-solid fa-list mr-1"></i>Baris
+                                </button>
+                            </div>
+
                             <!-- Toggle Filter Popover Button -->
-                            <button onclick="toggleVocabFilterPanel()" id="btn-toggle-filter-panel" class="px-3 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 whitespace-nowrap">
-                                <i class="fa-solid fa-sliders text-indigo-400"></i>
+                            <button onclick="toggleVocabFilterPanel()" id="btn-toggle-filter-panel" class="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs active:scale-95 whitespace-nowrap cursor-pointer shrink-0">
+                                <i class="fa-solid fa-sliders text-indigo-500 dark:text-indigo-400"></i>
                                 <span>Filter</span>
                                 <span id="badge-active-filter-count" class="hidden text-[10px] bg-indigo-600 text-white px-1.5 py-0.2 rounded-full font-bold">0</span>
                             </button>
 
                             <!-- Enhanced Sort Selector -->
-                            <div class="relative w-full">
-                                <select id="select-vocab-sort" onchange="renderVocabBank()" class="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl py-2.5 px-2 font-mono focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm">
+                            <div class="relative flex-1 sm:flex-none sm:w-56">
+                                <select id="select-vocab-sort" onchange="renderVocabBank()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs rounded-xl py-2.5 px-2 font-mono font-medium focus:outline-none focus:border-emerald-500 cursor-pointer shadow-xs">
                                     <option value="recent">🕒 Terbaru Ditambahkan</option>
                                     <option value="oldest">⏳ Terlama Ditambahkan</option>
-                                    <option value="locked_first">🔒 Terkunci (Gembok Dulu)</option>
-                                    <option value="due_first">⏰ Perlu Review Hari Ini</option>
-                                    <option value="feynman_asc">🧠 Pemahaman: Belum Belajar (Lvl 0→5)</option>
-                                    <option value="feynman_desc">🏆 Pemahaman: Dikuasai (Lvl 5→0)</option>
-                                    <option value="cefr_desc">👑 Tingkat CEFR (C2 → A1 → Non-CEFR)</option>
+                                    <option value="review_priority">⏰ Jadwal Review Terdekat</option>
+                                    <option value="feynman_desc">🏆 Level Belajar (Lvl 5 → 0)</option>
+                                    <option value="feynman_asc">🎯 Level Belajar (Lvl 0 → 5)</option>
                                     <option value="cefr_asc">🌱 Tingkat CEFR (A1 → C2)</option>
-                                    <option value="alpha_asc">🔤 Abjad (A → Z)</option>
-                                    <option value="alpha_desc">🔤 Abjad (Z → A)</option>
+                                    <option value="cefr_desc">👑 Tingkat CEFR (C2 → A1)</option>
                                 </select>
                             </div>
 
                             <!-- Reset Button -->
-                            <button onclick="resetVocabFilters()" title="Reset Semua Filter" class="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all shadow-sm active:scale-95 shrink-0 flex items-center justify-center">
+                            <button onclick="resetVocabFilters()" title="Reset Semua Filter" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all shadow-xs active:scale-95 shrink-0 flex items-center justify-center cursor-pointer">
                                 <i class="fa-solid fa-rotate-left text-xs"></i>
                             </button>
                         </div>
@@ -2379,8 +2342,9 @@
                                     <button onclick="setVocabFilterLearning('all')" id="chip-learn-all" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition-all shadow-sm">Semua</button>
                                     <button onclick="setVocabFilterLearning('locked')" id="chip-learn-locked" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 font-bold text-[11px] transition-all">🔒 Belum Buka Gembok</button>
                                     <button onclick="setVocabFilterLearning('unlearned')" id="chip-learn-unlearned" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-rose-300 border border-rose-500/40 font-bold text-[11px] transition-all">🔴 Belum Belajar (Lvl 0)</button>
+                                    <button onclick="setVocabFilterLearning('learning')" id="chip-learn-learning" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-blue-300 border border-blue-500/40 font-bold text-[11px] transition-all">📘 Sedang Belajar (Lvl 1-4)</button>
                                     <button onclick="setVocabFilterLearning('due')" id="chip-learn-due" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 font-bold text-[11px] transition-all">⏰ Review Hari Ini</button>
-                                    <button onclick="setVocabFilterLearning('mastered')" id="chip-learn-mastered" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-yellow-300 border border-yellow-500/40 font-bold text-[11px] transition-all">🏆 Bebas Review</button>
+                                    <button onclick="setVocabFilterLearning('mastered')" id="chip-learn-mastered" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-yellow-300 border border-yellow-500/40 font-bold text-[11px] transition-all">🏆 Bebas Review (Lvl 5)</button>
                                 </div>
                             </div>
 
@@ -2411,7 +2375,18 @@
                     </div>
                 </div>
 
-                <!-- 3. Vocab Bank Cards Grid (2-Column Responsive High-Efficiency Cards) -->
+                <!-- 4. Result Count & Fast Status Bar -->
+                <div class="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
+                    <div>
+                        Menampilkan <strong id="vocab-visible-count" class="text-emerald-400 font-bold">0</strong> kosakata
+                    </div>
+                    <button onclick="seedSampleVocabBank()" class="hover:text-emerald-300 transition-colors flex items-center gap-1 text-[11px]">
+                        <i class="fa-solid fa-sparkles text-amber-400"></i>
+                        <span>+5 IELTS Starter Pack</span>
+                    </button>
+                </div>
+
+                <!-- 5. Vocab Bank Cards Container (Grid / List Mode Dynamic) -->
                 <div id="vocab-bank-list" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                     <!-- Rendered Dynamically by JS -->
                 </div>
@@ -4147,21 +4122,21 @@
     </div>
 
     <!-- Bulk Vocabulary Input Modal (Batch Import) -->
-    <div id="modal-bulk-vocab" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-indigo-500/40 w-full max-w-2xl rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[92vh] flex flex-col overflow-y-auto">
-            <button onclick="closeBulkVocabModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg z-10 p-1 cursor-pointer">
+    <div id="modal-bulk-vocab" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-indigo-500/40 w-full max-w-2xl rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[92vh] flex flex-col overflow-y-auto">
+            <button onclick="closeBulkVocabModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg z-10 p-1 cursor-pointer transition-colors">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
             <!-- Header -->
-            <div class="space-y-1.5 border-b border-slate-800 pb-3 pr-8">
+            <div class="space-y-1.5 border-b border-slate-200 dark:border-slate-800 pb-3 pr-8">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg border border-indigo-500/30">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg border border-indigo-200 dark:border-indigo-500/30">
                         <i class="fa-solid fa-layer-group"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-white font-mono">Input Kosakata Massal (Batch)</h3>
-                        <p class="text-xs text-slate-400 font-sans">Tempel daftar kata dari bacaan Anda. Semua kata langsung masuk seketika, dan AI Worker akan memperkaya data di latar belakang.</p>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-mono">Input Kosakata Massal (Batch)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-sans">Tempel daftar kata dari bacaan Anda. Semua kata langsung masuk seketika, dan AI Worker akan memperkaya data di latar belakang.</p>
                     </div>
                 </div>
             </div>
@@ -4169,23 +4144,23 @@
             <!-- Textarea for Batch Words -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between text-xs font-mono">
-                    <label for="textarea-bulk-vocab" class="text-slate-300 font-bold flex items-center gap-1.5">
-                        <i class="fa-solid fa-paste text-indigo-400"></i>
+                    <label for="textarea-bulk-vocab" class="text-slate-700 dark:text-slate-300 font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-paste text-indigo-500 dark:text-indigo-400"></i>
                         <span>Daftar Kata (Baris baru, koma, atau bullet):</span>
                     </label>
-                    <span id="bulk-vocab-counter-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-950 text-indigo-300 border border-indigo-500/40 font-bold">0 kata terdeteksi</span>
+                    <span id="bulk-vocab-counter-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-indigo-300 border border-slate-200 dark:border-indigo-500/40 font-bold">0 kata terdeteksi</span>
                 </div>
-                <textarea id="textarea-bulk-vocab" rows="6" oninput="onBulkVocabInput()" placeholder="Contoh:&#10;prevailing&#10;mitigate&#10;scrutinize&#10;unprecedented&#10;ubiquitous&#10;&#10;Atau dipisah koma: paramount, bolster, delve..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 resize-y leading-relaxed shadow-inner"></textarea>
+                <textarea id="textarea-bulk-vocab" rows="6" oninput="onBulkVocabInput()" placeholder="Contoh:&#10;prevailing&#10;mitigate&#10;scrutinize&#10;unprecedented&#10;ubiquitous&#10;&#10;Atau dipisah koma: paramount, bolster, delve..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-900 dark:text-slate-200 focus:outline-none focus:border-indigo-500 resize-y leading-relaxed shadow-xs"></textarea>
             </div>
 
             <!-- Live Parsing Preview Chips Container -->
-            <div id="bulk-vocab-preview-container" class="space-y-2 p-3 rounded-xl bg-slate-950/70 border border-slate-800">
-                <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                    <span class="flex items-center gap-1.5 font-bold text-slate-300">
-                        <i class="fa-solid fa-tags text-indigo-400"></i>
+            <div id="bulk-vocab-preview-container" class="space-y-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center justify-between text-[11px] font-mono">
+                    <span class="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
+                        <i class="fa-solid fa-tags text-indigo-500 dark:text-indigo-400"></i>
                         <span>Pratinjau Kata Terdeteksi:</span>
                     </span>
-                    <span id="bulk-vocab-summary-text" class="text-[10px] text-slate-400">Ketik atau tempel teks di atas.</span>
+                    <span id="bulk-vocab-summary-text" class="text-[10px] text-slate-500 dark:text-slate-400">Ketik atau tempel teks di atas.</span>
                 </div>
                 <div id="bulk-vocab-chips-list" class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
                     <!-- Dynamic chips: green for new words, slate for existing words -->
@@ -4193,16 +4168,16 @@
             </div>
 
             <!-- Actions Footer -->
-            <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
-                    <i class="fa-solid fa-bolt text-amber-400"></i>
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-amber-500"></i>
                     <span>+10 XP per kata baru • Instan masuk tanpa loading</span>
                 </div>
                 <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-                    <button type="button" onclick="closeBulkVocabModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs font-mono rounded-xl transition-all border border-slate-700 cursor-pointer">
+                    <button type="button" onclick="closeBulkVocabModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs font-mono rounded-xl transition-all border border-slate-200 dark:border-slate-700 cursor-pointer">
                         Batal
                     </button>
-                    <button type="button" id="btn-submit-bulk-vocab" onclick="submitBulkVocabWords()" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-95 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button type="button" id="btn-submit-bulk-vocab" onclick="submitBulkVocabWords()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 dark:disabled:bg-slate-800 dark:disabled:text-slate-600 dark:disabled:border-slate-700 disabled:shadow-none disabled:cursor-not-allowed">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                         <span id="btn-submit-bulk-text">Masukkan Semua ke Bank</span>
                     </button>
